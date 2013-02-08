@@ -10,7 +10,7 @@ The big problem with this is: how do we know whether peoples' behavior in the la
 
 Many variants on experience sampling exist; however, extant ones tend to rely either on specialized hardware and/or software, or online connectivity.  hedonometer differs in that participants are prompted for and send data purely by text message. Hence, people need only have a cell phone to participate.
 
-_TODO:_ add references
+_TODO_ add references
 
 ## Components
 
@@ -43,3 +43,11 @@ If a survey contains multiple questions, researchers will have three message ord
 * Round robin: ABC ABC ABC ABC ABC ...
 * Random without replacement: CAB BAC ABC CAB ACB BCA ...
 * Random with replacement: CAA BAC CBB AAA CBA AAB ...
+
+### Scheduling
+
+Messages will be scheduled with a minimum and maximum time between samples. Each sample will be scheduled relative to the start of the day -- base time will be `start_time + (sample_num * max_time)`, and the actual sample time will be uniformly between `min_time` and `max_time` for all samples except the first -- which will be uniformly between 0 and max_time.
+
+Any participant-added gaps will simply push all scheduled messages into the future by the length of the gap. This way, no gaming of the system is possible; there's no way to force a message to come at a given time.
+
+_TODO_ add graphic illustrating this. Also fix terminology.
