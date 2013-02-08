@@ -1,6 +1,6 @@
-h1. hedonometer
+# hedonometer
 
-h2. Background
+## Background
 
 A simple Rails-based web application for collecting experience sampling data via text message.
 
@@ -12,11 +12,11 @@ Many variants on experience sampling exist; however, extant ones tend to rely ei
 
 _TODO:_ add references
 
-h2. Components
+## Components
 
 hedonometer has two main parts: a participant-facing application (accessed mainly or only by text message), and a web-based interface for researches to set up surveys.
 
-h3. Participants!
+### Participants!
 
 Participants sign in to the app by texting "signup" to your assigned phone number. The app will respond by asking for the participant's email address. Upon providing that, the app will send the participant a researcher-specified "welcome" email. This ensures that participants can both send and recieve text messages from the app.
 
@@ -24,15 +24,22 @@ The reseacher will schedule an intake with the participant as normal, and the re
 
 During the data colleciton period, participants will receive texts at researcher-specified intervals and respond. At any point, participants can text "stop" or "unsubscribe" to cancel (as per relevant laws regarding text message services).
 
-h3. Researchers!
+### Researchers!
 
 Workflow for researchers will be similar to:
 
-* Create an account on Twilio, buy a number there
-* In hedonometer, add your twilio Account SID and auth token
-* hedonometer will find your phone number
-* In the admin interface, add one (or more?) questions to your survey
-* (maybe) Choose a randomization type (random, random with replacement, round-robin)
-* Choose a number of days for collection, also hours, and maybe "valid" start and end times
-* Validate participants and set a start date for them.
-* Download data!
+1. Create an account on Twilio, buy a number there
+1. In hedonometer, add your twilio Account SID and auth token
+1. hedonometer will find your phone number
+1. In the admin interface, add one (or more?) questions to your survey
+1. Choose a number of days for collection, also hours, and maybe "valid" start and end times
+1. Validate participants and set a start date for them.
+1. Download data!
+
+### Randomization
+
+If a survey contains multiple questions, researchers will have three message ordering strategies. Assuming your survey has questions A, B, and C, you'll be able to order messages by:
+
+* Round robin: ABC ABC ABC ABC ABC ...
+* Random without replacement: CAB BAC ABC CAB ACB BCA ...
+* Random with replacement: CAA BAC CBB AAA CBA AAB ...
