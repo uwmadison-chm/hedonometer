@@ -1,17 +1,22 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.11'
+gem 'mysql2', '~> 0.3.11'
+gem 'compass', '~> 0.12.2'
+gem 'haml', '~> 3.1.7'
+gem 'sass', '~> 3.2.5'
+gem 'susy', '~> 1.0.5'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem 'twilio-ruby', '~> 3.9.0'
 
-gem 'mysql2'
+group :development do
+  gem 'capistrano'
+end
 
-gem 'compass'
-gem 'haml'
-gem 'sass'
-gem 'susy'
+gem 'jquery-rails'
 
+# To use ActiveModel has_secure_password
+gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -25,19 +30,11 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
-
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
 
 # Use unicorn as the app server
 # gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
 
 # To use debugger
 # gem 'debugger'
