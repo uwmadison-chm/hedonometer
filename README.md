@@ -46,7 +46,9 @@ If a survey contains multiple questions, researchers will have three message ord
 
 ### Scheduling
 
-Messages will be scheduled with a minimum and maximum time between samples. Each sample will be scheduled relative to the start of the day -- base time will be `start_time + (sample_num * max_time)`, and the actual sample time will be uniformly between `min_time` and `max_time` for all samples except the first -- which will be uniformly between 0 and max_time.
+Messages will be scheduled with a mean time between messages and a randomization range, such that if you have a 60 minute mean time between messages and a 30 minute random range, your message will be delivered between 45 and 75 minutes from now. Time randomization will be uniform, not normal.
+
+Each message in the day will be scheuled at `start_time + random_range/2 + ((sample_num * mean_time) + U(0, random_range)`
 
 Any participant-added gaps will simply push all scheduled messages into the future by the length of the gap. This way, no gaming of the system is possible; there's no way to force a message to come at a given time.
 
