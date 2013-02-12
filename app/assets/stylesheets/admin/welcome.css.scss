@@ -1,3 +1,24 @@
 // Place all the styles related to the admin/welcome controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#demo {
+  position: relative;
+  background-color: #FEE;
+  width: 0px;
+  height: 40px;
+}
+
+.hour {
+  position: absolute;
+  height: 40px;
+  bottom: 0;
+  border-left: 1px solid black;
+}
+
+.sp {
+  position: absolute;
+  height: 20px;
+  bottom: 0;
+  background-color: green;
+}
