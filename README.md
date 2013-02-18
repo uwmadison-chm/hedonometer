@@ -28,12 +28,14 @@ During the data colleciton period, participants will receive texts at researcher
 
 Workflow for researchers will be similar to:
 
-1. Create an account on Twilio, buy a number there
+1. Create an account on Twilio, buy a number there. Charge your account ($0.01 per message)
 1. In hedonometer, add your twilio Account SID and auth token
 1. hedonometer will find your phone number
 1. In the admin interface, add one (or more?) questions to your survey
-1. Choose a number of days for collection, also hours, and maybe "valid" start and end times
+1. Choose a number of days for collection, and (maybe) limits on early/late data collection.
+1. Choose a number of samples per day, average between samples, and time randomization: [example interface](http://njvack.github.com/hedonometer/admin_demo_times.html)
 1. Validate participants and set a start date for them.
+1. Wait for data collection...
 1. Download data!
 
 ### Randomization
