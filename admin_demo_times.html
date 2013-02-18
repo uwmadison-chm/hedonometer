@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Scheduling demo</title>
+    <style type="text/css">
+    #demo {
+      position: relative;
+      background-color: #FEE;
+      width: 0px;
+      height: 40px;
+    }
+
+    .hour {
+      position: absolute;
+      height: 40px;
+      bottom: 0;
+      border-left: 1px solid black;
+    }
+
+    .sp {
+      position: absolute;
+      height: 20px;
+      bottom: 0;
+      background-color: rgba(190, 190, 230, 0.8);
+    }
+    </style>
+
+    <script src="js/jquery-1.9.1.js" type="text/javascript"></script>
+    <script src="js/admin_demo.js" type="text/javascript"></script>
+  </head>
+</html>
+<body>
+  <p>This is the admin welcome</p>
+  <div class='controls'>
+    <div class='fl'>
+      <input id='num_samples' max='999' min='1' type='number' value='8'>
+      <label>samples per day, spaced</label>
+      <input id='mean_time' max='999' min='1' type='number' value='60'>
+      <label>±</label>
+      <input id='time_range' max='999' min='0' type='number' value='15'>
+      <label>minutes apart</label>
+    </div>
+  </div>
+  <div id='demo'></div>
+</body>
