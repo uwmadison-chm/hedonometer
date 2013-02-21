@@ -1,1 +1,10 @@
-%p Welcome to the hedonometer.
+%p Here is a demo of the participant time changer
+
+%ol#days
+  %li
+    %label= Date.today.to_s :slashed
+    .timeline
+  %li
+    %label= Date.tomorrow.to_s :slashed
+    .timeline
+  

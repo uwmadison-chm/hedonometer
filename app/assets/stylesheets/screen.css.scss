@@ -10,3 +10,9 @@
   @include container;
   @include susy-grid-background;
 }
+
+#page {
+  @include container;
+  @include susy-grid-background;
+}
+

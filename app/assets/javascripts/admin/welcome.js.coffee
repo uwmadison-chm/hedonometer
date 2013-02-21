@@ -2,12 +2,13 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-console.log "Hi!"
-
 px_per_minute = 1
 
+sample_count = ->
+  $('#num_samples').val() - 1
+
 day_len_minutes = -> 
-  $('#mean_time').val() * $('#num_samples').val() + $('#time_range').val()*1
+  $('#mean_time').val() * sample_count() + $('#time_range').val()*2
   
 day_width_px = ->
   day_len_minutes() * px_per_minute + 'px'
@@ -17,13 +18,12 @@ set_demo_width = ->
 
 draw_sampling_periods = ->
   demo = $('#demo')
-  periods = $('#num_samples').val()*1;
-  width = $('#time_range').val() * px_per_minute + 'px'
+  periods = sample_count();
+  width = $('#time_range').val()* 2 * px_per_minute + 'px'
   i = 0
   while i < periods+1
     start_time = i * $('#mean_time').val()
     start_px = start_time * px_per_minute + 'px'
-    console.log([i, start_time, width]);
     $('<div class="sp"></div>').appendTo(demo).css
       width: width,
       left: start_px
@@ -44,10 +44,16 @@ draw_hours = ->
       left: left_pos
     cur_min += 60
     i += 1
-    console.log(i)
 
-$ ->
-  # Stuff
+do_demo = ->
   set_demo_width()
   draw_hours()
   draw_sampling_periods()
+  
+
+jQuery ->
+  # Stuff
+  do_demo()
+  $('input').on('change', -> 
+    do_demo()
+  )

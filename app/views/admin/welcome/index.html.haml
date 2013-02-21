@@ -2,13 +2,11 @@
 
 .controls
   .fl
-    %input#num_samples{:value => 8}
-    %label Number of samples per day
-  .fl
-    %input#mean_time{:value => 60}
-    %label Mean time between samples (min)
-  .fl
-    %input#time_range{:value => 30}
-    %label Range interval (min)
+    %input#num_samples{value:8, min: 1, max: 999, type:'number'}
+    %label samples per day, spaced
+    %input#mean_time{value: 60, min: 1, max:999, type:'number'}
+    %label ±
+    %input#time_range{:value => 15, min: 0, max: 999, type:'number'}
+    %label minutes apart
 #demo
    
