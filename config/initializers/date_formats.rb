@@ -1,0 +1,1 @@
+Date::DATE_FORMATS[:slashed] = "%-m/%d"
