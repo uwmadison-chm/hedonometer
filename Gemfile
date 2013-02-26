@@ -25,6 +25,14 @@ group :assets do
   gem 'susy', '~> 1.0.5'
   gem 'coffee-rails', '~> 3.2.2'
 
+  # Testing stuff
+  gem 'rb-inotify', :require => false
+  gem 'rb-fsevent', :require => false
+  gem 'rb-fchange', :require => false
+  gem 'guard'
+  gem 'guard-test'
+  gem 'terminal-notifier-guard'
+
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
 
