@@ -52,7 +52,6 @@ do_demo = ->
   
 
 jQuery ->
-  # Stuff
   do_demo()
   $('input').on('change', -> 
     do_demo()
