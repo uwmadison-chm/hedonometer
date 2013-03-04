@@ -1,9 +1,9 @@
 require 'test_helper'
 
 class Admin::WelcomeControllerTest < ActionController::TestCase
-  test "should get index" do
+  test "index requires login" do
     get :index
-    assert_response :success
+    assert_response :redirect
   end
 
 end

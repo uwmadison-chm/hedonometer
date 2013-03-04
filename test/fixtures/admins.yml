@@ -4,8 +4,8 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-#  column: value
+nate:
+  email: njvack@wisc.edu
+  can_change_admins: true
+  can_create_surveys: true
+  active: true
