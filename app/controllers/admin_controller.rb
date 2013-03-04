@@ -9,7 +9,7 @@ class AdminController < ApplicationController
   private
   def require_login!
     unless current_admin
-      redirect_to new_admin_session_path
+      redirect_to admin_login_path
     end
   end
   

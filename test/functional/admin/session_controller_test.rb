@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Admin::SessionsControllerTest < ActionController::TestCase
+class Admin::SessionControllerTest < ActionController::TestCase
   test "should get new without login" do
     get :new
     assert_response :success
@@ -11,5 +11,5 @@ class Admin::SessionsControllerTest < ActionController::TestCase
     get :new
     assert !admin_id_set?
   end
-
+  
 end
