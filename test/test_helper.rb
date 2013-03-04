@@ -9,5 +9,17 @@ class ActiveSupport::TestCase
   # -- they do not yet inherit this setting
   fixtures :all
 
+  def admin_login_as(fixture_name)
+    session[:admin_id] = admins(fixture_name).id
+  end
+
+  def admin_logout
+    session.delete :admin_id
+  end
+  
+  def admin_id_set?
+    session.include? :admin_id
+  end
+
   # Add more helper methods to be used by all tests here...
 end
