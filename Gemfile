@@ -32,7 +32,7 @@ group :assets do
   gem 'guard'
   gem 'guard-test'
   gem 'terminal-notifier-guard'
-
+  gem 'spring', :git => 'git://github.com/jonleighton/spring.git'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
 
