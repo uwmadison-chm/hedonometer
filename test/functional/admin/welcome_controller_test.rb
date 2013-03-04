@@ -9,6 +9,7 @@ class Admin::WelcomeControllerTest < ActionController::TestCase
     admin_logout
     get :index
     assert_response :redirect
+    assert_redirected_to admin_login_path
   end
   
   test "index renders when logged in" do

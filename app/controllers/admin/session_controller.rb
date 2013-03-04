@@ -4,4 +4,8 @@ class Admin::SessionController < AdminController
   
   def new
   end
+  
+  def destroy
+    redirect_to admin_login_path
+  end
 end

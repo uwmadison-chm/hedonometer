@@ -12,4 +12,11 @@ class Admin::SessionControllerTest < ActionController::TestCase
     assert !admin_id_set?
   end
   
+  test "destroy clears session and redirects to login" do
+    admin_login_as :nate
+    get :destroy
+    assert_response :redirect
+    assert_redirected_to admin_login_path
+  end
+  
 end
