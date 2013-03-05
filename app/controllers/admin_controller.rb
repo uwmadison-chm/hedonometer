@@ -14,6 +14,7 @@ class AdminController < ApplicationController
   def require_login!
     unless active_current_admin?
       reset_session
+      session[:destination] = request.url
       redirect_to admin_login_path
     end
   end

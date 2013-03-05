@@ -23,5 +23,12 @@ class Admin::WelcomeControllerTest < ActionController::TestCase
     assert_false admin_id_set?
     assert_redirected_to admin_login_path
   end
+  
+  test "redirecting saves destination in session" do
+    admin_logout
+    get :index
+    assert_response :redirect
+    assert_not_nil session[:destination]
+  end
 
 end
