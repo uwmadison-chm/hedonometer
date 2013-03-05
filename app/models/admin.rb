@@ -6,6 +6,8 @@ class Admin < ActiveRecord::Base
   
   before_save :encrypt_password
   
+  validates :email, uniqueness:true
+  
   def active?
     deleted_at.nil?
   end

@@ -23,4 +23,9 @@ class AdminTest < ActiveSupport::TestCase
     assert_not_nil a.password_salt
     assert_not_nil a.password_hash
   end
+  
+  test "admins must have unique email addresses" do
+    a = Admin.new(email:admins(:nate).email, password:'foo')
+    assert_false a.valid?
+  end
 end
