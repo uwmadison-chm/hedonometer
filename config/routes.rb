@@ -9,7 +9,9 @@ Hedonometer::Application.routes.draw do
   
   namespace :admin do
     root :to => 'welcome#index'
-    get 'login' => 'session#new'
-    get 'logout' => 'session#destroy'
+    # Authn
+    get 'login'   => 'session#new'
+    post 'login'  => 'session#create'
+    get 'logout'  => 'session#destroy'
   end
 end

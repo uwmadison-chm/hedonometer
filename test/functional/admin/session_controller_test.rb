@@ -25,4 +25,23 @@ class Admin::SessionControllerTest < ActionController::TestCase
     assert_redirected_to admin_login_path
   end
   
+  test "login with good password works" do
+    post :create, 
+      {email:admins(:nate).email, password:'password'}, 
+      {destination:'foo'}
+    assert_response :redirect
+    assert_redirected_to 'foo'
+  end
+  
+  test "default redirect to root url" do
+    post :create, {email:admins(:nate).email, password:'password'}
+    assert_redirected_to admin_root_url
+  end
+  
+  test "bad password renders new" do
+    post :create, {email:admins(:nate).email, password:'bad_password'}
+    assert_response :success
+    assert_template :new
+  end
+  
 end

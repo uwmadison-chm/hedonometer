@@ -8,4 +8,14 @@ class Admin::SessionController < AdminController
     reset_session
     redirect_to admin_login_path
   end
+  
+  def create
+    a = Admin.authenticate(params[:email], params[:password])
+    if a
+      dest = session.delete(:destination) || admin_root_url
+      redirect_to dest
+    else
+      render action:'new'
+    end
+  end
 end
