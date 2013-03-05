@@ -13,6 +13,7 @@ class Admin::SessionController < AdminController
     a = Admin.authenticate(params[:email], params[:password])
     if a
       dest = session.delete(:destination) || admin_root_url
+      session[:admin_id] = a.id
       redirect_to dest
     else
       render action:'new'

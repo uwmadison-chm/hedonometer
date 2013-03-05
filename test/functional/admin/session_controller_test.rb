@@ -25,6 +25,12 @@ class Admin::SessionControllerTest < ActionController::TestCase
     assert_redirected_to admin_login_path
   end
   
+  test "login with good password sets admin_id" do
+    assert_false admin_id_set?
+    post :create, {email:admins(:nate).email, password:'password'}
+    assert admin_id_set?
+  end
+  
   test "login with good password works" do
     post :create, 
       {email:admins(:nate).email, password:'password'}, 
