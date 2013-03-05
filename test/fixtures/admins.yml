@@ -8,6 +8,8 @@ nate:
   email: njvack@wisc.edu
   can_change_admins: true
   can_create_surveys: true
+  password_salt: $2a$10$COApfcke3vtQqjdBJkzTNu
+  password_hash: <%= BCrypt::Engine.hash_secret('password', '$2a$10$COApfcke3vtQqjdBJkzTNu') %>
 
 deleted:
   email: deleted@example.edu

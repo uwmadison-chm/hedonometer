@@ -5,7 +5,17 @@ class Admin < ActiveRecord::Base
     deleted_at.nil?
   end
   
-  class << self
-    
+  def password_match?(pw)
+    self if (
+      password_hash.present? and 
+      password_hash == BCrypt::Engine.hash_secret(pw, password_salt)) 
   end
+  
+  class << self
+    def authenticate(email, password)
+      a = where(email:email).first
+      a and a.password_match? password
+    end
+  end
+  
 end
