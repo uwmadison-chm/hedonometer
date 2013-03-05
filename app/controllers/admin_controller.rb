@@ -13,6 +13,7 @@ class AdminController < ApplicationController
   private
   def require_login!
     unless active_current_admin?
+      reset_session
       redirect_to admin_login_path
     end
   end

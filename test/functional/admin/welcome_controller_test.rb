@@ -20,6 +20,7 @@ class Admin::WelcomeControllerTest < ActionController::TestCase
   test "inactive users get logged out" do
     admin_login_as :deleted
     get :index
+    assert_false admin_id_set?
     assert_redirected_to admin_login_path
   end
 
