@@ -1,2 +1,6 @@
-<h1>Admin::Sessions#new</h1>
-<p>Find me in app/views/admin/sessions/new.html.erb</p>
+%h1 Welcome to the Hedonometer!
+
+= form_tag admin_login_path, id:'login_form' do
+  = email_field_tag :email, params[:email], autofocus:params.exclude?(:email), :size => 30
+  = password_field_tag :password, '', autofocus:params.include?(:email)
+  = submit_tag "Let me in!"
