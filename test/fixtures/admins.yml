@@ -8,4 +8,7 @@ nate:
   email: njvack@wisc.edu
   can_change_admins: true
   can_create_surveys: true
-  active: true
+
+deleted:
+  email: deleted@example.edu
+  deleted_at: <%= Time.now %>

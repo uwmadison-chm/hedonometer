@@ -16,5 +16,11 @@ class Admin::WelcomeControllerTest < ActionController::TestCase
     get :index
     assert_response :success
   end
+  
+  test "inactive users get logged out" do
+    admin_login_as :deleted
+    get :index
+    assert_redirected_to admin_login_path
+  end
 
 end
