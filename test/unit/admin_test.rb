@@ -16,4 +16,11 @@ class AdminTest < ActiveSupport::TestCase
     a = admins(:deleted)
     assert_nil Admin.authenticate(a.email, '')
   end
+  
+  test "creating a user encrypts password" do
+    a = Admin.create(email:'foo@example.com', password:'password')
+    assert a.valid?
+    assert_not_nil a.password_salt
+    assert_not_nil a.password_hash
+  end
 end
