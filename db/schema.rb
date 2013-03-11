@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305155723) do
+ActiveRecord::Schema.define(:version => 20130305182013) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :null => false
@@ -22,6 +22,26 @@ ActiveRecord::Schema.define(:version => 20130305155723) do
     t.datetime "deleted_at"
     t.string   "password_salt"
     t.string   "password_hash"
+  end
+
+  add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
+
+  create_table "survey_permissions", :force => true do |t|
+    t.integer  "admins_id",         :null => false
+    t.integer  "surveys_id",        :null => false
+    t.boolean  "can_modify_survey"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  create_table "surveys", :force => true do |t|
+    t.string   "name",                                         :null => false
+    t.integer  "samples_per_day",              :default => 4,  :null => false
+    t.integer  "mean_minutes_between_samples", :default => 60, :null => false
+    t.integer  "sample_minutes_plusminus",     :default => 15, :null => false
+    t.boolean  "active"
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
   end
 
 end
