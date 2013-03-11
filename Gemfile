@@ -33,11 +33,10 @@ group :assets do
   gem 'rb-fchange', :require => false
   gem 'guard'
   gem 'guard-test'
-  gem 'terminal-notifier-guard'
   gem 'spring', :git => 'git://github.com/jonleighton/spring.git'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
-
+  gem 'pry-debugger'
   gem 'uglifier', '>= 1.0.3'
 end
 
