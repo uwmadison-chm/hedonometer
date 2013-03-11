@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(:version => 20130305182013) do
   add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
 
   create_table "survey_permissions", :force => true do |t|
-    t.integer  "admins_id",         :null => false
-    t.integer  "surveys_id",        :null => false
+    t.integer  "admin_id",          :null => false
+    t.integer  "survey_id",         :null => false
     t.boolean  "can_modify_survey"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
