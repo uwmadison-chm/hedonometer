@@ -50,4 +50,10 @@ class Admin::SessionControllerTest < ActionController::TestCase
     assert_template :new
   end
   
+  test "no params on login renders new" do
+    post :create
+    assert_response :success
+    assert_template :new
+  end
+  
 end
