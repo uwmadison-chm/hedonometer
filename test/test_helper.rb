@@ -16,7 +16,7 @@ class ActiveSupport::TestCase
   def admin_logout
     session.delete :admin_id
   end
-  
+
   def admin_id_set?
     session.include? :admin_id
   end
