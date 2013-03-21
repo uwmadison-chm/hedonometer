@@ -1,3 +1,4 @@
-class SurveyPermissions < ActiveRecord::Base
-  # attr_accessible :title, :body
+class SurveyPermission < ActiveRecord::Base
+  belongs_to :admin
+  belongs_to :survey
 end

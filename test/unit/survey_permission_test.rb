@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class SurveyPermissionsTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test "fixtures OK" do
+    s = surveys(:test)
+    #assert_include?
+  end
 end

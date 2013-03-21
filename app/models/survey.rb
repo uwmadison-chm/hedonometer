@@ -1,3 +1,4 @@
 class Survey < ActiveRecord::Base
-  # attr_accessible :title, :body
+  has_many :survey_permissions
+  has_many :admins, :through => :survey_permissions
 end
