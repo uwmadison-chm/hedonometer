@@ -1,4 +1,38 @@
-%p This is the admin welcome. Your list of experiments will go here.
+%p This is the admin welcome.
+%table#active_surveys
+  %tr
+    %th Name
+    %th Phone number
+    %th Active
+    %th Completed
+    %th Collected
+  %tr
+    %td Frequent pilot
+    %td (608) 555-2391
+    %td 7
+    %td 15
+    %td 1253 / 1631
+  %tr
+    %td Infrequent pilot
+    %td (608) 555-3958
+    %td 2
+    %td 21
+    %td 583 / 621
+
+%table#active_surveys
+  %tr
+    %th Name
+    %th Phone number
+    %th Active
+    %th Completed
+    %th Collected
+
+  %tr
+    %td Intial test
+    %td (608) 555-2934
+    %td 2
+    %td 21
+    %td 583 / 621
 
 .controls
   .fl
@@ -9,4 +43,3 @@
     %input#time_range{:value => 15, min: 0, max: 999, type:'number'}
     %label minutes apart
 #demo
-   
