@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305182013) do
+ActiveRecord::Schema.define(:version => 20130322190210) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :null => false
@@ -35,13 +35,13 @@ ActiveRecord::Schema.define(:version => 20130305182013) do
   end
 
   create_table "surveys", :force => true do |t|
-    t.string   "name",                                         :null => false
-    t.integer  "samples_per_day",              :default => 4,  :null => false
-    t.integer  "mean_minutes_between_samples", :default => 60, :null => false
-    t.integer  "sample_minutes_plusminus",     :default => 15, :null => false
-    t.boolean  "active"
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.string   "name",                                            :null => false
+    t.integer  "samples_per_day",              :default => 4,     :null => false
+    t.integer  "mean_minutes_between_samples", :default => 60,    :null => false
+    t.integer  "sample_minutes_plusminus",     :default => 15,    :null => false
+    t.boolean  "active",                       :default => false, :null => false
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
   end
 
 end
