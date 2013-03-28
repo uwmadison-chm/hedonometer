@@ -1,3 +1,6 @@
-%h1 Admin::Surveys#edit
-%p
-  I am editing #{params[:id]}
+%h1 Edit survey
+- if @survey
+  = form_for [:admin, @survey] do
+    %p This is here.
+- else
+  %p Survey not found
