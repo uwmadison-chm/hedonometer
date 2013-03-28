@@ -10,3 +10,18 @@ test:
   mean_minutes_between_samples: 60
   sample_minutes_plusminus: 15
   active: true
+
+someone_elses:
+  name: Survey that Nate can't change!
+  samples_per_day: 4
+  mean_minutes_between_samples: 60
+  sample_minutes_plusminus: 15
+  active: false
+
+orphaned:
+  name: Survey that Nate isn't an admin of at all!
+  samples_per_day: 4
+  mean_minutes_between_samples: 60
+  sample_minutes_plusminus: 15
+  active: false
+

@@ -28,4 +28,12 @@ class AdminTest < ActiveSupport::TestCase
     a = Admin.new(email:admins(:nate).email, password:'foo')
     assert_false a.valid?
   end
+
+  test "admins can find modifiable surveys" do
+    a = admins(:nate)
+    ms = a.surveys.modifiable.to_a
+    assert_include ms, surveys(:test)
+    assert_not_include ms, surveys(:someone_elses)
+    assert_not_include ms, surveys(:orphaned)
+  end
 end

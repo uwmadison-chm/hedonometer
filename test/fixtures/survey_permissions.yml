@@ -6,5 +6,10 @@
 #
 nate_test:
   admin: nate
-  survey: first
+  survey: test
   can_modify_survey: true
+
+nate_someone_elses:
+  admin: nate
+  survey: someone_elses
+  can_modify_survey: false

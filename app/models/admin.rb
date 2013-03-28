@@ -9,7 +9,11 @@ class Admin < ActiveRecord::Base
   validates :email, uniqueness:true
 
   has_many :survey_permissions
-  has_many :surveys, :through => :survey_permissions
+  has_many :surveys, :through => :survey_permissions do
+    def modifiable
+      where("survey_permissions.can_modify_survey" => true)
+    end
+  end
 
   def active?
     deleted_at.nil?
