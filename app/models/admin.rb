@@ -1,8 +1,8 @@
 class Admin < ActiveRecord::Base
-  attr_accessible :email, :can_change_admins, :can_create_surveys, :deleted_at
+  #attr_accessible :email, :can_change_admins, :can_create_surveys, :deleted_at
 
   attr_accessor :password
-  attr_accessible :password
+  #attr_accessible :password
 
   before_save :encrypt_password
 
