@@ -26,14 +26,14 @@ class AdminTest < ActiveSupport::TestCase
 
   test "admins must have unique email addresses" do
     a = Admin.new(email:admins(:nate).email, password:'foo')
-    assert_false a.valid?
+    refute a.valid?
   end
 
   test "admins can find modifiable surveys" do
     a = admins(:nate)
     ms = a.surveys.modifiable.to_a
-    assert_include ms, surveys(:test)
-    assert_not_include ms, surveys(:someone_elses)
-    assert_not_include ms, surveys(:orphaned)
+    assert_includes ms, surveys(:test)
+    refute_includes ms, surveys(:someone_elses)
+    refute_includes ms, surveys(:orphaned)
   end
 end
