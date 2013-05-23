@@ -15,7 +15,7 @@ class Admin::SessionControllerTest < ActionController::TestCase
   test "logout clears session" do
     admin_login_as :nate
     get :destroy
-    assert_false admin_id_set?
+    refute admin_id_set?
   end
 
   test "destroy clears session and redirects to login" do
@@ -26,7 +26,7 @@ class Admin::SessionControllerTest < ActionController::TestCase
   end
 
   test "login with good password sets admin_id" do
-    assert_false admin_id_set?
+    refute admin_id_set?
     post :create, {email:admins(:nate).email, password:'password'}
     assert admin_id_set?
   end
