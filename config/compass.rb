@@ -1,3 +1,1 @@
-# Require any additional compass plugins here.
-project_type = :rails
-require 'susy'
+# Require any additional compass plugins here. This doesn't actually seem to matter.
