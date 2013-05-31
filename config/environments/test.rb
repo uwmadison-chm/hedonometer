@@ -5,12 +5,15 @@ Hedonometer::Application.configure do
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
-  config.eager_load = false
   config.cache_classes = true
+  config.eager_load = false
 
+
+  config.assets.compile = false
+  # Old assets settings -- I really don't want assets at all in testing.
   # Configure static asset server for tests with Cache-Control for performance
-  config.serve_static_assets = true
-  config.static_cache_control = "public, max-age=3600"
+  #config.serve_static_assets = true
+  #config.static_cache_control = "public, max-age=3600"
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
