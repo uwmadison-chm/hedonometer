@@ -6,6 +6,7 @@ gem 'haml', '~> 4.0.0'
 gem 'twilio-ruby', '~> 3.9.0'
 
 gem 'jquery-rails'
+gem 'json', '~> 1.7.7'
 
 # To use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.0.0', require: 'bcrypt'
@@ -20,7 +21,7 @@ group :development do
   gem 'rb-fsevent', require: false
   gem 'rb-fchange', require: false
   gem 'guard'
-  gem 'guard-test'
+  gem 'guard-minitest'
   gem 'spring', git: 'git://github.com/jonleighton/spring.git'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
@@ -31,7 +32,9 @@ group :development do
   gem 'sass', '~> 3.2.8'
   gem 'sass-rails', git: 'git://github.com/rails/sass-rails.git'
   gem 'compass', '~> 0.12.2'
-  gem 'compass-rails', git: 'git://github.com/Compass/compass-rails.git', tag: 'rails4'
+  #gem 'compass-rails', git: 'git://github.com/Compass/compass-rails.git', tag: 'rails4'
+  gem 'compass-rails', github: 'milgner/compass-rails', ref: '1749c06f15dc4b058427e7969810457213647fb8'
+
   gem 'susy', '~> 1.0.5'
   gem 'coffee-rails', '~> 4.0.0'
 
