@@ -15,6 +15,11 @@ class Admin < ActiveRecord::Base
     end
   end
 
+  def can_modify_survey?(survey)
+    sp = self.surveys.modifiable.where(
+      "survey_permissions.survey_id" => survey).first
+  end
+
   def active?
     deleted_at.nil?
   end

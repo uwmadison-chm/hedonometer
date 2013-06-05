@@ -36,4 +36,11 @@ class AdminTest < ActiveSupport::TestCase
     refute_includes ms, surveys(:someone_elses)
     refute_includes ms, surveys(:orphaned)
   end
+
+  test "admins can test for modifiability" do
+    a = admins(:nate)
+    assert a.can_modify_survey? surveys(:test)
+    refute a.can_modify_survey? surveys(:someone_elses)
+    refute a.can_modify_survey? surveys(:orphaned)
+  end
 end
