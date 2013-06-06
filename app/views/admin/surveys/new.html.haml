@@ -1,4 +1,3 @@
 %h2 Make a new survey
 
-= form_for [:admin, Survey.new] do |f|
-  %p hi
+= render 'form', survey: @survey

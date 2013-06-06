@@ -1,6 +1,5 @@
 %h1 Edit survey
 - if @survey
-  = form_for [:admin, @survey] do
-    %p This is here.
+  = render 'form', survey: @survey
 - else
   %p Survey not found

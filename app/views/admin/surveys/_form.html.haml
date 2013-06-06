@@ -1,0 +1,8 @@
+= form_for [:admin, survey], builder: TwoColumnFormBuilder do |f|
+  =f.text_field :name, autofocus: true
+  =f.number_field :samples_per_day
+  =f.number_field :mean_minutes_between_samples
+  =f.number_field :sample_minutes_plusminus
+  =f.check_box :active
+
+  =f.submit "Save"
