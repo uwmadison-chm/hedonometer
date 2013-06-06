@@ -26,28 +26,29 @@ class Admin::SurveysControllerTest < ActionController::TestCase
   end
 
   test "should get edit for editable survey" do
-    get :edit, id:surveys(:test).id
+    get :edit, id:surveys(:test)
     assert_response :success
     assert assigns(:survey)
   end
 
   test "should not make form for orphaned survey" do
-    get :edit, id:surveys(:orphaned).id
+    get :edit, id:surveys(:orphaned)
     assert_response :success
     assert_nil assigns(:survey)
   end
 
   test "should not make form for noneditable survey" do
-    get :edit, id:surveys(:someone_elses).id
+    get :edit, id:surveys(:someone_elses)
     assert_response :success
     assert_nil assigns(:survey)
   end
 
   test "create a survey" do
-    post :create, sample_data
+    assert_difference 'Survey.count' do
+      post :create, sample_data
+    end
     s = assigns(:survey)
     assert s
-    refute s.new_record?
     assert_redirected_to edit_admin_survey_path(s)
   end
 
@@ -58,4 +59,5 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     assert assigns(:survey).new_record?
     assert_template :new
   end
+
 end
