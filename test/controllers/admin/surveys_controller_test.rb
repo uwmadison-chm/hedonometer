@@ -60,4 +60,19 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     assert_template :new
   end
 
+  test "update a survey" do
+    s = surveys(:test)
+    post :update, id: s, survey: {name: "freeeow"}
+    assert assigns(:survey)
+    assert_equal "freeeow", assigns(:survey).name
+    assert_redirected_to edit_admin_survey_path(s)
+  end
+
+  test "bad update sends to edit" do
+    s = surveys(:test)
+    post :update, id: s, survey: {name: ""}
+    assert_response :success
+    assert_template :edit
+  end
+
 end

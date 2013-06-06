@@ -9,6 +9,11 @@ class Admin::SurveysController < AdminController
   end
 
   def update
+    if @survey.update_attributes survey_params
+      redirect_to edit_admin_survey_path(@survey)
+    else
+      render action: :edit
+    end
   end
 
   def create
