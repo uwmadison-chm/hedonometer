@@ -5,6 +5,7 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
   # <div class="col2"><input type= ... /></div>
   # <div class="feedback"><span class="error">Field errors</span></div>
   # </div>
+
   def left_label(attribute, field_content, label_content, options={})
     @template.content_tag(:div, class: "field") do
       @template.content_tag(:div, label(attribute, label_content), class: "col1")+
@@ -23,26 +24,19 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
-  def text_field(attribute, options={})
-    label_content = options.delete :label
-    follow_content = options.delete :follow_field_with
-    field_content = super + follow_content
-    left_label attribute, field_content, label_content, options
-  end
-
-  def email_field(attribute, options={})
-    label_content = options.delete(:label)
-    left_label attribute, super, label_content, options
-  end
-
-  def number_field(attribute, options = {})
-    label_content = options.delete(:label)
-    left_label attribute, super, label_content, options
-  end
-
-  def password_field(attribute, options={})
-    label_content = options.delete(:label)
-    left_label attribute, super, label_content, options
+  left_labeled_fields = [
+    :text_field, :email_field, :number_field, :password_field, :file_field,
+    :color_field, :search_field, :telephone_field, :phone_field,
+    :date_field, :time_field, :datetime_field, :datetime_local_field,
+    :month_field, :week_field, :url_field, :range_field
+  ]
+  left_labeled_fields.each do |f|
+    define_method f do |attribute, options = {}|
+      label_content = options.delete :label
+      follow_content = options.delete :follow_field_with
+      field_content = super(attribute, options) + follow_content
+      left_label attribute, field_content, label_content, options
+    end
   end
 
   def check_box(attribute, options={})
