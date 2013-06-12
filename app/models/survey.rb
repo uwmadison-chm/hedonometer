@@ -4,6 +4,8 @@ class Survey < ActiveRecord::Base
   has_many :survey_permissions
   has_many :admins, through: :survey_permissions
 
+  has_many :survey_questions
+
   validates :creator, presence: true, on: :create
   validates :name, presence: true
   validates :samples_per_day, numericality: {only_integer: true, greater_than: 0}
