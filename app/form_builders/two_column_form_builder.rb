@@ -52,11 +52,11 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def submit(value, options = {})
-    @template.content_tag(:div, class: 'field') do
+    @template.content_tag(:div, class: "line") do
 
-      @template.content_tag(:div, '&nbsp;', {class: 'col1'}, false) +
-      @template.content_tag(:div, {class: 'col2'}) do
-        @template.content_tag(:input, nil, type: 'submit', value: value)
+      @template.content_tag(:div, "&nbsp;", {class: "col1"}, false) +
+      @template.content_tag(:div, {class: "col2"}) do
+        @template.content_tag(:input, nil, type: "submit", value: value)
       end
 
     end
