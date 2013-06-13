@@ -1,8 +1,18 @@
 = form_for [:admin, survey], builder: TwoColumnFormBuilder do |f|
   =f.text_field :name, autofocus: true
-  =f.number_field :samples_per_day
-  =f.number_field :mean_minutes_between_samples
-  =f.number_field :sample_minutes_plusminus
+  = fields_for survey, builder: ActionView::Helpers::FormBuilder do |simple|
+    .line
+      .col1
+        Sampling
+      .col2
+        =simple.number_field :samples_per_day, min: 1, max: 99
+        =simple.label :samples_per_day, "times per day,"
+        =simple.number_field :mean_minutes_between_samples, min: 1, max: 9999
+        =simple.label :sample_minutes_plusminus, "±"
+        =simple.number_field :sample_minutes_plusminus, min: 0, max: 9999
+        minutes between samples
   =f.check_box :active
 
   =f.submit "Save"
+  = f.fields_for :survey_questions, survey.survey_questions do |question_form|
+    = question_form.text_field :question_text
