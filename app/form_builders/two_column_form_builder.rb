@@ -1,13 +1,13 @@
 class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
   # Return something like:
-  # <div class="field">
+  # <div class="line">
   # <div class="col1"><label for="something[foo]">Label text</label></div>
   # <div class="col2"><input type= ... /></div>
   # <div class="feedback"><span class="error">Field errors</span></div>
   # </div>
 
   def left_label(attribute, field_content, label_content, options={})
-    @template.content_tag(:div, class: "field") do
+    @template.content_tag(:div, class: "line") do
       @template.content_tag(:div, label(attribute, label_content), class: "col1")+
       @template.content_tag(:div, field_content, class: "col2")+
       @template.content_tag(:div, field_errors(attribute), class: "feedback")
@@ -17,7 +17,7 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
   # Just like left_label, except the label and content are reversed -- for
   # checkboxes and the like.
   def right_label(attribute, field_content, label_content, options={})
-    @template.content_tag(:div, class: "field") do
+    @template.content_tag(:div, class: "line") do
       @template.content_tag(:div, field_content, class: "col1")+
       @template.content_tag(:div, label(attribute, label_content), class: "col2")+
       @template.content_tag(:div, field_errors(attribute), class: "feedback")
