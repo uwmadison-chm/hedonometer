@@ -8,7 +8,6 @@ capybara-*.html
 /config/database.yml
 /config/deploy.rb
 /config/unicorn.rb
-/bin/*
 /log/*
 /tmp/*
 /db/*.sqlite3
