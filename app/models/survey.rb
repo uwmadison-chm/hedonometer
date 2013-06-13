@@ -5,15 +5,14 @@ class Survey < ActiveRecord::Base
   has_many :admins, through: :survey_permissions
 
   has_many :survey_questions
+  accepts_nested_attributes_for :survey_questions
 
-  validates :creator, presence: true, on: :create
   validates :name, presence: true
   validates :samples_per_day, numericality: {only_integer: true, greater_than: 0}
-  validates :mean_minutes_between_samples,
-    numericality: {only_integer: true, greater_than: 0}
-  validates :sample_minutes_plusminus,
-    numericality: {only_integer: true, greater_than: 0}
+  validates :mean_minutes_between_samples, numericality: {only_integer: true, greater_than: 0}
+  validates :sample_minutes_plusminus, numericality: {only_integer: true, greater_than: 0}
 
+  validates :creator, on: :create, presence: true
   after_create :assign_creator_as_admin
 
   private
