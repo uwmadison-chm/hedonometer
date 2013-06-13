@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', git: 'https://github.com/rails/rails.git', tag: 'v4.0.0.rc1'
+gem 'rails', git: 'https://github.com/rails/rails.git', tag: 'v4.0.0.rc2'
 gem 'haml', '~> 4.0.0'
 
 gem 'twilio-ruby', '~> 3.9.0'
