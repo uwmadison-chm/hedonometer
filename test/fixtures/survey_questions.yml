@@ -1,11 +1,19 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+test_what:
+  survey: test
+  question_text: "What are you doing?"
+  position: 1
 
-# This model initially had no columns defined.  If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-#  column: value
+test_where:
+  survey: test
+  question_text: "Where are you?"
+  position: 2
+
+test_who:
+  survey: test
+  question_text: "Who are you with?"
+  position: 3
+
+test_how:
+  survey: test
+  question_text: "How are you feeling?"
+  position: 4
