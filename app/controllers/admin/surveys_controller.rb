@@ -35,6 +35,7 @@ class Admin::SurveysController < AdminController
         :samples_per_day,
         :mean_minutes_between_samples,
         :sample_minutes_plusminus,
-        :active)
+        :active,
+        :survey_questions_attributes => [:id, :question_text])
   end
 end
