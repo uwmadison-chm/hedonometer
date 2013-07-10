@@ -18,5 +18,4 @@ class TwilioNumber < ActiveRecord::Base
     @account.incoming_phone_numbers.list
   end
 
-  def self.
 end
