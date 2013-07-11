@@ -39,6 +39,13 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
+  def select(attribute, list, options={})
+      label_content = options.delete :label
+      follow_content = options.delete :follow_field_with
+      field_content = super(attribute, list) + follow_content
+      left_label attribute, field_content, label_content
+  end
+
   def check_box(attribute, options={})
     label_content = options.delete(:label)
     right_label attribute, super, label_content, options
