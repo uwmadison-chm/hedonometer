@@ -36,6 +36,9 @@ class Admin::SurveysController < AdminController
         :mean_minutes_between_samples,
         :sample_minutes_plusminus,
         :active,
+        :twilio_account_sid,
+        :twilio_auth_token,
+        :phone_number,
         :survey_questions_attributes => [:id, :question_text])
   end
 end

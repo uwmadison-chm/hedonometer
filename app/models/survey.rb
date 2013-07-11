@@ -1,8 +1,10 @@
 class Survey < ActiveRecord::Base
   attr_accessor :creator
+  attr_accessor :phone_number
 
   has_many :survey_permissions
   has_many :admins, through: :survey_permissions
+  has_one :twilio_number
 
   has_many :survey_questions
   accepts_nested_attributes_for :survey_questions

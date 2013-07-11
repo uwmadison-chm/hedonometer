@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130626164608) do
+ActiveRecord::Schema.define(version: 20130711185854) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -51,12 +51,12 @@ ActiveRecord::Schema.define(version: 20130626164608) do
     t.boolean  "active",                       default: false, null: false
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
+    t.string   "twilio_account_sid"
+    t.string   "twilio_auth_token"
   end
 
   create_table "twilio_numbers", force: true do |t|
     t.integer  "survey_id",        null: false
-    t.string   "account_sid",      null: false
-    t.string   "auth_token",       null: false
     t.string   "phone_number",     null: false
     t.string   "phone_number_sid", null: false
     t.datetime "created_at"
