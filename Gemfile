@@ -30,7 +30,7 @@ group :development do
 
   # Gems used only for assets and not required
   gem 'sass', '~> 3.2.8'
-  gem 'sass-rails', git: 'git://github.com/rails/sass-rails.git'
+  gem 'sass-rails', '~> 4.0.0'
   gem 'compass', '~> 0.12.2'
   #gem 'compass-rails', git: 'git://github.com/Compass/compass-rails.git', tag: 'rails4'
   gem 'compass-rails', github: 'milgner/compass-rails', branch: 'rails4'
