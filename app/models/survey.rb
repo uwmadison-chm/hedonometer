@@ -9,6 +9,8 @@ class Survey < ActiveRecord::Base
   has_many :survey_questions
   accepts_nested_attributes_for :survey_questions
 
+  has_many :participants
+
   validates :name, presence: true
   validates :samples_per_day, numericality: {only_integer: true, greater_than: 0}
   validates :mean_minutes_between_samples, numericality: {only_integer: true, greater_than: 0}
