@@ -1,5 +1,5 @@
 = form_for [:admin, survey], builder: TwoColumnFormBuilder do |f|
-  =f.text_field :name, autofocus: true
+  = f.text_field :name, autofocus: true
   = fields_for survey, builder: ActionView::Helpers::FormBuilder do |simple|
     .line
       .col1
@@ -11,8 +11,12 @@
         =simple.label :sample_minutes_plusminus, "±"
         =simple.number_field :sample_minutes_plusminus, min: 0, max: 9999
         minutes between samples
-  =f.check_box :active
+  = f.text_field :twilio_account_sid, label: 'Twilio account SID', size: 55
+  = f.text_field :twilio_auth_token, size: 50
+  = f.text_field :phone_number
 
-  =f.submit "Save"
+  = f.check_box :active
+
+  = f.submit "Save"
   = f.fields_for :survey_questions, survey.survey_questions do |question_form|
     = question_form.text_field :question_text
