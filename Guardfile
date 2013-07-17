@@ -3,7 +3,7 @@
 
 notification :off
 
-guard :minitest, spring: true do
+guard :minitest do
 
   watch(%r|^test/test_helper\.rb|) { "test" }
   watch(%r|^test/.+_test\.rb|)
