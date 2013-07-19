@@ -1,5 +1,5 @@
 class Admin::SessionController < AdminController
-  skip_before_action :require_login!
+  skip_before_action :require_admin_login!
 
   def new
   end

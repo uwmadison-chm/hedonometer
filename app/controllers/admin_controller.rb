@@ -1,6 +1,6 @@
 class AdminController < ApplicationController
 
-  before_action :require_login!
+  before_action :require_admin_login!
 
   def current_admin
     @current_admin ||= Admin.where(id:session[:admin_id]).first
@@ -11,7 +11,7 @@ class AdminController < ApplicationController
   end
 
   private
-  def require_login!
+  def require_admin_login!
     unless active_current_admin?
       reset_session
       session[:destination] = request.url
