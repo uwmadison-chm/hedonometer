@@ -32,6 +32,8 @@ class PhoneNumber
     "(#{area}) #{exchange}-#{subscriber}"
   end
 
+  alias_method :humanize, :to_human
+
   def to_s
     @number
   end
