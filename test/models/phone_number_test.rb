@@ -18,4 +18,14 @@ class PhoneNumberTest < ActiveSupport::TestCase
     desired = "+1608555121"
     assert_equal desired, PhoneNumber.new("608-555-121").to_human
   end
+
+  test "deserialization loads" do
+    pn = PhoneNumber.load("6085551212")
+    assert_equal pn.class, PhoneNumber
+  end
+
+  test "deserialization dumps" do
+    pn = PhoneNumber.new("+16085551212")
+    assert_equal PhoneNumber.dump(pn), pn.to_e164
+  end
 end

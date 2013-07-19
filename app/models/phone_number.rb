@@ -1,6 +1,19 @@
 class PhoneNumber
   def initialize(number)
-    @number = self.class.to_e164 number
+    @number = self.class.to_e164 number.to_s
+  end
+
+  class << self
+    def load(value)
+      self.new(value)
+    end
+
+    def dump(obj)
+      case obj
+      when String then self.new(obj).to_e164
+      else obj.to_e164
+      end
+    end
   end
 
   def to_e164
