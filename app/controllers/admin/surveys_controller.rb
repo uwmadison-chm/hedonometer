@@ -1,5 +1,5 @@
 class Admin::SurveysController < AdminController
-  before_filter :find_survey, only: [:edit, :update]
+  before_action :find_survey, only: [:edit, :update]
 
   def new
     @survey = Survey.new
