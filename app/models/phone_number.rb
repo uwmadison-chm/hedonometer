@@ -14,11 +14,20 @@ class PhoneNumber
       else obj.to_e164
       end
     end
+
+    def to_e164(number)
+      cleaned = number.to_s.gsub(/[^0-9]/, '')
+      if cleaned.length < 11 #15555551212
+        cleaned = "1#{cleaned}"
+      end
+      "+#{cleaned}"
+    end
   end
 
   def to_e164
     @number
   end
+  alias_method :to_s, :to_e164
 
   def to_human
     # Assume we're in E.164 format
@@ -31,21 +40,6 @@ class PhoneNumber
     subscriber = @number[8,4]
     "(#{area}) #{exchange}-#{subscriber}"
   end
-
   alias_method :humanize, :to_human
 
-  def to_s
-    @number
-  end
-
-  private
-  class << self
-    def to_e164(number)
-      cleaned = number.gsub(/[^0-9]/, '')
-      if cleaned.length < 11 #15555551212
-        cleaned = "1#{cleaned}"
-      end
-      "+#{cleaned}"
-    end
-  end
 end

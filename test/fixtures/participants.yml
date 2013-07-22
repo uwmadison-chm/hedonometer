@@ -1,5 +1,5 @@
 ppt1:
   survey: test
-  phone_number: +16085551212
+  phone_number: "+16085551212"
   login_code: 12345
   # That's amazing! I've got the same combination on my luggage!
