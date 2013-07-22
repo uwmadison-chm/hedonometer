@@ -6,11 +6,13 @@ Hedonometer::Application.routes.draw do
   root :to => 'welcome#index'
 
   resources :surveys do
-    resources :participants
     get 'login'  => 'session#new'
     post 'login' => 'session#create'
     get 'logout' => 'session#destroy'
 
+    resources :participants, only: [:create] do
+      post :send_login_code, on: :collection
+    end
   end
 
   namespace :admin do

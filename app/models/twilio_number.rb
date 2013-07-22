@@ -1,6 +1,9 @@
 require 'twilio-ruby'
 
 class TwilioNumber < ActiveRecord::Base
+  attr_accessor :client
+  attr_accessor :account
+
   belongs_to :survey
 
   validates :account_sid, presence: true

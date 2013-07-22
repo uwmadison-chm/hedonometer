@@ -10,6 +10,18 @@ class ParticipantsController < ApplicationController
     end
   end
 
+  def send_login_code
+    participant = @survey.participants.where(
+      phone_number: PhoneNumber.to_e164(params[:participant][:phone_number])).first
+    status = participant ? :ok : :not_found
+    if participant
+      number = @survey.twilio_number
+      number.connect!
+      number.account.sms.messages.create {} #TODO really really send this message
+    end
+    render nothing: true, status: status
+  end
+
   protected
 
   def find_survey
