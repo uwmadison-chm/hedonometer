@@ -7,6 +7,10 @@ Hedonometer::Application.routes.draw do
 
   resources :surveys do
     resources :participants
+    get 'login'  => 'session#new'
+    post 'login' => 'session#create'
+    get 'logout' => 'session#destroy'
+
   end
 
   namespace :admin do
