@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class ParticipantsController < ApplicationController
   before_action :find_survey
 

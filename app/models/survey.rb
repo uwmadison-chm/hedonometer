@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Survey < ActiveRecord::Base
   attr_accessor :creator
   attr_accessor :phone_number

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateSurveyPermissions < ActiveRecord::Migration
   def change
     create_table :survey_permissions do |t|

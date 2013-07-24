@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
   # Return something like:
   # <div class="line">

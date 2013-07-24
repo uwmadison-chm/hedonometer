@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateSurveyQuestions < ActiveRecord::Migration
   def change
     create_table :survey_questions do |t|

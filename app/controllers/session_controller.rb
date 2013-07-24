@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class SessionController < SurveyedController
   skip_before_action :require_participant_login!
 

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 Hedonometer::Application.routes.draw do
   get 'sessions/new'
 

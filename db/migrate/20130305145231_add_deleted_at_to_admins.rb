@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddDeletedAtToAdmins < ActiveRecord::Migration
   def change
     remove_column :admins, :active

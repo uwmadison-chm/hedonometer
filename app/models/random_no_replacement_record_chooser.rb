@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RandomNoReplacementRecordChooser
   attr_reader :record_set, :unused_id_list
   def initialize(record_set, unused_id_array=[])

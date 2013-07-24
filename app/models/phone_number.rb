@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class PhoneNumber
   def initialize(number)
     @number = self.class.to_e164 number.to_s

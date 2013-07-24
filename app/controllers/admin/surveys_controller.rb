@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Admin::SurveysController < AdminController
   before_action :find_survey, only: [:edit, :update]
 

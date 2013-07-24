@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Participant < ActiveRecord::Base
   LOGIN_CODE_LENGTH = 5
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateTwilioNumbers < ActiveRecord::Migration
   def change
     create_table :twilio_numbers do |t|

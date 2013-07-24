@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class SetScriptNameFromApache
   # Copies the HTTP_SCRIPT_NAME variable into SCRIPT_NAME
 

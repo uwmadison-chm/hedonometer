@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class SurveyedController < ApplicationController
   before_action :find_survey
 
