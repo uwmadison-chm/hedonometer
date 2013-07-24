@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130717203044) do
+ActiveRecord::Schema.define(version: 20130724210331) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -62,16 +62,7 @@ ActiveRecord::Schema.define(version: 20130717203044) do
     t.datetime "updated_at",                                   null: false
     t.string   "twilio_account_sid"
     t.string   "twilio_auth_token"
+    t.string   "phone_number"
   end
-
-  create_table "twilio_numbers", force: true do |t|
-    t.integer  "survey_id",        null: false
-    t.string   "phone_number",     null: false
-    t.string   "phone_number_sid", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "twilio_numbers", ["phone_number"], name: "index_twilio_numbers_on_phone_number", unique: true, using: :btree
 
 end
