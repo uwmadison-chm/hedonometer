@@ -10,6 +10,7 @@ test:
   mean_minutes_between_samples: 60
   sample_minutes_plusminus: 15
   active: true
+  phone_number: +16085559990
 
 someone_elses:
   name: Survey that Nate can't change!
@@ -17,6 +18,7 @@ someone_elses:
   mean_minutes_between_samples: 60
   sample_minutes_plusminus: 15
   active: false
+  phone_number: +16085559991
 
 orphaned:
   name: Survey that Nate isn't an admin of at all!
@@ -24,4 +26,5 @@ orphaned:
   mean_minutes_between_samples: 60
   sample_minutes_plusminus: 15
   active: false
+  phone_number: +16085559992
 

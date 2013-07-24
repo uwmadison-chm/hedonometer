@@ -19,6 +19,8 @@ class Survey < ActiveRecord::Base
   validates :creator, on: :create, presence: true
   after_create :assign_creator_as_admin
 
+  serialize :phone_number, PhoneNumber
+
   private
   def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true

@@ -34,4 +34,8 @@ class SurveyTest < ActiveSupport::TestCase
     assert_equal s.admins.first, admins(:nate)
     assert admins(:nate).can_modify_survey?(s)
   end
+
+  test "phone number serialization" do
+    assert_kind_of PhoneNumber, surveys(:test).phone_number
+  end
 end
