@@ -17,9 +17,12 @@ class ParticipantsController < ApplicationController
       phone_number: PhoneNumber.to_e164(params[:participant][:phone_number])).first
     status = participant ? :ok : :not_found
     if participant
-      number = @survey.twilio_number
-      number.connect!
-      number.account.sms.messages.create {} #TODO really really send this message
+      client = Twilio::REST::Client.new @survey.twilio_account_sid, @survey.twilio_auth_token
+      client.account.sms.messages.create({
+              from: @survey.phone_number.to_e164,
+              to: participant.phone_number.to_e164,
+              body: "Your login code is #{participant.login_code}"
+            })
     end
     render nothing: true, status: status
   end
