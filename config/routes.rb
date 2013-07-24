@@ -10,8 +10,9 @@ Hedonometer::Application.routes.draw do
     post 'login' => 'session#create'
     get 'logout' => 'session#destroy'
 
-    resources :participants, only: [:create] do
-      post :send_login_code, on: :collection
+    resources :participants, only: [:create]
+    resource :participant, only: [:edit, :update] do
+      post :send_login_code
     end
   end
 
