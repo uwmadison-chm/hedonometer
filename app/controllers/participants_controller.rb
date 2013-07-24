@@ -4,7 +4,7 @@ class ParticipantsController < ApplicationController
   def create
     @participant = @survey.participants.create participant_params
     if @participant.valid?
-      render nothing: true, status: :created
+      render text: "Created", status: :created
     else
       render text: @participant.errors.to_json, status: :conflict
     end
