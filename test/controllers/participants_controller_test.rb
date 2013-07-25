@@ -3,6 +3,11 @@ require 'test_helper'
 
 class ParticipantsControllerTest < ActionController::TestCase
 
+  def setup
+    @cli = Recordy.new
+    super
+  end
+
   def params_for_create
     {
       :participant => {:phone_number => '(608) 555-9999'},
@@ -32,13 +37,19 @@ class ParticipantsControllerTest < ActionController::TestCase
   end
 
   test "send login code succeeds" do
-    cli = Recordy.new
-    mock_twilio_service cli do
+    mock_twilio_service @cli do
       post :send_login_code, params_for_find
       assert_response :success
       # This should have done cli.account.sms.messages.create
-      resp = cli.calls[0][:ret].calls[0][:ret].calls[0][:ret].calls[0]
-      assert_equal :create, resp[:method]
+      assert_method_chain @cli, [:account, :sms, :messages, :create]
+    end
+  end
+
+  test "send login code creates outgoing text message" do
+    mock_twilio_service @cli do
+      assert_changes surveys(:test).outgoing_text_messages, :count, 1 do
+        post :send_login_code, params_for_find
+      end
     end
   end
 
