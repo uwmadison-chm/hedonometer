@@ -21,6 +21,13 @@ class Survey < ActiveRecord::Base
 
   serialize :phone_number, PhoneNumber
 
+  has_many :outgoing_text_messages
+
+  def sms_target
+    client = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
+    client.account.sms.messages
+  end
+
   private
   def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true
