@@ -1,0 +1,2 @@
+class IncomingTextMessage < TextMessage
+end

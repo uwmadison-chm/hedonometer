@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130724210331) do
+ActiveRecord::Schema.define(version: 20130725154825) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -64,5 +64,22 @@ ActiveRecord::Schema.define(version: 20130724210331) do
     t.string   "twilio_auth_token"
     t.string   "phone_number"
   end
+
+  create_table "text_messages", force: true do |t|
+    t.integer  "survey_id",       null: false
+    t.string   "type",            null: false
+    t.string   "from",            null: false
+    t.string   "to",              null: false
+    t.string   "message",         null: false
+    t.text     "server_response"
+    t.datetime "scheduled_at"
+    t.datetime "delivered_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "text_messages", ["survey_id", "from"], name: "index_text_messages_on_survey_id_and_from", using: :btree
+  add_index "text_messages", ["survey_id", "to"], name: "index_text_messages_on_survey_id_and_to", using: :btree
+  add_index "text_messages", ["survey_id", "type"], name: "index_text_messages_on_survey_id_and_type", using: :btree
 
 end
