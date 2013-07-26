@@ -3,7 +3,6 @@ require 'test_helper'
 
 class ParticipantsControllerTest < ActionController::TestCase
   def setup
-    # Yes, this is bogus. It doesn't matter for these purposes.
     twilio_mock(TwilioResponses.create_sms)
     super
   end
