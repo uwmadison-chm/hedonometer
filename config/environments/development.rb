@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 Hedonometer::Application.configure do
+  WebMock.allow_net_connect!
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
