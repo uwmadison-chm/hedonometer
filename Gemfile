@@ -27,13 +27,13 @@ group :development do
   # gem 'therubyracer', :platforms => :ruby
   gem 'pry-debugger'
   gem 'uglifier', '>= 1.0.3'
+  gem 'webmock', '~> 1.13.0'
 
   # Gems used only for assets and not required
   gem 'sass', '~> 3.2.8'
   gem 'sass-rails', '~> 4.0.0'
   gem 'compass', '~> 0.12.2'
-  #gem 'compass-rails', git: 'git://github.com/Compass/compass-rails.git', tag: 'rails4'
-  gem 'compass-rails', github: 'milgner/compass-rails', branch: 'rails4'
+  gem 'compass-rails', '~> 2.0.alpha.0'
 
   gem 'susy', '~> 1.0.5'
   gem 'coffee-rails', '~> 4.0.0'
