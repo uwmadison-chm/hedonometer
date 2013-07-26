@@ -45,6 +45,26 @@ module TwilioResponses
 }
 resp
   end
+
+  def self.failed_sms
+<<-resp
+{
+    "account_sid": "AC5ef872f6da5a21de157d80997a64bd33",
+    "api_version": "2010-04-01",
+    "body": "Jenny please?! I love you <3",
+    "date_created": "Wed, 18 Aug 2010 20:01:40 +0000",
+    "date_sent": null,
+    "date_updated": "Wed, 18 Aug 2010 20:01:40 +0000",
+    "direction": "outbound-api",
+    "from": "+14158141829",
+    "price": null,
+    "sid": "SM90c6fc909d8504d45ecdb3a3d5b3556e",
+    "status": "failed",
+    "to": "+14159352345",
+    "uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages/SM90c6fc909d8504d45ecdb3a3d5b3556e.json"
+}
+resp
+  end
 end
 
 module MiniTest::Assertions
