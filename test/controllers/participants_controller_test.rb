@@ -2,10 +2,35 @@
 require 'test_helper'
 
 class ParticipantsControllerTest < ActionController::TestCase
-
   def setup
-    @cli = Recordy.new
+    # Yes, this is bogus. It doesn't matter for these purposes.
+    twilio_mock(example_create_message_response)
     super
+  end
+
+  def teardown
+    WebMock.reset!
+    super
+  end
+
+  def example_create_message_response
+<<-resp
+{
+    "account_sid": "AC5ef872f6da5a21de157d80997a64bd33",
+    "api_version": "2010-04-01",
+    "body": "Jenny please?! I love you <3",
+    "date_created": "Wed, 18 Aug 2010 20:01:40 +0000",
+    "date_sent": null,
+    "date_updated": "Wed, 18 Aug 2010 20:01:40 +0000",
+    "direction": "outbound-api",
+    "from": "+14158141829",
+    "price": null,
+    "sid": "SM90c6fc909d8504d45ecdb3a3d5b3556e",
+    "status": "queued",
+    "to": "+14159352345",
+    "uri": "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages/SM90c6fc909d8504d45ecdb3a3d5b3556e.json"
+}
+resp
   end
 
   def params_for_create
@@ -37,19 +62,13 @@ class ParticipantsControllerTest < ActionController::TestCase
   end
 
   test "send login code succeeds" do
-    mock_twilio_service @cli do
-      post :send_login_code, params_for_find
-      assert_response :success
-      # This should have done cli.account.sms.messages.create
-      assert_method_chain @cli, [:account, :sms, :messages, :create]
-    end
+    post :send_login_code, params_for_find
+    assert_response :success
   end
 
   test "send login code creates outgoing text message" do
-    mock_twilio_service @cli do
-      assert_changes surveys(:test).outgoing_text_messages, :count, 1 do
-        post :send_login_code, params_for_find
-      end
+    assert_changes surveys(:test).outgoing_text_messages, :count, 1 do
+      post :send_login_code, params_for_find
     end
   end
 

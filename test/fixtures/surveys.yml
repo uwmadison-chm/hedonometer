@@ -1,9 +1,5 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+# The twilio account SIDs and auth tokens are totally bogus.
 
-# This model initially had no columns defined.  If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
 test:
   name: Test survey!
   samples_per_day: 4
@@ -11,6 +7,8 @@ test:
   sample_minutes_plusminus: 15
   active: true
   phone_number: +16085559990
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
 
 someone_elses:
   name: Survey that Nate can't change!
@@ -19,6 +17,8 @@ someone_elses:
   sample_minutes_plusminus: 15
   active: false
   phone_number: +16085559991
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: 7896f62400694bbb39cf3ab76a470aec7cb7ab99
 
 orphaned:
   name: Survey that Nate isn't an admin of at all!
@@ -27,4 +27,6 @@ orphaned:
   sample_minutes_plusminus: 15
   active: false
   phone_number: +16085559992
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
 

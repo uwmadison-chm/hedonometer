@@ -23,9 +23,8 @@ class Survey < ActiveRecord::Base
 
   has_many :outgoing_text_messages
 
-  def sms_target
-    client = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
-    client.account.sms.messages
+  def twilio_client
+    cli = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
   end
 
   private
