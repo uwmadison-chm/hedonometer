@@ -65,6 +65,30 @@ resp
 }
 resp
   end
+
+  def self.incoming_params(survey, body)
+    {
+      "AccountSid"=>"ACf20086b4a32fd314cb912316f2890564",
+      "Body"=>body,
+      "ToZip"=>"53706",
+      "FromState"=>"WI",
+      "ToCity"=>"MADISON",
+      "SmsSid"=>"SM36abd8535bfbb65fe01affc5aa7081ba",
+      "ToState"=>"WI",
+      "To"=>survey.phone_number.to_e164,
+      "ToCountry"=>"US",
+      "FromCountry"=>"US",
+      "SmsMessageSid"=>"SM36abd8535bfbb65fe01affc5aa7081ba",
+      "ApiVersion"=>"2010-04-01",
+      "FromCity"=>"BARABOO",
+      "SmsStatus"=>"received",
+      "From"=>"+16084486677",
+      "FromZip"=>"53913",
+      "survey_id"=>survey.id
+    }
+  end
+
+
 end
 
 module MiniTest::Assertions
@@ -75,5 +99,13 @@ module MiniTest::Assertions
     diff = after - before
 
     assert_equal exp_diff, diff, "Expected #{obj.class.name}##{method} to change by #{exp_diff}, changed by #{diff}"
+  end
+
+  def assert_valid(obj, message=nil)
+    assert obj.valid?, (message || obj.errors.full_messages)
+  end
+
+  def refute_valid(obj, message=nil)
+    refute obj.valid?, (message || "expected #{obj} to not be valid")
   end
 end
