@@ -3,6 +3,12 @@ require 'test_helper'
 
 class PhoneNumberTest < ActiveSupport::TestCase
 
+  test "creating with blank gives blank" do
+    assert_equal "", PhoneNumber.new("").to_e164
+    assert_equal "", PhoneNumber.new(nil).to_e164
+    assert PhoneNumber.new(nil).blank?
+  end
+
   test "formats to E.164" do
     desired = "+16085551212"
     assert_equal desired, PhoneNumber.new("608-555-1212").to_e164

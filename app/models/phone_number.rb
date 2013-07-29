@@ -4,6 +4,10 @@ class PhoneNumber
     @number = self.class.to_e164 number.to_s
   end
 
+  def blank?
+    @number.blank?
+  end
+
   class << self
     def load(value)
       self.new(value)
@@ -18,6 +22,7 @@ class PhoneNumber
 
     def to_e164(number)
       cleaned = number.to_s.gsub(/[^0-9]/, '')
+      return cleaned if cleaned.empty?
       if cleaned.length < 11 #15555551212
         cleaned = "1#{cleaned}"
       end
