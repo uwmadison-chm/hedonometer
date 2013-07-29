@@ -22,6 +22,7 @@ class Survey < ActiveRecord::Base
   serialize :phone_number, PhoneNumber
 
   has_many :outgoing_text_messages
+  has_many :incoming_text_messages
 
   def twilio_client
     cli = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
