@@ -8,6 +8,10 @@ class PhoneNumber
     @number.blank?
   end
 
+  def ==(other)
+    self.to_s == PhoneNumber.new(other.to_s).to_s
+  end
+
   class << self
     def load(value)
       self.new(value)
