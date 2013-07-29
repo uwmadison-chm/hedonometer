@@ -1,7 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-class ParticipantsController < ApplicationController
-  before_action :find_survey
+class ParticipantsController < SurveyedController
+
+  skip_before_action :verify_authenticity_token, only: [:create]
+
 
   def create
     @participant = @survey.participants.create participant_params
@@ -24,10 +26,6 @@ class ParticipantsController < ApplicationController
   end
 
   protected
-
-  def find_survey
-    @survey = Survey.find params[:survey_id]
-  end
 
   def participant_params
     params.
