@@ -13,7 +13,7 @@ class PhoneNumberTest < ActiveSupport::TestCase
     desired = "+16085551212"
     assert_equal PhoneNumber.new(desired), PhoneNumber.new(desired)
     assert_equal PhoneNumber.new(desired), desired
-    assert_equal PhoneNumber.new(desired), desired[1..-1]
+    assert_equal PhoneNumber.new(desired), desired[2..-1] # 6085551212
   end
 
   test "formats to E.164" do
