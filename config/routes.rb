@@ -7,17 +7,17 @@ Hedonometer::Application.routes.draw do
 
   root :to => 'welcome#index'
 
-  resources :surveys do
-    get 'login'  => 'session#new'
-    post 'login' => 'session#create'
-    get 'logout' => 'session#destroy'
+  resources :surveys, :only => [] do
+    get  'login'   => 'session#new'
+    post 'login'   => 'session#create'
+    get  'logout'  => 'session#destroy'
+    get  'send_login_code' => 'participants#send_login_code'
 
     post 'message' => 'incoming_text_messages#create'
+    get  '' => 'participants#edit', :as => '' # survey_path
+    post '' => 'participants#update'
 
     resources :participants, only: [:create]
-    resource :participant, only: [:edit, :update] do
-      post :send_login_code
-    end
   end
 
   namespace :admin do
@@ -26,8 +26,8 @@ Hedonometer::Application.routes.draw do
     resources 'surveys'
 
     # Authn
-    get 'login'   => 'session#new'
+    get  'login'  => 'session#new'
     post 'login'  => 'session#create'
-    get 'logout'  => 'session#destroy'
+    get  'logout' => 'session#destroy'
   end
 end
