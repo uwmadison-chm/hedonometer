@@ -4,6 +4,7 @@ class SessionController < SurveyedController
   skip_before_action :require_participant_login!
 
   def new
+    @participant = Participant.new
   end
 
   def destroy
@@ -12,13 +13,15 @@ class SessionController < SurveyedController
   end
 
   def create
-    #a = Admin.authenticate(params[:email], params[:password])
-    #if a
-    #  dest = session.delete(:destination) || admin_root_url
-    #  session[:admin_id] = a.id
-    #  redirect_to dest
-    #else
-    #  render action:'new'
-    #end
+    @participant = @survey.participants.authenticate(
+      login_params[:phone_number],
+      login_params[:login_code]) || Participant.new(login_params)
+    render action: 'new'
+  end
+
+  protected
+  def login_params
+    params.require(:participant).
+      permit(:phone_number, :login_code)
   end
 end
