@@ -61,6 +61,11 @@ class SessionControllerTest < ActionController::TestCase
     assert_redirected_to survey_path(participants(:ppt1).survey)
   end
 
+  test "good login sets participant_id in session" do
+    post :create, good_login_params_for(participants(:ppt1))
+    assert_includes session, :participant_id
+  end
+
   test "send login code creates outgoing text message" do
     twilio_mock(TwilioResponses.create_sms)
 
