@@ -65,7 +65,7 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
 
       @template.content_tag(:div, "&nbsp;", {class: "col1"}, false) +
       @template.content_tag(:div, {class: "col2"}) do
-        @template.content_tag(:input, nil, type: "submit", value: value)
+        @template.submit_tag(value, options)
       end
 
     end
