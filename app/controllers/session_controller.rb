@@ -19,6 +19,8 @@ class SessionController < SurveyedController
     @participant = @survey.participants.authenticate(
       login_params[:phone_number],
       login_params[:login_code]) || Participant.new(login_params)
+    redirect_to survey_path(@survey) and return unless @participant.new_record?
+    # fall through
     render action: 'new'
   end
 

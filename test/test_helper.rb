@@ -20,6 +20,18 @@ class ActiveSupport::TestCase
     session.include? :admin_id
   end
 
+  def participant_login_as(fixture_name)
+    session[:participant_id] = participants(fixture_name).id
+  end
+
+  def participant_logout
+    session.delete :participant_id
+  end
+
+  def participant_logged_in?
+    session.include? :participant_id
+  end
+
   def twilio_mock(body)
     stub_http_request(:any, /.*@api.twilio.com/).to_return(body: body)
   end
