@@ -11,7 +11,7 @@ Hedonometer::Application.routes.draw do
     get  'login'   => 'session#new'
     post 'login'   => 'session#create'
     get  'logout'  => 'session#destroy'
-    get  'send_login_code' => 'participants#send_login_code'
+    get  'send_login_code' => 'session#send_login_code'
 
     post 'message' => 'incoming_text_messages#create'
     get  '' => 'participants#edit', :as => '' # survey_path

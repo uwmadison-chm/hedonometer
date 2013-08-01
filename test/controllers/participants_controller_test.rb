@@ -40,21 +40,4 @@ class ParticipantsControllerTest < ActionController::TestCase
     assert_response 409
   end
 
-  test "send login code succeeds" do
-    post :send_login_code, params_for_find
-    assert_response :success
-  end
-
-  test "send login code creates outgoing text message" do
-    assert_changes surveys(:test).outgoing_text_messages, :count, 1 do
-      post :send_login_code, params_for_find
-    end
-  end
-
-  test "send login code 404s if we can't find" do
-    bp = params_for_create
-    bp[:participant][:phone_number] = '1'
-    post :send_login_code, bp
-    assert_response :not_found
-  end
 end
