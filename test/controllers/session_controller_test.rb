@@ -46,7 +46,8 @@ class SessionControllerTest < ActionController::TestCase
 
     post :send_login_code, params_for_login_code(:test, participants(:ppt1).phone_number)
     assert_response :redirect
-    assert_redirected_to survey_login_path(surveys(:test))
+    assert_redirected_to survey_login_path(surveys(:test),
+      {participant: {phone_number: participants(:ppt1).phone_number.to_s}})
   end
 
   test "failed login renders new" do

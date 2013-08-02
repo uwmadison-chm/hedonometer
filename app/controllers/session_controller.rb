@@ -4,7 +4,7 @@ class SessionController < SurveyedController
   skip_before_action :require_participant_login!
 
   def new
-    @participant = Participant.new(phone_number: flash[:phone_number])
+    @participant = Participant.new(login_form_params)
   end
 
   def destroy
@@ -35,7 +35,7 @@ class SessionController < SurveyedController
       message = ParticipantTexter.login_code_message(participant)
       message.deliver_and_save!
     end
-    redirect_to survey_login_path(@survey), flash: { phone_number: number.to_s}
+    redirect_to survey_login_path @survey, {participant: {phone_number: number.to_s}}
   end
 
 
@@ -43,5 +43,8 @@ class SessionController < SurveyedController
   def login_params
     params.require(:participant).
       permit(:phone_number, :login_code)
+  end
+  def login_form_params
+    params.fetch(:participant, {}).permit(:phone_number)
   end
 end
