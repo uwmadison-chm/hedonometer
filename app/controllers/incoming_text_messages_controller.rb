@@ -1,6 +1,8 @@
 class IncomingTextMessagesController < SurveyedController
 
   skip_before_action :verify_authenticity_token
+  skip_before_action :require_participant_login!
+
   before_action :underscorify_params!
 
   def create

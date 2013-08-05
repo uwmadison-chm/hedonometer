@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 class SurveyedController < ApplicationController
+  before_action :require_participant_login!
+
   protected
   def current_survey
     @current_survey ||= Survey.find params[:survey_id]
@@ -8,10 +10,11 @@ class SurveyedController < ApplicationController
   helper_method :current_survey
 
   def current_participant
+    @current_participant ||= current_survey.participants.where(id: session[:participant_id]).first
   end
   helper_method :current_participant
 
   def require_participant_login!
-
+    redirect_to survey_login_path(current_survey) unless current_participant
   end
 end

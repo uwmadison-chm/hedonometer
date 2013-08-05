@@ -26,6 +26,12 @@ class ParticipantsControllerTest < ActionController::TestCase
     }
   end
 
+  def params_for_edit(survey)
+    {
+      survey_id: survey.id
+    }
+  end
+
   test "participant should create" do
     post :create, params_for_create
     assert_response :success
@@ -38,6 +44,11 @@ class ParticipantsControllerTest < ActionController::TestCase
     assert_response :success
     post :create, params_for_create
     assert_response 409
+  end
+
+  test "edit requires login" do
+    get :edit, params_for_edit(surveys(:test))
+    assert_redirected_to survey_login_path()
   end
 
 end

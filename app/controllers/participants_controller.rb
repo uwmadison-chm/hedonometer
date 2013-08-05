@@ -3,6 +3,7 @@
 class ParticipantsController < SurveyedController
 
   skip_before_action :verify_authenticity_token, only: [:create]
+  skip_before_action :require_participant_login!, only: [:create]
 
   def edit
   end
