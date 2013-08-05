@@ -9,7 +9,7 @@ class SessionController < SurveyedController
 
   def destroy
     reset_session
-    redirect_to survey_login_path current_survey
+    redirect_to survey_login_path(current_survey)
   end
 
   def create
