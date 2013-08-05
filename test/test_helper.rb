@@ -20,8 +20,8 @@ class ActiveSupport::TestCase
     session.include? :admin_id
   end
 
-  def participant_login_as(fixture_name)
-    session[:participant_id] = participants(fixture_name).id
+  def participant_login_as(participant)
+    session[:participant_id] = participant.id
   end
 
   def participant_logout

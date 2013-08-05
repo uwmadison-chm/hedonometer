@@ -16,6 +16,7 @@ Hedonometer::Application.routes.draw do
     post 'message' => 'incoming_text_messages#create'
     get  '' => 'participants#edit', :as => '' # survey_path
     post '' => 'participants#update'
+    patch '' => 'participants#update'
 
     resources :participants, only: [:create]
   end
