@@ -41,12 +41,19 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
-  def select(attribute, list, options={})
+  def select(attribute, list, options={}, html_options={})
       label_content = options.delete :label
       follow_content = options.delete :follow_field_with
-      field_content = super(attribute, list) + follow_content
+      field_content = super(attribute, list, options, html_options) + follow_content
       left_label attribute, field_content, label_content
   end
+
+  def time_zone_select(attribute, priority_zones=nil, options={}, html_options={})
+      label_content = options.delete :label
+      follow_content = options.delete :follow_field_with
+      field_content = super(attribute, priority_zones, options) + follow_content
+      left_label attribute, field_content, label_content
+    end
 
   def check_box(attribute, options={})
     label_content = options.delete(:label)
