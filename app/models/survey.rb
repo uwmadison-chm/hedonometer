@@ -28,6 +28,10 @@ class Survey < ActiveRecord::Base
     cli = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
   end
 
+  def day_length_minutes
+    samples_per_day * mean_minutes_between_samples + sample_minutes_plusminus
+  end
+
   private
   def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true
