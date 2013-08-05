@@ -24,10 +24,13 @@ class Schedule
   class Day
     attr_accessor :date
     attr_accessor :time_periods
-
     def initialize(date, time_periods)
       @date = date
       @time_periods = time_periods
+    end
+
+    def time_range_strings(format_string="%l:%M %p")
+      time_periods.map {|tp| "#{tp.start_at.strftime(format_string)}-#{tp.end_at.strftime(format_string)}"}.join(", ")
     end
   end
 

@@ -7,11 +7,12 @@ class ParticipantsController < SurveyedController
 
   def edit
     @participant = current_participant
+    @participant.schedule ||= Schedule.build_for_participant @participant
   end
 
   def update
     @participant = current_participant
-    logger.debug update_participant_params
+    logger.debug "  update_participant_params: #{update_participant_params}"
     if @participant.update_attributes(update_participant_params)
       redirect_to survey_path(current_survey)
     else
@@ -40,6 +41,6 @@ class ParticipantsController < SurveyedController
   def update_participant_params
     params.
     require(:participant).
-    permit(:time_zone)
+    permit(:time_zone, :schedule_days => [:date, :time_ranges])
   end
 end

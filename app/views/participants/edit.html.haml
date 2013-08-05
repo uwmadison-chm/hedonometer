@@ -1,3 +1,7 @@
 = form_for @participant, url: survey_path(current_survey), builder: TwoColumnFormBuilder do |f|
   = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: "Central Time (US & Canada)"
+  - @participant.schedule_days.each do |day|
+    .fl
+      = text_field_tag "participant[schedule_days][][date]", day.date
+      = text_field_tag "participant[schedule_days][][time_ranges]", day.time_range_strings
   = f.submit "Save my settings"
