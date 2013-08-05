@@ -1,5 +1,5 @@
 %p To set your availability, enter your phone number and login code.
 = form_for @participant, builder: TwoColumnFormBuilder, url: survey_login_path(current_survey), id:'login_form' do |f|
-  = f.phone_field :phone_number, value: humanize_phone_number(@participant.phone_number), autofocus: true, follow_field_with: submit_tag("Text me my login code!", name: 'send_code')
-  = f.text_field :login_code
-  = f.submit "Log in!", name: 'login'
+  = f.phone_field :phone_number, value: humanize_phone_number(@participant.phone_number), tabindex:1, autofocus: true, follow_field_with: submit_tag("Text me my login code!", name: 'send_code')
+  = f.text_field :login_code, tabindex: 2
+  = f.submit "Log in!", name: 'login', tabindex: 3
