@@ -1,19 +1,15 @@
 # -*- encoding : utf-8 -*-
 
 class SurveyedController < ApplicationController
-  before_action :find_survey
-
   protected
   def current_survey
-    @survey ||= Survey.find params[:survey_id]
+    @current_survey ||= Survey.find params[:survey_id]
   end
-
-  def find_survey
-    current_survey
-  end
+  helper_method :current_survey
 
   def current_participant
   end
+  helper_method :current_participant
 
   def require_participant_login!
 

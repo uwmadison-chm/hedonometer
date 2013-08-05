@@ -9,33 +9,33 @@ class SessionController < SurveyedController
 
   def destroy
     reset_session
-    redirect_to survey_login_path @survey
+    redirect_to survey_login_path current_survey
   end
 
   def create
     if params[:send_code]
       send_login_code and return
     end
-    @participant = @survey.participants.authenticate(
+    @participant = current_survey.participants.authenticate(
       login_params[:phone_number],
       login_params[:login_code]) || Participant.new(login_params)
     unless @participant.new_record?
       session[:participant_id] = @participant.id
-      redirect_to survey_path(@survey) and return
+      redirect_to survey_path(current_survey) and return
     end
-    # fall through
+    # login failed, fall through
     render action: 'new'
   end
 
   def send_login_code
     number = PhoneNumber.new(params[:participant][:phone_number])
-    participant = @survey.participants.where(phone_number: number.to_e164).first
+    participant = current_survey.participants.where(phone_number: number.to_e164).first
     status = participant ? :ok : :not_found
     if participant
       message = ParticipantTexter.login_code_message(participant)
       message.deliver_and_save!
     end
-    redirect_to survey_login_path @survey, {participant: {phone_number: number.to_s}}
+    redirect_to survey_login_path current_survey, {participant: {phone_number: number.to_s}}
   end
 
 

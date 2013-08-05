@@ -12,7 +12,7 @@ class ParticipantsController < SurveyedController
 
   def create
     # Will primarily be called by other apps via API
-    @participant = @survey.participants.create participant_params
+    @participant = current_survey.participants.create participant_params
     if @participant.valid?
       render text: "Created", status: :created
     else

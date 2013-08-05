@@ -5,7 +5,7 @@ class IncomingTextMessagesController < SurveyedController
 
   def create
     logger.debug "Incoming text message: #{params.inspect}"
-    itm = @survey.incoming_text_messages.create!(
+    itm = current_survey.incoming_text_messages.create!(
       to: params[:to],
       from: params[:from],
       message: params[:body],
