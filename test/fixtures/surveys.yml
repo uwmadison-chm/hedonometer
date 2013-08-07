@@ -5,7 +5,7 @@ test:
   samples_per_day: 4
   mean_minutes_between_samples: 60
   sample_minutes_plusminus: 15
-  sampled_days: 7
+  sampled_days: 2
   active: true
   phone_number: +16085559990
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2

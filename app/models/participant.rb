@@ -1,3 +1,4 @@
+require 'schedule'
 # -*- encoding : utf-8 -*-
 class Participant < ActiveRecord::Base
   LOGIN_CODE_LENGTH = 5
@@ -12,8 +13,23 @@ class Participant < ActiveRecord::Base
   validates :login_code, presence: true, length: {is: LOGIN_CODE_LENGTH}
 
   serialize :schedule
-  def schedule_days=(attrs)
-    logger.debug(attrs.inspect)
+
+  def schedule_days=(day_attrs)
+    logger.debug(Time.zone)
+    # will be an array of {date: 'XX', time_ranges: 'A:BB AM - C:DD AM, E:FF AM - G:HH PM'}
+    # Gonna Just Do This.
+    days = day_attrs.map {|attrs|
+      day_date = Date.parse(attrs[:date])
+      date_str = day_date.strftime("%Y-%m-%d")
+      time_ranges = attrs[:time_ranges].split(",").map {|range|
+        start_at, end_at = range.split("-").map {|part| Time.zone.parse("#{date_str} #{part}")} #hoo boy
+        range = Schedule::TimeRange.new(start_at.utc, end_at.utc)
+        logger.debug(range.start_at)
+        range
+      }
+      Schedule::Day.new(day_date, time_ranges)
+    }
+    self.schedule = Schedule.new(days)
   end
 
   def schedule_days

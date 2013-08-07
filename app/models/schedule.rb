@@ -14,7 +14,7 @@ class Schedule
         date = today + (day_count + 1)
         t1 = date + 9.hours
         t2 = t1 + survey.day_length_minutes.minutes
-        tp = TimePeriod.new(t1, t2)
+        tp = TimeRange.new(t1, t2)
         Day.new(date, [tp])
       }
       self.new(days)
@@ -23,24 +23,31 @@ class Schedule
 
   class Day
     attr_accessor :date
-    attr_accessor :time_periods
-    def initialize(date, time_periods)
+    attr_accessor :time_ranges
+    def initialize(date, time_ranges)
       @date = date
-      @time_periods = time_periods
+      @time_ranges = time_ranges
     end
 
-    def time_range_strings(format_string="%l:%M %p")
-      time_periods.map {|tp| "#{tp.start_at.strftime(format_string)}-#{tp.end_at.strftime(format_string)}"}.join(", ")
+    def time_range_strings
+      time_ranges.join " - "
     end
+
   end
 
-  class TimePeriod
+  class TimeRange
     attr_accessor :start_at
     attr_accessor :end_at
+    FORMAT_STRING = "%l:%M %p"
 
     def initialize(start_at, end_at)
       @start_at = start_at
       @end_at = end_at
+    end
+
+    def to_s
+      # 9:00 AM - 5:15PM
+      [start_at, end_at].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
     end
   end
 end
