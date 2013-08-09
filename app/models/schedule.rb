@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Schedule
 
   attr_accessor :days
@@ -18,36 +19,6 @@ class Schedule
         Day.new(date, [tp])
       }
       self.new(days)
-    end
-  end
-
-  class Day
-    attr_accessor :date
-    attr_accessor :time_ranges
-    def initialize(date, time_ranges)
-      @date = date
-      @time_ranges = time_ranges
-    end
-
-    def time_range_strings
-      time_ranges.join ", "
-    end
-
-  end
-
-  class TimeRange
-    attr_accessor :start_at
-    attr_accessor :end_at
-    FORMAT_STRING = "%l:%M %p"
-
-    def initialize(start_at, end_at)
-      @start_at = start_at
-      @end_at = end_at
-    end
-
-    def to_s
-      # 9:00 AM - 5:15PM
-      [start_at, end_at].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
     end
   end
 end
