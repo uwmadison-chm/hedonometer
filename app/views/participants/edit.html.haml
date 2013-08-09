@@ -3,5 +3,5 @@
   - @participant.schedule_days.each do |day|
     .fl
       = text_field_tag "participant[schedule_days][][date]", day.date
-      = text_field_tag "participant[schedule_days][][time_ranges]", day.time_range_strings
+      = text_field_tag "participant[schedule_days][][time_ranges]", day.time_range_strings, size: 60
   = f.submit "Save my settings"
