@@ -30,7 +30,7 @@ class Schedule
     end
 
     def time_range_strings
-      time_ranges.join " - "
+      time_ranges.join ", "
     end
 
   end
