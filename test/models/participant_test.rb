@@ -26,7 +26,7 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "saving schedule works" do
     p = participants(:ppt1)
-    s = Schedule.build_for_participant p
+    p.schedule = Schedule.build_for_participant p
     p.save
     p2 = Participant.find(p.id)
     assert_equal p.survey.sampled_days, p2.schedule.days.length
