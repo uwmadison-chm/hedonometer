@@ -16,7 +16,7 @@
   = f.text_field :phone_number
 
   = f.check_box :active
+  = f.fields_for :survey_questions, survey.survey_questions do |question_form|
+    = question_form.text_field :question_text, size: 110
 
   = f.submit "Save"
-  = f.fields_for :survey_questions, survey.survey_questions do |question_form|
-    = question_form.text_field :question_text

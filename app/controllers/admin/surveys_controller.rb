@@ -4,9 +4,11 @@ class Admin::SurveysController < AdminController
 
   def new
     @survey = Survey.new
+    @survey.survey_questions.build
   end
 
   def edit
+    @survey.survey_questions.build if @survey
   end
 
   def update

@@ -7,7 +7,10 @@ class Survey < ActiveRecord::Base
   has_one :twilio_number
 
   has_many :survey_questions
-  accepts_nested_attributes_for :survey_questions
+  accepts_nested_attributes_for :survey_questions,
+    allow_destroy: true,
+    reject_if: ->(attributes) { attributes[:question_text].blank? }
+
 
   has_many :participants
 
