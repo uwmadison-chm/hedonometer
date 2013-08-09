@@ -1,45 +1,21 @@
 %p= link_to "Create a survey", new_admin_survey_path
 
-
 %table#active_surveys
   %thead
     %tr
       %th Name
+      %th
       %th Phone number
       %th Active
       %th Completed
-      %th Probes
-      %th Responses
-  %tbody.active
-    %tr
-      %td Frequent pilot
-      %td (608) 555-2391
-      %td 7
-      %td 15
-      %td 1631
-      %td 1253
-    %tr
-      %td Infrequent pilot
-      %td (608) 555-3958
-      %td 2
-      %td 21
-      %td 621
-      %td 583
-  %tbody.inactive
-    %tr
-      %td Intial test
-      %td (608) 555-2934
-      %td 0
-      %td 3
-      %td 34
-      %td 30
-
-.controls
-  .fl
-    %input#num_samples{value:8, min: 1, max: 999, type:'number'}
-    %label samples per day, spaced
-    %input#mean_time{value: 60, min: 1, max:999, type:'number'}
-    %label ±
-    %input#time_range{:value => 15, min: 0, max: 999, type:'number'}
-    %label minutes apart
-#demo
+      %th Sent messages
+      %th Received messages
+    - current_admin.surveys.modifiable.each do |survey|
+      %tr
+        %td= survey.name
+        %td= link_to "Edit", edit_admin_survey_path(survey)
+        %td= survey.phone_number.humanize
+        %td= survey.active?
+        %td false
+        %td= survey.outgoing_text_messages.count
+        %td= survey.incoming_text_messages.count

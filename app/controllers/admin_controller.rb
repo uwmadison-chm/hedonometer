@@ -7,6 +7,7 @@ class AdminController < ApplicationController
   def current_admin
     @current_admin ||= Admin.where(id:session[:admin_id]).first
   end
+  helper_method :current_admin
 
   def active_current_admin?
     current_admin and current_admin.active?
