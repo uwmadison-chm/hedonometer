@@ -7,7 +7,7 @@ class ParticipantsController < SurveyedController
 
   def edit
     @participant = current_participant
-    @participant.schedule ||= Schedule.build_for_participant @participant
+    @participant.build_schedule_days if @participant.schedule_empty?
   end
 
   def update
@@ -41,6 +41,6 @@ class ParticipantsController < SurveyedController
   def update_participant_params
     params.
     require(:participant).
-    permit(:time_zone, :schedule_days => [:date, :time_ranges])
+    permit(:time_zone, :schedule_days_attributes => [:id, :date, :time_ranges_string, :skip])
   end
 end

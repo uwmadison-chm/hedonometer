@@ -17,4 +17,11 @@ class TimeRange
   def length_minutes
     (@end_at - @start_at)/60
   end
+
+  def self.from_date_and_string(date, range_string)
+    sd, ed = range_string.split("-").map {|time_str| Time.zone.parse("#{date} #{time_str}")}
+    # Handle ranges like 5:00 PM - 2:00 AM
+    ed += 1.day if ed < sd
+    self.new(sd, ed)
+  end
 end

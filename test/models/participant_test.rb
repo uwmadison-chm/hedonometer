@@ -24,21 +24,10 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal participants(:ppt1), Participant.authenticate(PhoneNumber.new('6085551212'), '12345')
   end
 
-  test "saving schedule works" do
+  test "building schedule works" do
     p = participants(:ppt1)
-    p.schedule = Schedule.build_for_participant p
-    p.save
-    p2 = Participant.find(p.id)
-    assert_equal p.survey.sampled_days, p2.schedule.days.length
-  end
-
-  test "setting schedule_days works" do
-    p = participants(:ppt1)
-    s = Schedule.build_for_participant p
-    attrs = s.days.map {|d|
-      time_range = d.time_ranges.first
-      [{date: d.date.strftime("%Y-%m-%d"), time_ranges: ""}]
-    }
+    p.build_schedule_days
+    assert_equal p.survey.sampled_days, p.schedule_days.length
   end
 
 end

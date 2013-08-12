@@ -1,7 +1,10 @@
 = form_for @participant, url: survey_path(current_survey), builder: TwoColumnFormBuilder do |f|
   = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: "Central Time (US & Canada)"
-  - @participant.schedule_days.each do |day|
-    .fl
-      = text_field_tag "participant[schedule_days][][date]", day.date
-      = text_field_tag "participant[schedule_days][][time_ranges]", day.time_range_strings, size: 60
+  = f.fields_for :schedule_days, builder: ActionView::Helpers::FormBuilder do |day_form|
+    .line
+      .col1
+        %label= day_form.object.date.strftime("%A, %B %-d")
+        = day_form.hidden_field :date
+      .col2
+        = day_form.text_field :time_ranges_string, size: 72
   = f.submit "Save my settings"

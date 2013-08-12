@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130805204150) do
+ActiveRecord::Schema.define(version: 20130812195429) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -35,6 +35,24 @@ ActiveRecord::Schema.define(version: 20130805204150) do
     t.datetime "updated_at"
     t.text     "schedule"
     t.string   "time_zone"
+  end
+
+  create_table "schedule_days", force: true do |t|
+    t.integer  "participant_id",                 null: false
+    t.date     "date",                           null: false
+    t.text     "time_ranges"
+    t.boolean  "skip",           default: false, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "scheduled_questions", force: true do |t|
+    t.integer  "schedule_day_id",    null: false
+    t.integer  "survey_question_id", null: false
+    t.datetime "scheduled_at",       null: false
+    t.datetime "delivered_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "survey_permissions", force: true do |t|

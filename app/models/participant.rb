@@ -1,8 +1,4 @@
 # -*- encoding : utf-8 -*-
-
-# Require these so serialization works properly
-require 'schedule'
-require 'day'
 require 'time_range'
 
 class Participant < ActiveRecord::Base
@@ -16,29 +12,21 @@ class Participant < ActiveRecord::Base
 
   before_validation :set_login_code, on: :create
   validates :login_code, presence: true, length: {is: LOGIN_CODE_LENGTH}
+  has_many :schedule_days
+  accepts_nested_attributes_for :schedule_days
 
-  serialize :schedule
-
-  def schedule_days=(day_attrs)
-    logger.debug(Time.zone)
-    # will be an array of {date: 'XX', time_ranges: 'A:BB AM - C:DD AM, E:FF AM - G:HH PM'}
-    # Gonna Just Do This.
-    days = day_attrs.map {|attrs|
-      day_date = Date.parse(attrs[:date])
-      date_str = day_date.strftime("%Y-%m-%d")
-      time_ranges = attrs[:time_ranges].split(",").map {|range|
-        start_at, end_at = range.split("-").map {|part| Time.zone.parse("#{date_str} #{part}")} #hoo boy
-        range = Schedule::TimeRange.new(start_at.utc, end_at.utc)
-        logger.debug(range.start_at)
-        range
-      }
-      Schedule::Day.new(day_date, time_ranges)
-    }
-    self.schedule = Schedule.new(days)
+  def schedule_empty?
+    self.schedule_days.empty?
   end
 
-  def schedule_days
-    schedule.days
+  def build_schedule_days
+    start_date = Time.zone.now.to_date
+    self.survey.sampled_days.times do |t|
+      sample_date = start_date + t + 1
+      # TODO make this not shitty
+      time_range = TimeRange.new(start_date + 9.hours, start_date + 9.hours + survey.day_length_minutes.minutes)
+      self.schedule_days.build date: sample_date, time_ranges: [time_range]
+    end
   end
 
   class << self
