@@ -1,5 +1,10 @@
-require 'schedule'
 # -*- encoding : utf-8 -*-
+
+# Require these so serialization works properly
+require 'schedule'
+require 'day'
+require 'time_range'
+
 class Participant < ActiveRecord::Base
   LOGIN_CODE_LENGTH = 5
 
