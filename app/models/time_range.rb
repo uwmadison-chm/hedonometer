@@ -13,4 +13,8 @@ class TimeRange
     # 9:00 AM - 5:15PM
     [start_at, end_at].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
   end
+
+  def length_minutes
+    (@end_at - @start_at)/60
+  end
 end

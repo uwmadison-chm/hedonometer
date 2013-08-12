@@ -11,4 +11,7 @@ class Day
     time_ranges.join ", "
   end
 
+  def length_minutes
+    @time_ranges.map {|tr| tr.length_minutes}.reduce(:+)
+  end
 end
