@@ -35,6 +35,11 @@ class Survey < ActiveRecord::Base
     samples_per_day * mean_minutes_between_samples + sample_minutes_plusminus
   end
 
+  def sample_time_range
+    ((mean_minutes_between_samples-sample_minutes_plusminus).minutes..
+      (mean_minutes_between_samples+sample_minutes_plusminus).minutes)
+  end
+
   private
   def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true
