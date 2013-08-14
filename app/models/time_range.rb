@@ -9,6 +9,10 @@ class TimeRange
     @end = end_at
   end
 
+  def last
+    @end
+  end
+
   def to_s
     # 9:00 AM - 5:15PM
     [@first, @end].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
