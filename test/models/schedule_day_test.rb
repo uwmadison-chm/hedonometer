@@ -57,4 +57,27 @@ class ScheduleDayTest < ActiveSupport::TestCase
     ranges = @sd.truncated_time_ranges_starting_at(test_start)
     assert_empty ranges
   end
+
+  test "baseline time with no scheduled questions" do
+    assert_equal schedule_days(:test_day_1).time_ranges.first.first, schedule_days(:test_day_1).next_question_base_time
+  end
+
+  test "baseline with a scheduled, undelivered question" do
+    sd = schedule_days(:test_day_1)
+    q = sd.scheduled_questions.create(
+      survey_question: survey_questions(:test_what),
+      scheduled_at: sd.time_ranges.first.first + 10.minutes
+      )
+    assert_equal sd.time_ranges.first.first, sd.next_question_base_time
+  end
+
+  test "baseline with a scheduled, delivered question" do
+    sd = schedule_days(:test_day_1)
+    q = sd.scheduled_questions.create(
+      survey_question: survey_questions(:test_what),
+      scheduled_at: sd.time_ranges.first.first + 10.minutes,
+      delivered_at: sd.time_ranges.first.first + 10.minutes
+      )
+    assert_equal q.delivered_at, sd.next_question_base_time
+  end
 end

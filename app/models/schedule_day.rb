@@ -7,6 +7,8 @@ class ScheduleDay < ActiveRecord::Base
 
   serialize :time_ranges
 
+  has_many :scheduled_questions
+
   # TODO: Add validation for time_ranges_string
 
   def time_ranges_string
@@ -19,6 +21,11 @@ class ScheduleDay < ActiveRecord::Base
       self.time_ranges = []
     end
     self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.date, range_str)}
+  end
+
+  def next_question_base_time
+    q = self.scheduled_questions.delivered.order('delivered_at DESC').first
+    q ? q.delivered_at : time_ranges.first.first
   end
 
   def valid_future_time_from(start_at, future_seconds)
