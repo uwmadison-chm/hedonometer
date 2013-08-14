@@ -1,21 +1,30 @@
 # -*- encoding : utf-8 -*-
 class TimeRange
-  attr_accessor :start_at
-  attr_accessor :end_at
   FORMAT_STRING = "%l:%M %p"
+  attr_accessor :first
+  attr_accessor :end
 
-  def initialize(start_at, end_at)
-    @start_at = start_at
-    @end_at = end_at
+  def initialize(first_at, end_at)
+    @first = first_at
+    @end = end_at
   end
 
   def to_s
     # 9:00 AM - 5:15PM
-    [start_at, end_at].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
+    [@first, @end].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
+  end
+
+  def include?(t)
+    # Oddly, Range#include? does not seem to work right
+    @first <= t and @end >= t
   end
 
   def length_minutes
-    (@end_at - @start_at)/60
+    duration/60
+  end
+
+  def duration
+    (@end - @first)
   end
 
   def self.from_date_and_string(date, range_string)

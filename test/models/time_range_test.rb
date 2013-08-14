@@ -13,14 +13,14 @@ class TimeRangeTest < ActiveSupport::TestCase
   test "normal time range parsing" do
     d = Time.zone.now.to_date
     tr = TimeRange.from_date_and_string(d, "9:00 AM - 10:00 AM")
-    assert_equal (d + 9.hours), tr.start_at
-    assert_equal (d + 10.hours), tr.end_at
+    assert_equal (d + 9.hours), tr.first
+    assert_equal (d + 10.hours), tr.end
   end
 
   test "cross-day parsing" do
     d = Time.zone.now.to_date
     tr = TimeRange.from_date_and_string(d, "11:00 PM - 1:00 AM")
-    assert_equal (d + 23.hours), tr.start_at
-    assert_equal (d + 25.hours), tr.end_at
+    assert_equal (d + 23.hours), tr.first
+    assert_equal (d + 25.hours), tr.end
   end
 end
