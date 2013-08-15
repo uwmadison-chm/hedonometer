@@ -40,6 +40,10 @@ class Survey < ActiveRecord::Base
       (mean_minutes_between_samples+sample_minutes_plusminus).minutes)
   end
 
+  def question_chooser
+    RandomNoReplacementRecordChooser
+  end
+
   private
   def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true
