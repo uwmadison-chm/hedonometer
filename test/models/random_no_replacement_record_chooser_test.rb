@@ -11,7 +11,7 @@ class RandomNoReplacementRecordChooserTest < ActiveSupport::TestCase
   test "it should set all ids when empty" do
     all_ids = @all_questions.pluck :id
     chooser = RandomNoReplacementRecordChooser.new(@all_questions, [])
-    assert_equal all_ids, chooser.unused_id_list
+    assert_equal all_ids, chooser.unused_ids
   end
 
 
@@ -37,6 +37,14 @@ class RandomNoReplacementRecordChooserTest < ActiveSupport::TestCase
       chooser.choose
     }
     assert_equal (@all_questions.count+1), chosen.size
+  end
+
+  test "serialize state" do
+    all_ids = @all_questions.pluck :id
+    chooser = RandomNoReplacementRecordChooser.new(@all_questions)
+    ss = chooser.serialize_state
+    assert_equal ss[:type], 'RandomNoReplacementRecordChooser'
+    assert_equal all_ids, ss[:unused_ids]
   end
 
 end
