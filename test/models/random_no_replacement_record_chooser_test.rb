@@ -47,4 +47,10 @@ class RandomNoReplacementRecordChooserTest < ActiveSupport::TestCase
     assert_equal all_ids, ss[:unused_ids]
   end
 
+  test "deserialize with nil stuff" do
+    all_ids = @all_questions.pluck :id
+    chooser = RandomNoReplacementRecordChooser.from_serializer(@all_questions, nil)
+    assert_equal all_ids, chooser.unused_ids
+  end
+
 end

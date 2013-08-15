@@ -21,6 +21,12 @@ class RandomNoReplacementRecordChooser
     }
   end
 
+  def self.from_serializer(record_set, serialization_data)
+    data = serialization_data || {}
+    unused_ids = data[:unused_ids] || []
+    self.new(record_set, unused_ids)
+  end
+
   private
   def allow_all_ids_if_empty!
     if @unused_ids.empty?
