@@ -15,6 +15,8 @@ class Participant < ActiveRecord::Base
   has_many :schedule_days
   accepts_nested_attributes_for :schedule_days
 
+  serialize :question_chooser_state
+
   def schedule_empty?
     self.schedule_days.empty?
   end
@@ -23,10 +25,21 @@ class Participant < ActiveRecord::Base
     start_date = Time.zone.now.to_date
     self.survey.sampled_days.times do |t|
       sample_date = start_date + t + 1
-      # TODO make this respect a survey-level preference
+      # TODO replace 9.hours with a survey-level preference
       time_range = TimeRange.new(start_date + 9.hours, start_date + 9.hours + survey.day_length_minutes.minutes)
       self.schedule_days.build date: sample_date, time_ranges: [time_range]
     end
+  end
+
+  def current_question_or_new
+    # TODO Implement
+  end
+
+  def reschedule_survey_question
+    # Pseudocode -- this won't really work yet
+    q = current_question_or_new
+    q.
+    q
   end
 
   class << self

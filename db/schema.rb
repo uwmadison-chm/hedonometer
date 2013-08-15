@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130812195429) do
+ActiveRecord::Schema.define(version: 20130812222125) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -27,14 +27,15 @@ ActiveRecord::Schema.define(version: 20130812195429) do
   add_index "admins", ["email"], name: "index_admins_on_email", unique: true, using: :btree
 
   create_table "participants", force: true do |t|
-    t.integer  "survey_id",                   null: false
-    t.string   "phone_number",                null: false
-    t.boolean  "active",       default: true, null: false
+    t.integer  "survey_id",                             null: false
+    t.string   "phone_number",                          null: false
+    t.boolean  "active",                 default: true, null: false
     t.string   "login_code"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "schedule"
     t.string   "time_zone"
+    t.text     "question_chooser_state"
   end
 
   create_table "schedule_days", force: true do |t|
