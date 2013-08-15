@@ -9,6 +9,8 @@ class ScheduleDay < ActiveRecord::Base
 
   has_many :scheduled_questions
 
+  scope :potentials_for_date, ->(date) { order('date').where('date >= ?', date - 1.day)}
+
   # TODO: Add validation for time_ranges_string
 
   def time_ranges_string
@@ -23,9 +25,13 @@ class ScheduleDay < ActiveRecord::Base
     self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.date, range_str)}
   end
 
+  def starts_at
+    time_ranges.first.first
+  end
+
   def next_question_base_time
     q = self.scheduled_questions.delivered.order('delivered_at DESC').first
-    q ? q.delivered_at : time_ranges.first.first
+    q ? q.delivered_at : starts_at
   end
 
   def valid_future_time_from(start_at, future_seconds)
@@ -36,6 +42,10 @@ class ScheduleDay < ActiveRecord::Base
       end
       future_seconds -= range.duration
     end
+  end
+
+  def valid_time_from_next_question_base(future_seconds)
+    valid_future_time_from(next_question_base_time, future_seconds)
   end
 
   def time_range_for(t)
@@ -50,5 +60,17 @@ class ScheduleDay < ActiveRecord::Base
     new_start_time = [t, ranges[0].first].max
     ranges[0] = TimeRange.new(new_start_time, ranges[0].end)
     ranges
+  end
+
+  def all_questions_delivered?
+    scheduled_questions.delivered.count >= participant.survey.samples_per_day
+  end
+
+  def can_deliver_more_questions?
+    not all_questions_delivered?
+  end
+
+  def undelivered_question
+    self.scheduled_questions.undelivered.first
   end
 end

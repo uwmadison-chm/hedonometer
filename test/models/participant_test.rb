@@ -30,4 +30,13 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal p.survey.sampled_days, p.schedule_days.length
   end
 
+  test "getting new question" do
+    p = participants(:ppt1)
+    sq = p.choose_question
+    unused = p.question_chooser_state[:unused_ids]
+    refute_nil unused
+    assert_equal (p.survey.survey_questions.count - 1), unused.length
+    refute_includes p.question_chooser_state[:unused_ids], sq.id
+  end
+
 end

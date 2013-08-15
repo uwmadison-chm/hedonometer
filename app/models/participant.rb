@@ -31,15 +31,41 @@ class Participant < ActiveRecord::Base
     end
   end
 
-  def current_question_or_new
-    # TODO Implement
+  def choose_question
+    chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
+    chooser.choose.tap {
+      self.question_chooser_state = chooser.serialize_state
+    }
   end
 
-  def reschedule_survey_question
-    # Pseudocode -- this won't really work yet
-    q = current_question_or_new
-    q.
-    q
+  def current_question_or_new
+    # Returns a question or new -- unsaved.
+    day = first_available_schedule_day
+    return nil unless day
+    question = day.undelivered_question
+    if question.nil?
+      survey_question = choose_question
+      question = day.scheduled_questions.build(
+        survey_question: survey_question)
+    end
+    question
+  end
+
+  def first_available_schedule_day
+    # We could be dealing with questions from yesterday if the day ran past midnight
+    # This feels so damn ugly. I'm doing this wrong.
+    days = self.schedule_days.potentials_for_date(Date.today)
+    days.find {|day| day.can_deliver_more_questions?}
+  end
+
+  def schedule_survey_question
+    # Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
+    # question_chooser_state may be updated.
+    question = current_question_or_new
+    # We know question is not delivered; we can set its scheduled_at
+    future_seconds = rand(survey.sample_time_range)
+    question.scheduled_at = question.schedule_day.valid_time_from_next_question_base(future_seconds)
+    question
   end
 
   class << self
