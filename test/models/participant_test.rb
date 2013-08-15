@@ -25,7 +25,7 @@ class ParticipantTest < ActiveSupport::TestCase
   end
 
   test "building schedule works" do
-    p = participants(:ppt1)
+    p = participants(:ppt2)
     p.build_schedule_days
     assert_equal p.survey.sampled_days, p.schedule_days.length
   end

@@ -4,3 +4,9 @@ ppt1:
   login_code: 12345
   # That's amazing! I've got the same combination on my luggage!
   time_zone: Central Time (US & Canada)
+
+ppt2:
+  survey: test
+  phone_number: "+16085551213"
+  login_code: 11111
+  time_zone: Central Time (US & Canada)
