@@ -39,7 +39,7 @@ class ScheduleDay < ActiveRecord::Base
   end
 
   def time_range_for(t)
-    # Finds the time range in which t happens, or the possible one. Or nil.
+    # Finds the time range in which t happens, or the next possible one. Or nil.
     sorted = time_ranges.sort_by {|tr| tr.first}
     sorted.detect {|tr| tr.include? t} || sorted.detect {|tr| tr.first > t}
   end
