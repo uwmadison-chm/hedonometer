@@ -11,6 +11,8 @@ gem 'json', '~> 1.7.7'
 # To use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.0.0', require: 'bcrypt'
 
+gem 'delayed_job_active_record'
+
 
 group :development do
   gem 'capistrano'
