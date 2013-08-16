@@ -36,6 +36,14 @@ class ParticipantsControllerTest < ActionController::TestCase
     {
       survey_id: participant.survey_id,
       participant: {
+        time_zone: participant.time_zone,
+        schedule_days_attributes: participant.schedule_days.map {|sd|
+          {
+            id: sd.id,
+            date: sd.date,
+            time_ranges_string: sd.time_ranges_string
+          }
+        }
       }
     }
   end
@@ -73,5 +81,16 @@ class ParticipantsControllerTest < ActionController::TestCase
     post :update, params
     assert_equal "Hawaii", ppt.reload.time_zone
     assert_redirected_to survey_path(ppt.survey)
+  end
+
+  test "update schedules a question" do
+    ppt = participants(:ppt1)
+    participant_login_as ppt
+    day = ppt.schedule_days.first
+    assert_equal 0, day.scheduled_questions.count
+    assert_changes day.scheduled_questions, :count, 1 do
+      post :update, params_for_update(ppt)
+      assert_redirected_to survey_path(ppt.survey)
+    end
   end
 end

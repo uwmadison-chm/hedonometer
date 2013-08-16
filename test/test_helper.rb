@@ -113,6 +113,13 @@ module MiniTest::Assertions
     assert_equal exp_diff, diff, "Expected #{obj.class.name}##{method} to change by #{exp_diff}, changed by #{diff}"
   end
 
+  def assert_no_change(obj, method)
+    before = obj.send method
+    yield
+    after  = obj.send method
+    assert_equal before, after, "Expected #{obj.class.name}##{method} to not change, changed from #{before} to #{after}"
+  end
+
   def assert_valid(obj, message=nil)
     assert obj.valid?, (message || obj.errors.full_messages)
   end
