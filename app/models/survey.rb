@@ -35,9 +35,16 @@ class Survey < ActiveRecord::Base
     samples_per_day * mean_minutes_between_samples + sample_minutes_plusminus
   end
 
-  def sample_time_range
-    ((mean_minutes_between_samples-sample_minutes_plusminus).minutes..
-      (mean_minutes_between_samples+sample_minutes_plusminus).minutes)
+  def mininum_intersample_period
+    (mean_minutes_between_samples - sample_minutes_plusminus).minutes
+  end
+
+  def maximum_intersample_period
+    (mean_minutes_between_samples + sample_minutes_plusminus).minutes
+  end
+
+  def intersample_range
+    (mininum_intersample_period..maximum_intersample_period)
   end
 
   def question_chooser

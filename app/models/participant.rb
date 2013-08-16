@@ -64,7 +64,7 @@ class Participant < ActiveRecord::Base
     # question_chooser_state may be updated.
     question = current_question_or_new
     # We know question is not delivered; we can set its scheduled_at
-    future_seconds = rand(survey.sample_time_range)
+    future_seconds = rand(survey.intersample_range)
     question.scheduled_at = question.schedule_day.valid_time_from_next_question_base(future_seconds)
     logger.debug("Scheduled #{question}")
     question

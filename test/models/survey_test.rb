@@ -43,6 +43,6 @@ class SurveyTest < ActiveSupport::TestCase
     s = surveys(:test)
     lowest = (s.mean_minutes_between_samples-s.sample_minutes_plusminus).minutes
     highest = (s.mean_minutes_between_samples+s.sample_minutes_plusminus).minutes
-    assert_equal (lowest..highest), s.sample_time_range
+    assert_equal (lowest..highest), s.intersample_range
   end
 end
