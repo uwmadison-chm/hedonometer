@@ -35,6 +35,7 @@ class Participant < ActiveRecord::Base
     chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
     chooser.choose.tap {
       self.question_chooser_state = chooser.serialize_state
+      logger.debug("New question chooser state: chooser.serialize_state")
     }
   end
 
@@ -65,7 +66,14 @@ class Participant < ActiveRecord::Base
     # We know question is not delivered; we can set its scheduled_at
     future_seconds = rand(survey.sample_time_range)
     question.scheduled_at = question.schedule_day.valid_time_from_next_question_base(future_seconds)
+    logger.debug("Scheduled #{question}")
     question
+  end
+
+  def schedule_survey_question_and_save!
+    q = schedule_survey_question
+    q.save!
+    self.save!
   end
 
   class << self

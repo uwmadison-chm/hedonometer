@@ -93,4 +93,17 @@ class ParticipantsControllerTest < ActionController::TestCase
       assert_redirected_to survey_path(ppt.survey)
     end
   end
+
+  test "two updates don't add more questions" do
+    ppt = participants(:ppt1)
+    participant_login_as ppt
+    day = ppt.schedule_days.first
+    post :update, params_for_update(ppt)
+    assert_redirected_to survey_path(ppt.survey)
+    assert_equal 1, day.scheduled_questions.count
+    assert_no_change day.scheduled_questions, :count do
+      post :update, params_for_update(ppt)
+    end
+  end
+
 end

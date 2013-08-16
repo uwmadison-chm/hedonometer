@@ -14,6 +14,7 @@ class ParticipantsController < SurveyedController
     @participant = current_participant
     logger.debug "  update_participant_params: #{update_participant_params}"
     if @participant.update_attributes(update_participant_params)
+      @participant.schedule_survey_question_and_save!
       redirect_to survey_path(current_survey)
     else
       render :action => :edit
