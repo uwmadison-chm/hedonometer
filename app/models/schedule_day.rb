@@ -42,6 +42,7 @@ class ScheduleDay < ActiveRecord::Base
       end
       future_seconds -= range.duration
     end
+    nil
   end
 
   def valid_time_from_next_question_base(future_seconds)

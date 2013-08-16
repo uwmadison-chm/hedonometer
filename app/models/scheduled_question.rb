@@ -10,7 +10,16 @@ class ScheduledQuestion < ActiveRecord::Base
   scope :delivered, -> { where.not(delivered_at: nil).order('scheduled_at desc') }
   scope :undelivered, -> { where(delivered_at: nil).order('scheduled_at desc') }
 
-  def deliver_if_possible!
+  def deliver_and_save_if_possible!(message)
+    if can_be_delivered_now?
+      message.deliver_and_save!
+      self.delivered_at = Time.now
+    end
+    if aged_out?
+      logger.warn("oh man scheduled_question #{id} aged out")
+      self.delivered_at = Time.now
+    end
+    save!
   end
 
   def max_age

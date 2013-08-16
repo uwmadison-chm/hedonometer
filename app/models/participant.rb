@@ -55,6 +55,7 @@ class Participant < ActiveRecord::Base
   def first_available_schedule_day
     # We could be dealing with questions from yesterday if the day ran past midnight
     # This feels so damn ugly. I'm doing this wrong.
+    # TODO: Bring the number of future seconds in here
     days = self.schedule_days.potentials_for_date(Date.today)
     days.find {|day| day.can_deliver_more_questions?}
   end
