@@ -15,20 +15,29 @@ class ScheduledQuestionTest < ActiveSupport::TestCase
     refute sq.delivery_due?
   end
 
-  test "older than x seconds" do
-    sq = ScheduledQuestion.new scheduled_at: (Time.now - 1.minute)
+  test "younger than" do
+    sq = ScheduledQuestion.new scheduled_at: 1.minute.ago
     assert sq.younger_than?(30.seconds)
-    refute sq.younger_than?(2.minutes)
+    refute sq.younger_than?(90.minutes)
+  end
+
+  test "aged out" do
+    sq = schedule_days(:test_day_1).scheduled_questions.build
+    survey = schedule_days(:test_day_1).participant.survey
+    sq.scheduled_at = Time.now
+    refute sq.aged_out?
+    sq.scheduled_at = Time.now - (survey.mininum_intersample_period+1.second)
+    assert sq.aged_out?
   end
 
   test "can be delivered now" do
-    sq = ScheduledQuestion.new scheduled_at: Time.now - 1.minute
-    assert sq.can_be_delivered_now?(30.seconds)
-    refute sq.can_be_delivered_now?(2.minutes)
+    sq = schedule_days(:test_day_1).scheduled_questions.build(scheduled_at: Time.now - 1.minute)
+    ##binding.pry
+    assert sq.can_be_delivered_now?
     sq.delivered_at = Time.now
-    refute sq.can_be_delivered_now?(30.seconds)
+    refute sq.can_be_delivered_now?
     sq.delivered_at = nil
     sq.scheduled_at = Time.now + 1.minute
-    refute sq.can_be_delivered_now?(30.seconds)
+    refute sq.can_be_delivered_now?
   end
 end

@@ -10,8 +10,23 @@ class ScheduledQuestion < ActiveRecord::Base
   scope :delivered, -> { where.not(delivered_at: nil).order('scheduled_at desc') }
   scope :undelivered, -> { where(delivered_at: nil).order('scheduled_at desc') }
 
-  def can_be_delivered_now?(max_age)
-    undelivered? and delivery_due? and younger_than?(max_age)
+  def deliver_if_possible!
+  end
+
+  def max_age
+    schedule_day.participant.survey.mininum_intersample_period
+  end
+
+  def aged_out?
+    younger_than?(max_age)
+  end
+
+  def can_be_delivered_now?
+    undelivered? and delivery_due? and not aged_out?
+  end
+
+  def delivered?
+    delivered_at
   end
 
   def undelivered?
