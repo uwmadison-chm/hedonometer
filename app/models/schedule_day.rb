@@ -11,6 +11,18 @@ class ScheduleDay < ActiveRecord::Base
 
   scope :potentials_for_date, ->(date) { order('date').where('date >= ?', date - 1.day)}
 
+  validates :aasm_state, presence: true
+
+  include AASM
+  aasm do
+    state :open, initial: true
+    state :finished
+
+    event :finish do
+      transitions from: :open, to: :finished
+    end
+  end
+
   # TODO: Add validation for time_ranges_string
 
   def time_ranges_string

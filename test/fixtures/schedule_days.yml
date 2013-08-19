@@ -2,3 +2,4 @@ test_day_1:
   participant: ppt1
   date: 2013-08-15
   time_ranges: <%= [TimeRange.from_date_and_string(Date.parse("2013-08-15"), "8:00 AM - 3:00 PM")].to_yaml.inspect %>
+  aasm_state: open
