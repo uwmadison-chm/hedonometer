@@ -3,7 +3,7 @@ require 'test_helper'
 class ScheduleDayTest < ActiveSupport::TestCase
 
   def setup
-    @sd = ScheduleDay.new
+    @sd = schedule_days(:test_day_1)
     @sd.time_ranges = sample_time_ranges
     @start = sample_time_ranges[0].first
     super
