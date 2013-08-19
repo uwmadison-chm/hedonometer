@@ -38,11 +38,4 @@ class SurveyTest < ActiveSupport::TestCase
   test "phone number serialization" do
     assert_kind_of PhoneNumber, surveys(:test).phone_number
   end
-
-  test "sample time range" do
-    s = surveys(:test)
-    lowest = (s.mean_minutes_between_samples-s.sample_minutes_plusminus).minutes
-    highest = (s.mean_minutes_between_samples+s.sample_minutes_plusminus).minutes
-    assert_equal (lowest..highest), s.intersample_range
-  end
 end

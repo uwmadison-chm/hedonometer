@@ -29,38 +29,36 @@ class ScheduleDay < ActiveRecord::Base
     time_ranges.first.first
   end
 
-  def next_question_base_time
-    q = self.scheduled_questions.delivered.order('delivered_at DESC').first
-    q ? q.delivered_at : starts_at
+  def survey
+    self.participant.survey
   end
 
-  def valid_future_time_from(start_at, future_seconds)
-    ranges_to_search = self.truncated_time_ranges_starting_at(start_at)
-    ranges_to_search.each do |range|
+  def minimum_time_to_next_question
+    (((scheduled_questions.delivered.count + 1) * survey.mean_minutes_between_samples) -
+      survey.sample_minutes_plusminus).minutes
+  end
+
+  def maximum_time_to_next_question
+    (((scheduled_questions.delivered.count + 1) * survey.mean_minutes_between_samples) +
+      survey.sample_minutes_plusminus).minutes
+  end
+
+  def next_question_time_range
+    (minimum_time_to_next_question..maximum_time_to_next_question)
+  end
+
+  def random_time_for_next_question
+    valid_time_after_day_start(rand(next_question_time_range))
+  end
+
+  def valid_time_after_day_start(future_seconds)
+    time_ranges.each do |range|
       if range.duration >= future_seconds
         return range.first + future_seconds
       end
       future_seconds -= range.duration
     end
     nil
-  end
-
-  def valid_time_from_next_question_base(future_seconds)
-    valid_future_time_from(next_question_base_time, future_seconds)
-  end
-
-  def time_range_for(t)
-    # Finds the time range in which t happens, or the next possible one. Or nil.
-    sorted = time_ranges.sort_by {|tr| tr.first}
-    sorted.detect {|tr| tr.include? t} || sorted.detect {|tr| tr.first > t}
-  end
-
-  def truncated_time_ranges_starting_at(t)
-    ranges = time_ranges.find_all {|tr| tr.end >= t}.map {|tr| tr.dup}
-    return ranges if ranges.empty?
-    new_start_time = [t, ranges[0].first].max
-    ranges[0] = TimeRange.new(new_start_time, ranges[0].end)
-    ranges
   end
 
   def all_questions_delivered?

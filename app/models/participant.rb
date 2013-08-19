@@ -42,6 +42,7 @@ class Participant < ActiveRecord::Base
   def current_question_or_new
     # Returns a question or new -- unsaved.
     day = first_available_schedule_day
+    logger.debug("Day is #{day}")
     return nil unless day
     question = day.undelivered_question
     if question.nil?
@@ -65,8 +66,7 @@ class Participant < ActiveRecord::Base
     # question_chooser_state may be updated.
     question = current_question_or_new
     # We know question is not delivered; we can set its scheduled_at
-    future_seconds = rand(survey.intersample_range)
-    question.scheduled_at = question.schedule_day.valid_time_from_next_question_base(future_seconds)
+    question.scheduled_at = question.schedule_day.random_time_for_next_question
     logger.debug("Scheduled #{question}")
     question
   end

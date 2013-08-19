@@ -17,67 +17,48 @@ class ScheduleDayTest < ActiveSupport::TestCase
       TimeRange.new(t1+(3.5).hours, t1+(3.75).hours)]
   end
 
-  test "time bumping" do
-    t = @sd.valid_future_time_from(@start, 30.minutes)
-    assert_equal (@start + 30.minutes), t
-    t = @sd.valid_future_time_from(@start, 90.minutes)
-    assert_equal (@start + 150.minutes), t
+  test "valid time without bump" do
+    t = @sd.valid_time_after_day_start(30.minutes)
+    assert_equal @start+30.minutes, t
   end
 
-  test "find time range inside" do
-    tr = @sd.time_range_for(@start)
-    assert_equal @sample_time_ranges[0], tr
-    tr = @sd.time_range_for(@start + 150.minutes)
-    assert_equal @sample_time_ranges[1], tr
+  test "valid time with bumps" do
+    t = @sd.valid_time_after_day_start(61.minutes)
+    assert_equal @sample_time_ranges[1].first + 1.minute, t
+    t = @sd.valid_time_after_day_start(121.minutes)
+    assert_equal @sample_time_ranges[2].first + 1.minute, t
   end
 
-  test "find time range with bumping" do
-    tr = @sd.time_range_for(@start + 61.minutes)
-    assert_equal @sample_time_ranges[1], tr
-    tr = @sd.time_range_for(@start + 4.hours)
-    assert_nil tr
+  test "not enough time" do
+    assert_nil @sd.valid_time_after_day_start(3.hours)
   end
 
-  test "truncate time ranges from start" do
-    test_start = @start + (2.5).hours
-    ranges = @sd.truncated_time_ranges_starting_at(test_start)
-    assert_equal 2, ranges.length
-    assert_equal test_start, ranges[0].first
-  end
-
-  test "truncate time ranges between ranges" do
-    test_start = @start + (1.5).hours
-    ranges = @sd.truncated_time_ranges_starting_at(test_start)
-    assert_equal 2, ranges.length
-    assert_equal (@start + 2.hours), ranges[0].first
-  end
-
-  test "truncate returns nothing if too late" do
-    test_start = @start + 4.hours
-    ranges = @sd.truncated_time_ranges_starting_at(test_start)
-    assert_empty ranges
-  end
-
-  test "baseline time with no scheduled questions" do
-    assert_equal schedule_days(:test_day_1).time_ranges.first.first, schedule_days(:test_day_1).next_question_base_time
-  end
-
-  test "baseline with a scheduled, undelivered question" do
+  test "minimum time to next question" do
     sd = schedule_days(:test_day_1)
-    q = sd.scheduled_questions.create(
-      survey_question: survey_questions(:test_what),
-      scheduled_at: sd.time_ranges.first.first + 10.minutes
-      )
-    assert_equal sd.time_ranges.first.first, sd.next_question_base_time
-  end
-
-  test "baseline with a scheduled, delivered question" do
-    sd = schedule_days(:test_day_1)
+    survey = sd.participant.survey
+    min_time = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
+    assert_equal min_time, sd.minimum_time_to_next_question
     q = sd.scheduled_questions.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: sd.time_ranges.first.first + 10.minutes,
       delivered_at: sd.time_ranges.first.first + 10.minutes
       )
-    assert_equal q.delivered_at, sd.next_question_base_time
+    min_time = (2*survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
+    assert_equal min_time, sd.minimum_time_to_next_question
   end
+
+  test "maximum time to next question" do
+    sd = schedule_days(:test_day_1)
+    survey = sd.participant.survey
+    min_time = (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
+    assert_equal min_time, sd.maximum_time_to_next_question
+    q = sd.scheduled_questions.create(
+      survey_question: survey_questions(:test_what),
+      scheduled_at: sd.time_ranges.first.first + 10.minutes,
+      delivered_at: sd.time_ranges.first.first + 10.minutes
+      )
+    min_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
+    assert_equal min_time, sd.maximum_time_to_next_question
+  end
+
 end
