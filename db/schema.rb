@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130816154130) do
+ActiveRecord::Schema.define(version: 20130819205256) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -61,7 +61,10 @@ ActiveRecord::Schema.define(version: 20130816154130) do
     t.boolean  "skip",           default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "aasm_state"
   end
+
+  add_index "schedule_days", ["aasm_state"], name: "index_schedule_days_on_aasm_state", using: :btree
 
   create_table "scheduled_questions", force: true do |t|
     t.integer  "schedule_day_id",    null: false
@@ -70,7 +73,10 @@ ActiveRecord::Schema.define(version: 20130816154130) do
     t.datetime "delivered_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "aasm_state"
   end
+
+  add_index "scheduled_questions", ["aasm_state"], name: "index_scheduled_questions_on_aasm_state", using: :btree
 
   create_table "survey_permissions", force: true do |t|
     t.integer  "admin_id",          null: false
