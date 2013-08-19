@@ -1,20 +1,21 @@
 GIT
   remote: git://github.com/guard/guard-minitest.git
-  revision: 70f6cf71288b42958e4c83485df2d227d93d600f
+  revision: 14f1c1ff9c285c338ec57ed9ca78c71b1a1d66b9
   specs:
-    guard-minitest (1.0.1)
+    guard-minitest (1.1.0)
       guard (>= 1.8)
       minitest (>= 2.1)
 
 GIT
   remote: git://github.com/jonleighton/spring.git
-  revision: 37053dcd88a678dd57ff1b5c103d20e5b43b43bd
+  revision: 2851cc99143a6eebb4398e72a93182b34338d61d
   specs:
     spring (0.0.10)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (3.0.20)
     actionmailer (4.0.0)
       actionpack (= 4.0.0)
       mail (~> 2.5.3)
@@ -173,7 +174,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
-    sqlite3 (1.3.7)
+    sqlite3 (1.3.8)
     susy (1.0.9)
       compass (>= 0.12.2)
       sass (>= 3.2.0)
@@ -181,7 +182,7 @@ GEM
     thread_safe (0.1.2)
       atomic
     tilt (1.4.1)
-    treetop (1.4.14)
+    treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
     twilio-ruby (3.9.0)
@@ -204,6 +205,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aasm (~> 3.0.20)
   bcrypt-ruby (~> 3.0.0)
   capistrano
   coffee-rails (~> 4.0.0)

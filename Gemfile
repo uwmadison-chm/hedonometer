@@ -15,6 +15,8 @@ gem 'daemons'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
 
+gem 'aasm', '~> 3.0.20'
+
 
 group :development do
   gem 'capistrano'
