@@ -12,7 +12,25 @@ class Participant < ActiveRecord::Base
 
   before_validation :set_login_code, on: :create
   validates :login_code, presence: true, length: {is: LOGIN_CODE_LENGTH}
-  has_many :schedule_days
+
+  has_many :schedule_days do
+    def potential_run_targets
+      where(aasm_state: ['waiting', 'running']).order('date')
+    end
+
+    def first_potential
+      potential_run_targets.first
+    end
+
+    def find_and_save_available_schedule_day!
+      potential_run_targets.each do |day|
+        day.run if
+
+        day.save!
+      end
+      nil
+    end
+  end
   accepts_nested_attributes_for :schedule_days
 
   serialize :question_chooser_state
@@ -53,28 +71,20 @@ class Participant < ActiveRecord::Base
     question
   end
 
-  def first_available_schedule_day
-    # We could be dealing with questions from yesterday if the day ran past midnight
-    # This feels so damn ugly. I'm doing this wrong.
-    # TODO: Bring the number of future seconds in here
-    days = self.schedule_days.potentials_for_date(Date.today)
-    days.find {|day| day.can_deliver_more_questions?}
-  end
-
   def schedule_survey_question
-    # Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
-    # question_chooser_state may be updated.
-    question = current_question_or_new
-    # We know question is not delivered; we can set its scheduled_at
-    question.scheduled_at = question.schedule_day.random_time_for_next_question
-    logger.debug("Scheduled #{question}")
-    question
+    ## Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
+    ## question_chooser_state may be updated.
+    #question = current_question_or_new
+    ## We know question is not delivered; we can set its scheduled_at
+    #question.scheduled_at = question.schedule_day.random_time_for_next_question
+    #logger.debug("Scheduled #{question}")
+    #question
   end
 
   def schedule_survey_question_and_save!
-    q = schedule_survey_question
-    q.save!
-    self.save!
+    #q = schedule_survey_question
+    #q.save!
+    #self.save!
   end
 
   class << self

@@ -30,10 +30,6 @@ class ScheduleDay < ActiveRecord::Base
     end
   end
 
-  def self.first_potential
-    running.order('date').first || waiting.order('date').first
-  end
-
   # TODO: Add validation for time_ranges_string
 
   def time_ranges_string
@@ -82,6 +78,10 @@ class ScheduleDay < ActiveRecord::Base
 
   def random_time_for_next_question
     valid_time_after_day_start(rand(next_question_time_range))
+  end
+
+  def can_schedule_a_question?
+
   end
 
   def valid_time_after_day_start(future_seconds)
