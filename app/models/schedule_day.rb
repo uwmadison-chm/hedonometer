@@ -56,14 +56,24 @@ class ScheduleDay < ActiveRecord::Base
     self.participant.survey
   end
 
+  def delivered_question_count
+    scheduled_questions.delivered.count
+  end
+
+  def minimum_time_to_question(question_number)
+    (((question_number) * survey.mean_minutes_between_samples) - survey.sample_minutes_plusminus).minutes
+  end
+
   def minimum_time_to_next_question
-    (((scheduled_questions.delivered.count + 1) * survey.mean_minutes_between_samples) -
-      survey.sample_minutes_plusminus).minutes
+    minimum_time_to_question(delivered_question_count + 1)
+  end
+
+  def maximum_time_to_question(question_number)
+    (((question_number) * survey.mean_minutes_between_samples) + survey.sample_minutes_plusminus).minutes
   end
 
   def maximum_time_to_next_question
-    (((scheduled_questions.delivered.count + 1) * survey.mean_minutes_between_samples) +
-      survey.sample_minutes_plusminus).minutes
+    maximum_time_to_question(delivered_question_count + 1)
   end
 
   def next_question_time_range
