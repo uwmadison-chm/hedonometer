@@ -21,13 +21,13 @@ class ScheduledQuestionTest < ActiveSupport::TestCase
     refute sq.younger_than?(90.minutes)
   end
 
-  test "aged out" do
+  test "too old to deliver" do
     sq = schedule_days(:test_day_1).scheduled_questions.build
     survey = schedule_days(:test_day_1).participant.survey
     sq.scheduled_at = Time.now
-    refute sq.aged_out?
+    refute sq.too_old_to_deliver?
     sq.scheduled_at = Time.now - (survey.mininum_intersample_period+1.second)
-    assert sq.aged_out?
+    assert sq.too_old_to_deliver?
   end
 
   test "can be delivered now" do

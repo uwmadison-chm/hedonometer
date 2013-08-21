@@ -7,17 +7,36 @@ class ScheduledQuestion < ActiveRecord::Base
 
   validates :scheduled_at, presence: true
 
-  scope :delivered, -> { where.not(delivered_at: nil).order('scheduled_at desc') }
-  scope :undelivered, -> { where(delivered_at: nil).order('scheduled_at desc') }
+  include AASM
+  aasm do
+    state :scheduled, initial: true
+    state :delivered, before_enter: :set_delivered_at
+    state :aged_out,  before_enter: :log_aging_out
+
+    event :mark_delivered do
+      transitions from: :scheduled, to: :delivered
+    end
+
+    event :mark_aged_out do
+      transitions from: :scheduled, to: :aged_out
+    end
+  end
+
+  def set_delivered_at
+    self.delivered_at = Time.now
+  end
+
+  def log_aging_out
+    logger.warn "Aging out #{self.to_s}"
+  end
 
   def deliver_and_save_if_possible!(message)
     if can_be_delivered_now?
       message.deliver_and_save!
-      self.delivered_at = Time.now
+      self.mark_delivered
     end
-    if aged_out?
-      logger.warn("oh man scheduled_question #{id} aged out")
-      self.delivered_at = Time.now
+    if too_old_to_deliver?
+      self.mark_aged_out
     end
     save!
   end
@@ -26,7 +45,7 @@ class ScheduledQuestion < ActiveRecord::Base
     schedule_day.participant.survey.mininum_intersample_period
   end
 
-  def aged_out?
+  def too_old_to_deliver?
     younger_than?(max_age)
   end
 
