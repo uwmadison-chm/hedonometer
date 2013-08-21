@@ -61,4 +61,21 @@ class ScheduleDayTest < ActiveSupport::TestCase
     min_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
     assert_equal min_time, @sd.maximum_time_to_next_question
   end
+
+  test "first potentials" do
+    ppt = participants(:ppt1)
+    sd = ppt.schedule_days.first_potential
+    assert_equal schedule_days(:test_day_1), sd
+    sd.run
+    sd.save
+    sd = ppt.schedule_days.first_potential
+    assert_equal schedule_days(:test_day_1), sd
+    sd.finish
+    sd.save
+    sd = ppt.schedule_days.first_potential
+    assert_equal schedule_days(:test_day_2), sd
+    sd.skip
+    sd.save
+    assert_nil ppt.schedule_days.first_potential
+  end
 end

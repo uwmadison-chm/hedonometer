@@ -9,18 +9,29 @@ class ScheduleDay < ActiveRecord::Base
 
   has_many :scheduled_questions
 
-  scope :potentials_for_date, ->(date) { order('date').where('date >= ?', date - 1.day)}
-
   validates :aasm_state, presence: true
 
   include AASM
   aasm do
-    state :open, initial: true
+    state :waiting, initial: true
+    state :running
     state :finished
 
-    event :finish do
-      transitions from: :open, to: :finished
+    event :run do
+      transitions from: :waiting, to: :running
     end
+
+    event :finish do
+      transitions from: :running, to: :finished
+    end
+
+    event :skip do
+      transitions from: :waiting, to: :finished
+    end
+  end
+
+  def self.first_potential
+    running.order('date').first || waiting.order('date').first
   end
 
   # TODO: Add validation for time_ranges_string
