@@ -16,6 +16,9 @@ class ParticipantsController < SurveyedController
     if @participant.update_attributes(update_participant_params)
       q = @participant.schedule_survey_question_and_save!
       logger.debug("Scheduled #{q.inspect}")
+      if q
+        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+      end
       redirect_to survey_path(current_survey)
     else
       render :action => :edit
