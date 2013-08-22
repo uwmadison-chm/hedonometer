@@ -50,7 +50,7 @@ class ScheduledQuestion < ActiveRecord::Base
   end
 
   def can_be_delivered_now?
-    undelivered? and delivery_due? and not aged_out?
+    undelivered? and delivery_due? and not too_old_to_deliver?
   end
 
   def delivered?

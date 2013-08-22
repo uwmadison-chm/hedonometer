@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class ScheduledQuestionTest < ActiveSupport::TestCase
+  class MockMessage
+    def deliver_and_save!
+      true
+    end
+  end
+
   test "undelivered when delivered_at is nil" do
     sq = ScheduledQuestion.new
     assert sq.undelivered?
@@ -39,5 +45,23 @@ class ScheduledQuestionTest < ActiveSupport::TestCase
     sq.delivered_at = nil
     sq.scheduled_at = Time.now + 1.minute
     refute sq.can_be_delivered_now?
+  end
+
+  test "deliver and save if possible" do
+    msg = MockMessage.new
+    q = survey_questions(:test_what)
+    survey = schedule_days(:test_day_1).participant.survey
+    sq = schedule_days(:test_day_1).scheduled_questions.build(
+      scheduled_at: Time.now - 1.minute,
+      survey_question: q)
+    sq.deliver_and_save_if_possible!(msg)
+    assert_equal 'delivered', sq.aasm_state
+    sq.delete
+    sq = schedule_days(:test_day_1).scheduled_questions.create(
+      scheduled_at: Time.now - (survey.mininum_intersample_period+1.second),
+      survey_question: q)
+    assert_equal 'scheduled', sq.aasm_state
+    sq.deliver_and_save_if_possible!(msg)
+    assert_equal 'aged_out', sq.aasm_state
   end
 end
