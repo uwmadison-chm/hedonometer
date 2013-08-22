@@ -56,6 +56,10 @@ class ScheduleDay < ActiveRecord::Base
     scheduled_questions.completed.count
   end
 
+  def current_question
+    scheduled_questions.scheduled.first
+  end
+
   def minimum_time_to_question(question_number)
     (((question_number) * survey.mean_minutes_between_samples) - survey.sample_minutes_plusminus).minutes
   end
