@@ -59,10 +59,10 @@ class Participant < ActiveRecord::Base
 
   def current_question_or_new
     # Returns a question or new -- unsaved.
-    day = first_available_schedule_day
+    day = schedule_days.advance_to_day_with_time_for_question!
     logger.debug("Day is #{day}")
     return nil unless day
-    question = day.undelivered_question
+    question = day.scheduled_questions.first
     if question.nil?
       survey_question = choose_question
       question = day.scheduled_questions.build(
@@ -72,19 +72,21 @@ class Participant < ActiveRecord::Base
   end
 
   def schedule_survey_question
-    ## Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
-    ## question_chooser_state may be updated.
-    #question = current_question_or_new
-    ## We know question is not delivered; we can set its scheduled_at
-    #question.scheduled_at = question.schedule_day.random_time_for_next_question
-    #logger.debug("Scheduled #{question}")
-    #question
+    # Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
+    # question_chooser_state may be updated.
+    question = current_question_or_new
+    return nil unless question
+    # We know question is not delivered; we can set its scheduled_at
+    question.scheduled_at = question.schedule_day.random_time_for_next_question
+    logger.debug("Scheduled #{question}")
+    question
   end
 
   def schedule_survey_question_and_save!
-    #q = schedule_survey_question
-    #q.save!
-    #self.save!
+    q = schedule_survey_question
+    q.save!
+    self.save! # Because we've updated our chooser state
+    q
   end
 
   class << self

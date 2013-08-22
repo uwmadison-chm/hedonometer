@@ -74,4 +74,22 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_nil ppt.schedule_days.advance_to_day_with_time_for_question!
     assert_equal ppt.schedule_days.count, ppt.schedule_days.finished.count
   end
+
+  test "current or new question basically works" do
+    ppt = participants(:ppt1)
+    q = ppt.current_question_or_new
+    refute_nil q
+  end
+
+  test "schedule survey question works" do
+    ppt = participants(:ppt1)
+    q = ppt.schedule_survey_question
+    refute_nil q
+  end
+
+  test "schedule and save works" do
+    ppt = participants(:ppt1)
+    q = ppt.schedule_survey_question_and_save!
+    refute q.new_record?
+  end
 end

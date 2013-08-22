@@ -101,8 +101,4 @@ class ScheduleDay < ActiveRecord::Base
   def can_deliver_more_questions?
     not all_questions_delivered?
   end
-
-  def undelivered_question
-    self.scheduled_questions.undelivered.first
-  end
 end
