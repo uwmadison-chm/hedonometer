@@ -22,11 +22,11 @@ class Participant < ActiveRecord::Base
       potential_run_targets.first
     end
 
-    def find_and_save_available_schedule_day!
+    def advance_to_day_with_time_for_question!
       potential_run_targets.each do |day|
-        day.run if
-
-        day.save!
+        day.run! if day.waiting?
+        day.finish! if not day.has_time_for_another_question?
+        return day if day.running?
       end
       nil
     end
