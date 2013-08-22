@@ -86,7 +86,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   test "update schedules a question" do
     ppt = participants(:ppt1)
     participant_login_as ppt
-    day = ppt.schedule_days.first
+    day = ppt.schedule_days.order('date').first
     assert_equal 0, day.scheduled_questions.count
     assert_changes day.scheduled_questions, :count, 1 do
       post :update, params_for_update(ppt)
@@ -97,7 +97,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   test "two updates don't add more questions" do
     ppt = participants(:ppt1)
     participant_login_as ppt
-    day = ppt.schedule_days.first
+    day = ppt.schedule_days.order('date').first
     post :update, params_for_update(ppt)
     assert_redirected_to survey_path(ppt.survey)
     assert_equal 1, day.scheduled_questions.count
@@ -105,5 +105,4 @@ class ParticipantsControllerTest < ActionController::TestCase
       post :update, params_for_update(ppt)
     end
   end
-
 end
