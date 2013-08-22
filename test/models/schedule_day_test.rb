@@ -36,6 +36,36 @@ class ScheduleDayTest < ActiveSupport::TestCase
     assert_nil @sd.valid_time_after_day_start(3.hours)
   end
 
+  test "has time for another question with deliveries" do
+    survey = @sd.survey
+    t1 = Time.now
+    t2 = t1 + survey.day_length_minutes.minutes
+    @sd.time_ranges = [TimeRange.new(t1, t2)]
+    @sd.survey.samples_per_day.times do |num|
+      assert @sd.has_time_for_another_question?
+      @sd.scheduled_questions.create(
+        survey_question: survey_questions(:test_what),
+        aasm_state: 'delivered',
+        scheduled_at: t1 + (num*survey.mean_minutes_between_samples).minutes)
+    end
+    refute @sd.has_time_for_another_question?
+  end
+
+  test "has time for another question with age-outs" do
+    survey = @sd.survey
+    t1 = Time.now
+    t2 = t1 + survey.day_length_minutes.minutes
+    @sd.time_ranges = [TimeRange.new(t1, t2)]
+    @sd.survey.samples_per_day.times do |num|
+      assert @sd.has_time_for_another_question?
+      @sd.scheduled_questions.create(
+        survey_question: survey_questions(:test_what),
+        aasm_state: 'aged_out',
+        scheduled_at: t1 + (num*survey.mean_minutes_between_samples).minutes)
+    end
+    refute @sd.has_time_for_another_question?
+  end
+
   test "minimum time to next question" do
     survey = @sd.participant.survey
     min_time = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes

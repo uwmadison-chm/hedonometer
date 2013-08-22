@@ -7,6 +7,8 @@ class ScheduledQuestion < ActiveRecord::Base
 
   validates :scheduled_at, presence: true
 
+  scope :completed, -> { where(aasm_state: ['delivered', 'aged_out'])}
+
   include AASM
   aasm do
     state :scheduled, initial: true

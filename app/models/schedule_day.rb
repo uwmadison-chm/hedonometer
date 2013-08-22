@@ -52,8 +52,8 @@ class ScheduleDay < ActiveRecord::Base
     self.participant.survey
   end
 
-  def delivered_question_count
-    scheduled_questions.delivered.count
+  def completed_question_count
+    scheduled_questions.completed.count
   end
 
   def minimum_time_to_question(question_number)
@@ -61,7 +61,7 @@ class ScheduleDay < ActiveRecord::Base
   end
 
   def minimum_time_to_next_question
-    minimum_time_to_question(delivered_question_count + 1)
+    minimum_time_to_question(completed_question_count + 1)
   end
 
   def maximum_time_to_question(question_number)
@@ -69,7 +69,7 @@ class ScheduleDay < ActiveRecord::Base
   end
 
   def maximum_time_to_next_question
-    maximum_time_to_question(delivered_question_count + 1)
+    maximum_time_to_question(completed_question_count + 1)
   end
 
   def next_question_time_range
@@ -80,8 +80,8 @@ class ScheduleDay < ActiveRecord::Base
     valid_time_after_day_start(rand(next_question_time_range))
   end
 
-  def can_schedule_a_question?
-
+  def has_time_for_another_question?
+    valid_time_after_day_start(maximum_time_to_next_question)
   end
 
   def valid_time_after_day_start(future_seconds)
