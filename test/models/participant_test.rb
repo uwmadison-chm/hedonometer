@@ -81,6 +81,14 @@ class ParticipantTest < ActiveSupport::TestCase
     refute_nil q
   end
 
+  test "current or new doesn't find delivered questions" do
+    ppt = participants(:ppt1)
+    sday = ppt.schedule_days.first
+    sq = sday.scheduled_questions.create!(
+      survey_question: survey_questions(:test_what), scheduled_at: Time.now, aasm_state: 'delivered')
+    refute_equal sq, ppt.current_question_or_new
+  end
+
   test "schedule survey question works" do
     ppt = participants(:ppt1)
     q = ppt.schedule_survey_question

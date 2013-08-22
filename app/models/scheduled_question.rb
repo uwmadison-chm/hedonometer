@@ -28,6 +28,10 @@ class ScheduledQuestion < ActiveRecord::Base
     self.delivered_at = Time.now
   end
 
+  def completed?
+    delivered? or aged_out?
+  end
+
   def log_aging_out
     logger.warn "Aging out #{self.to_s}"
   end

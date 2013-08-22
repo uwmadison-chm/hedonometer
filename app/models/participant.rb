@@ -13,7 +13,7 @@ class Participant < ActiveRecord::Base
   before_validation :set_login_code, on: :create
   validates :login_code, presence: true, length: {is: LOGIN_CODE_LENGTH}
 
-  has_many :schedule_days do
+  has_many :schedule_days, -> { order('date') } do
     def potential_run_targets
       where(aasm_state: ['waiting', 'running']).order('date')
     end
@@ -62,7 +62,7 @@ class Participant < ActiveRecord::Base
     day = schedule_days.advance_to_day_with_time_for_question!
     logger.debug("Day is #{day}")
     return nil unless day
-    question = day.scheduled_questions.first
+    question = day.current_question
     if question.nil?
       survey_question = choose_question
       question = day.scheduled_questions.build(

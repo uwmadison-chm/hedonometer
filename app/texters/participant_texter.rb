@@ -9,7 +9,7 @@ class ParticipantTexter < ActionTexter::Base
       participant = scheduled_question.schedule_day.participant
       message = message_for_participant(participant, scheduled_question.survey_question.question_text)
       scheduled_question.deliver_and_save_if_possible!(message)
-      if scheduled_question.delivered?
+      if scheduled_question.completed?
         new_question = participant.schedule_survey_question_and_save!
         if new_question
           self.delay(run_at: new_question.scheduled_at).deliver_scheduled_question!(new_question.id)
