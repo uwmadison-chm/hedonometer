@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130819205256) do
+ActiveRecord::Schema.define(version: 20130822214330) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -20,8 +20,8 @@ ActiveRecord::Schema.define(version: 20130819205256) do
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.datetime "deleted_at"
-    t.string   "password_salt"
-    t.string   "password_hash"
+    t.binary   "password_salt"
+    t.binary   "password_hash"
   end
 
   add_index "admins", ["email"], name: "index_admins_on_email", unique: true, using: :btree
