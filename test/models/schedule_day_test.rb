@@ -46,7 +46,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
       @sd.scheduled_questions.create(
         survey_question: survey_questions(:test_what),
         aasm_state: 'delivered',
-        scheduled_at: t1 + (num*survey.mean_minutes_between_samples).minutes)
+        scheduled_at: t1)
     end
     refute @sd.has_time_for_another_question?
   end
@@ -61,7 +61,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
       @sd.scheduled_questions.create(
         survey_question: survey_questions(:test_what),
         aasm_state: 'aged_out',
-        scheduled_at: t1 + (num*survey.mean_minutes_between_samples).minutes)
+        scheduled_at: t1)
     end
     refute @sd.has_time_for_another_question?
   end
@@ -73,22 +73,22 @@ class ScheduleDayTest < ActiveSupport::TestCase
     q = @sd.scheduled_questions.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
-      delivered_at: @sd.time_ranges.first.first + 10.minutes
-      )
+      aasm_state: 'delivered')
+
     min_time = (2*survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
     assert_equal min_time, @sd.minimum_time_to_next_question
   end
 
   test "maximum time to next question" do
     survey = @sd.participant.survey
-    min_time = (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
-    assert_equal min_time, @sd.maximum_time_to_next_question
+    max_time = (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
+    assert_equal max_time, @sd.maximum_time_to_next_question
     q = @sd.scheduled_questions.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
-      delivered_at: @sd.time_ranges.first.first + 10.minutes
-      )
-    min_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
-    assert_equal min_time, @sd.maximum_time_to_next_question
+      aasm_state: 'delivered')
+
+    max_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
+    assert_equal max_time, @sd.maximum_time_to_next_question
   end
 end
