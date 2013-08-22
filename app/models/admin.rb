@@ -14,8 +14,7 @@ class Admin < ActiveRecord::Base
   end
 
   def can_modify_survey?(survey)
-    sp = self.surveys.modifiable.where(
-      "survey_permissions.survey_id" => survey).first
+    sp = self.surveys.modifiable.where("survey_permissions.survey_id" => survey).first
   end
 
   def active?

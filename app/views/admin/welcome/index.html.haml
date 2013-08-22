@@ -6,6 +6,7 @@
       %th Name
       %th
       %th Phone number
+      %th Participants
       %th Active
       %th Completed
       %th Sent messages
@@ -15,6 +16,7 @@
         %td= survey.name
         %td= link_to "Edit", edit_admin_survey_path(survey)
         %td= survey.phone_number.humanize
+        %td= link_to survey.participants.count, admin_survey_participants_path(survey)
         %td= survey.active?
         %td false
         %td= survey.outgoing_text_messages.count
