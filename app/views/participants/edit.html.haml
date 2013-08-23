@@ -1,3 +1,7 @@
+%h1 Please set your availability for text-messeging.
+%p This is a temporary interface. This interface will change substantially before we run non-pilot participants.
+%p For now, please enter your availability for each day in the form, 8:00 AM - 12:00 PM, 3:00 PM - 9:00 PM. Let Drew know if you experience any difficulties, #{mail_to "asfox@wisc.edu"}.
+
 = form_for @participant, url: survey_path(current_survey), builder: TwoColumnFormBuilder do |f|
   = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: "Central Time (US & Canada)"
   = f.fields_for :schedule_days, builder: ActionView::Helpers::FormBuilder do |day_form|
