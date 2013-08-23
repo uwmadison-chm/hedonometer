@@ -42,10 +42,12 @@ class Participant < ActiveRecord::Base
   def build_schedule_days
     start_date = Time.zone.now.to_date
     self.survey.sampled_days.times do |t|
-      sample_date = start_date + t + 1
+      sample_date = start_date + (t + 1).days
       # TODO replace 9.hours with a survey-level preference
-      time_range = TimeRange.new(start_date + 9.hours, start_date + 9.hours + survey.day_length_minutes.minutes)
-      self.schedule_days.build date: sample_date, time_ranges: [time_range]
+      first = sample_date + 9.hours
+      last = first + survey.day_length_minutes.minutes
+      time_range = TimeRange.new(first, last)
+      self.schedule_days.build(date: sample_date, time_ranges: [time_range])
     end
   end
 
