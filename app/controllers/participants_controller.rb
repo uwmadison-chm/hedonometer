@@ -27,7 +27,9 @@ class ParticipantsController < SurveyedController
 
   def create
     # Will primarily be called by other apps via API
-    @participant = current_survey.participants.create create_participant_params
+    @participant = current_survey.participants.build create_participant_params
+    # All solutions are hacks; move to survey
+    @participant.time_zone = "Central Time (US & Canada)"
     if @participant.valid?
       render text: "Created", status: :created
     else
