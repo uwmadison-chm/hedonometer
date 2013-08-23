@@ -19,6 +19,7 @@ class ParticipantsController < SurveyedController
       if q
         ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
       end
+      flash[:save_message] = "Saved!"
       redirect_to survey_path(current_survey)
     else
       render :action => :edit

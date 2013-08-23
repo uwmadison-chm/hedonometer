@@ -12,3 +12,7 @@
       .col2
         = day_form.text_field :time_ranges_string, size: 72
   = f.submit "Save my settings"
+  - if flash[:save_message]
+    .line
+      .col1 &nbsp;
+      .col2= flash[:save_message]
