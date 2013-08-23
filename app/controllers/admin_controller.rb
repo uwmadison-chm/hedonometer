@@ -13,6 +13,11 @@ class AdminController < ApplicationController
     current_admin and current_admin.active?
   end
 
+  def current_survey
+    @current_survey ||= current_admin.surveys.find(params[:survey_id])
+  end
+  helper_method :current_survey
+
   private
   def require_admin_login!
     unless active_current_admin?

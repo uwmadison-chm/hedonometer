@@ -9,8 +9,7 @@
       %th Participants
       %th Active
       %th Completed
-      %th Sent messages
-      %th Received messages
+      %th Messages (sent:received)
     - current_admin.surveys.modifiable.each do |survey|
       %tr
         %td= survey.name
@@ -19,5 +18,4 @@
         %td= link_to survey.participants.count, admin_survey_participants_path(survey)
         %td= survey.active?
         %td false
-        %td= survey.outgoing_text_messages.count
-        %td= survey.incoming_text_messages.count
+        %td #{survey.outgoing_text_messages.count} : #{survey.incoming_text_messages.count}
