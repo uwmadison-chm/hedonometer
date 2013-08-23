@@ -1,12 +1,13 @@
 class ParticipantTexter < ActionTexter::Base
   class << self
     def login_code_message(participant)
-      message_for_participant(participant, "Your login code is #{participant.login_code}")
+      message_for_participant(participant, "Your login code is #{participant.login_code}. You may quit at any time by texting 'STOP'.")
     end
 
     def deliver_scheduled_question!(scheduled_question_id)
       scheduled_question = ScheduledQuestion.find scheduled_question_id
       participant = scheduled_question.schedule_day.participant
+      return unless participant.active?
       message = message_for_participant(participant, scheduled_question.survey_question.question_text)
       scheduled_question.deliver_and_save_if_possible!(message)
       if scheduled_question.completed?

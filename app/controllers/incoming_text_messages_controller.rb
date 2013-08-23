@@ -12,6 +12,15 @@ class IncomingTextMessagesController < SurveyedController
       from: params[:from],
       message: params[:body],
       server_response: params)
+    if itm.message.downcase == 'stop'
+      # Find the ppt and deactivate
+      # Todo: test this
+      ppt = current_survey.participants.where(phone_number: params[:from]).first
+      if ppt
+        ppt.active = false
+        ppt.save
+      end
+    end
     render nothing: true
   end
 
