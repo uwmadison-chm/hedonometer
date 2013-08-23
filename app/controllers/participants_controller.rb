@@ -30,7 +30,7 @@ class ParticipantsController < SurveyedController
     @participant = current_survey.participants.build create_participant_params
     # All solutions are hacks; move to survey
     @participant.time_zone = "Central Time (US & Canada)"
-    if @participant.valid?
+    if @participant.save
       render text: "Created", status: :created
     else
       render text: @participant.errors.to_json, status: :conflict

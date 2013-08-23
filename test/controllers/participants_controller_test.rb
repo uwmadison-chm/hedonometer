@@ -52,7 +52,7 @@ class ParticipantsControllerTest < ActionController::TestCase
     post :create, params_for_create
     assert_response :success
     assert_not_nil assigns(:participant)
-    refute assigns(:participant).new_record?
+    refute assigns(:participant).new_record?, assigns(:participant).errors.full_messages
   end
 
   test "participant should not create duplicate" do
