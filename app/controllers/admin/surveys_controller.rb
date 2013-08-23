@@ -35,6 +35,7 @@ class Admin::SurveysController < AdminController
       require(:survey).
       permit(
         :name,
+        :sampled_days,
         :samples_per_day,
         :mean_minutes_between_samples,
         :sample_minutes_plusminus,
