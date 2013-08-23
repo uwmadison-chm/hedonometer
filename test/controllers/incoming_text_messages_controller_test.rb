@@ -7,13 +7,13 @@ class IncomingTextMessagesControllerTest < ActionController::TestCase
       post :create, TwilioResponses.incoming_params(surveys(:test), "frabozz", participants(:ppt1).phone_number)
     end
   end
-  # TODO Make this actually work
+
   test "deactivates participants when we get a STOP message" do
-    skip "I don't know why this doesn't work"
-    # ppt = participants(:ppt1)
-    # post :create, TwilioResponses.incoming_params(surveys(:test), "stop", ppt.phone_number)
-    # ppt.reload
-    # refute ppt.active?
+    skip "I don't know why this doesn't work, let's debug it" and return
+    ppt = participants(:ppt1)
+    post :create, TwilioResponses.incoming_params(surveys(:test), "stop", ppt.phone_number)
+    ppt.reload
+    refute ppt.active?
   end
 
 end
