@@ -9,7 +9,6 @@ class IncomingTextMessagesControllerTest < ActionController::TestCase
   end
 
   test "deactivates participants when we get a STOP message" do
-    skip "I don't know why this doesn't work, let's debug it" and return
     ppt = participants(:ppt1)
     post :create, TwilioResponses.incoming_params(surveys(:test), "stop", ppt.phone_number)
     ppt.reload
