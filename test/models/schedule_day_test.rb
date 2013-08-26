@@ -36,6 +36,27 @@ class ScheduleDayTest < ActiveSupport::TestCase
     assert_nil @sd.valid_time_after_day_start(3.hours)
   end
 
+  test "adjust_day_length_to with extra time" do
+    setup_sample_time_ranges
+    @sd.adjust_day_length_to(3.hours)
+    assert_equal 3, @sd.time_ranges.length
+    assert_equal 1.hour, @sd.time_ranges.last.duration
+  end
+
+  test "adjust_day_length_to with not enough time" do
+    setup_sample_time_ranges
+    @sd.adjust_day_length_to(90.minutes)
+    assert_equal 2, @sd.time_ranges.length
+    assert_equal 30.minutes, @sd.time_ranges.last.duration
+  end
+
+  test "adjust_day_length_to with exactly enough time" do
+    setup_sample_time_ranges
+    @sd.adjust_day_length_to(135.minutes)
+    assert_equal 3, @sd.time_ranges.length
+    assert_equal 15.minutes, @sd.time_ranges.last.duration
+  end
+
   test "has time for another question with deliveries" do
     survey = @sd.survey
     t1 = Time.now

@@ -44,6 +44,17 @@ class ScheduleDay < ActiveRecord::Base
     self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.date, range_str)}
   end
 
+  def adjust_day_length_to(length)
+    self.time_ranges = time_ranges.take_while {|tr|
+      (length > 0).tap do |take|
+        if take
+          length -= tr.duration
+        end
+      end
+    }
+    self.time_ranges.last.end += length
+  end
+
   def starts_at
     time_ranges.first.first
   end
