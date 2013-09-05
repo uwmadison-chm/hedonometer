@@ -10,6 +10,7 @@
       %th Active
       %th Completed
       %th Messages (sent:received)
+      %th Download
     - current_admin.surveys.modifiable.each do |survey|
       %tr
         %td= survey.name
@@ -19,3 +20,4 @@
         %td= survey.active?
         %td false
         %td #{survey.outgoing_text_messages.count} : #{survey.incoming_text_messages.count}
+        %td= link_to "Download data", download_admin_survey_path(survey, format: :csv)

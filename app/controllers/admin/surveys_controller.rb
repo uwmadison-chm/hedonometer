@@ -1,10 +1,18 @@
 # -*- encoding : utf-8 -*-
 class Admin::SurveysController < AdminController
-  before_action :find_survey, only: [:edit, :update]
+  before_action :find_survey, only: [:edit, :update, :download]
 
   def new
     @survey = Survey.new
     @survey.survey_questions.build
+  end
+
+  def download
+    respond_to do |format|
+      format.csv {
+        render text: @survey.to_csv
+      }
+    end
   end
 
   def edit

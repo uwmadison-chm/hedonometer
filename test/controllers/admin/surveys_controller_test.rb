@@ -76,4 +76,10 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     assert_template :edit
   end
 
+  test "data downloads" do
+    s = surveys(:test)
+    get :download, id: s, format: 'csv'
+    assert_response :success
+  end
+
 end

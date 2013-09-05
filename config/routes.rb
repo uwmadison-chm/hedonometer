@@ -24,8 +24,9 @@ Hedonometer::Application.routes.draw do
   namespace :admin do
     root :to => 'welcome#index'
 
-    resources 'surveys' do
+    resources :surveys do
       resources :participants
+      get 'download', on: :member
     end
 
 
