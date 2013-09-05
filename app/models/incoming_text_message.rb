@@ -2,6 +2,10 @@ class IncomingTextMessage < TextMessage
   before_validation :set_delivered_at, on: :create
   validate :survey_phone_number_matches_to_phone_number
 
+  def direction
+    'incoming'
+  end
+
   protected
   def set_delivered_at
     self.delivered_at = Time.now

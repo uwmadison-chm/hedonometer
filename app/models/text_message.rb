@@ -10,6 +10,10 @@ class TextMessage < ActiveRecord::Base
 
   validates :survey, presence: true
 
+  def direction
+    'Error'
+  end
+
   class DeliveryError < RuntimeError
   end
 end

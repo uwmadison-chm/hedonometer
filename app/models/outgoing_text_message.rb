@@ -3,6 +3,10 @@ class OutgoingTextMessage < TextMessage
 
   SUCCESS_STATUSES = %w(queued sending sent)
 
+  def direction
+    'outgoing'
+  end
+
   def delivered_successfully?
     @twilio_message and SUCCESS_STATUSES.include? @twilio_message.status
   end
