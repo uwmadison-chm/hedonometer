@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'csv'
+
 class Survey < ActiveRecord::Base
   attr_accessor :creator
 
@@ -26,6 +28,16 @@ class Survey < ActiveRecord::Base
 
   has_many :outgoing_text_messages
   has_many :incoming_text_messages
+  has_many :text_messages
+
+  def to_csv
+    CSV.generate { |csv|
+      csv << ['survey', 'from', 'to', 'direction', 'time', 'message']
+      text_messages.order('created_at').find_each do |m|
+        csv << [name, m.from.humanize, m.to.humanize, m.direction, m.delivered_at, m.message]
+      end
+    }
+  end
 
   def twilio_client
     cli = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
