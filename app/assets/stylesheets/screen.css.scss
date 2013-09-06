@@ -12,6 +12,9 @@
 
 #page {
   @include container;
+}
+
+.grid {
   @include susy-grid-background;
 }
 
