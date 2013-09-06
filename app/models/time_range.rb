@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class TimeRange
-  FORMAT_STRING = "%l:%M %p"
+  FORMAT_STRING = "%-l:%M %P"
   attr_accessor :first
   attr_accessor :end
 
@@ -14,7 +14,7 @@ class TimeRange
   end
 
   def to_s
-    # 9:00 AM - 5:15PM
+    # 9:00 AM - 5:15 PM
     [@first, @end].map {|t| t.localtime.strftime(FORMAT_STRING)}.join(" - ")
   end
 
