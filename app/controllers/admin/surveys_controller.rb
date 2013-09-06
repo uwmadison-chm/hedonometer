@@ -51,6 +51,8 @@ class Admin::SurveysController < AdminController
         :twilio_account_sid,
         :twilio_auth_token,
         :phone_number,
+        :help_message,
+        :time_zone,
         :survey_questions_attributes => [:id, :question_text])
   end
 end

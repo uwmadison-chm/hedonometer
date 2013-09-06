@@ -12,11 +12,12 @@
         =simple.number_field :sample_minutes_plusminus, min: 0, max: 9999
         minutes between samples
   = f.number_field :sampled_days, label: "Number of days to sample"
+  = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: "Central Time (US & Canada)"
   = f.text_field :twilio_account_sid, label: 'Twilio account SID', size: 55
   = f.text_field :twilio_auth_token, size: 50
   = f.text_field :phone_number
-
-  = f.check_box :active
+  = f.text_area :help_message, label: raw("Help message for participants<br/>HTML OK"), rows: 5, cols: 60, value: survey_help_with_default(survey)
+  =# f.check_box :active
   = f.fields_for :survey_questions, survey.survey_questions do |question_form|
     = question_form.text_field :question_text, size: 110
 

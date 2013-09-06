@@ -30,7 +30,7 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
     :text_field, :email_field, :number_field, :password_field, :file_field,
     :color_field, :search_field, :telephone_field, :phone_field,
     :date_field, :time_field, :datetime_field, :datetime_local_field,
-    :month_field, :week_field, :url_field, :range_field
+    :month_field, :week_field, :url_field, :range_field, :text_area
   ]
   left_labeled_fields.each do |f|
     define_method f do |attribute, options = {}|
