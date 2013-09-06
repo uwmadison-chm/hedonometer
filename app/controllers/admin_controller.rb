@@ -26,5 +26,4 @@ class AdminController < ApplicationController
       redirect_to admin_login_path
     end
   end
-
 end
