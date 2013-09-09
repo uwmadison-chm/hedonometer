@@ -13,6 +13,9 @@ class Participant < ActiveRecord::Base
   before_validation :set_login_code, on: :create
   validates :login_code, presence: true, length: {is: LOGIN_CODE_LENGTH}
 
+  validates :time_zone, presence: true
+  before_validation :copy_time_zone_from_survey, on: :create
+
   has_many :schedule_days, -> { order('date') } do
     def potential_run_targets
       where(aasm_state: ['waiting', 'running']).order('date')
@@ -102,4 +105,8 @@ class Participant < ActiveRecord::Base
     ## All numeric, with LOGIN_CODE_LENGTH digits
     self.login_code = rand(10**LOGIN_CODE_LENGTH).to_s.rjust(LOGIN_CODE_LENGTH, '0')
   end
+
+   def copy_time_zone_from_survey
+     self.time_zone = survey.time_zone
+   end
 end

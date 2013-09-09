@@ -2,6 +2,13 @@
 require 'test_helper'
 
 class ParticipantTest < ActiveSupport::TestCase
+  test "participants get their time zone copied" do
+    p = surveys(:test).participants.build(phone_number: '1')
+    p.valid?
+    refute_nil p.time_zone
+    assert_equal surveys(:test).time_zone, p.time_zone
+  end
+
   test "participants are generated with login codes" do
     p = surveys(:test).participants.create(phone_number: '1')
     refute p.new_record?, p.errors.full_messages
