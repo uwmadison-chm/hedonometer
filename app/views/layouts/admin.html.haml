@@ -8,6 +8,6 @@
     = csrf_meta_tags
   %body
     #page{class: grid_if_development}
+      = if logged_in?
+        #logout= link_to "Log out", admin_logout_path
       = yield
-      #help
-        = raw current_survey.help_message

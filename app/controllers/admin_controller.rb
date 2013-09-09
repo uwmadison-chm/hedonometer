@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class AdminController < ApplicationController
+  layout 'admin'
 
   before_action :require_admin_login!
 
@@ -8,6 +9,11 @@ class AdminController < ApplicationController
     @current_admin ||= Admin.where(id:session[:admin_id]).first
   end
   helper_method :current_admin
+
+  def logged_in?
+    active_current_admin?
+  end
+  helper_method :logged_in?
 
   def active_current_admin?
     current_admin and current_admin.active?

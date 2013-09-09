@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 class SurveyedController < ApplicationController
+  layout 'participant'
+
   before_action :require_participant_login!
 
   protected
