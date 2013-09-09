@@ -6,12 +6,17 @@
 /* -------------------------------------------------------------------------*/
 /* Layout */
 
-.container {
-  @include container;
-}
+body { font: 100%/1.5 Verdana, sans-serif; }
+
+code { font-family: Verdana, sans-serif; }
 
 #page {
   @include container;
+  position: relative;
+}
+
+#logout {
+  position: absolute; top: 0; right: 0;
 }
 
 .grid {
@@ -19,6 +24,7 @@
 }
 
 form {
+  clear: both;
   .line {
     @include span-columns(12 omega);
     .col1 {
@@ -29,4 +35,9 @@ form {
       @include span-columns(8 omega,12);
     }
   }
+}
+
+#help {
+  clear: both;
+  padding-top: 1em;
 }
