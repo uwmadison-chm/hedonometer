@@ -15,4 +15,12 @@ class IncomingTextMessagesControllerTest < ActionController::TestCase
     refute ppt.active?
   end
 
+  test "activates participants when we get a START message" do
+    ppt = participants(:ppt1)
+    ppt.active = false
+    ppt.save!
+    post :create, TwilioResponses.incoming_params(surveys(:test), "start", ppt.phone_number)
+    ppt = Participant.find(ppt.id)
+    assert ppt.active?, "participant should be active"
+  end
 end
