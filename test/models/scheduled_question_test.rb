@@ -2,8 +2,12 @@ require 'test_helper'
 
 class ScheduledQuestionTest < ActiveSupport::TestCase
   class MockMessage
+    attr_accessor :delivered
+    def initialize
+      @delivered = false
+    end
     def deliver_and_save!
-      true
+      @delivered = true
     end
   end
 
@@ -63,5 +67,34 @@ class ScheduledQuestionTest < ActiveSupport::TestCase
     assert_equal 'scheduled', sq.aasm_state
     sq.deliver_and_save_if_possible!(msg)
     assert_equal 'aged_out', sq.aasm_state
+  end
+
+  test "deliver won't send to inactive participants" do
+    msg = MockMessage.new
+    q = survey_questions(:test_what)
+    ppt = schedule_days(:test_day_1).participant
+    ppt.active = false
+    ppt.save
+    survey = schedule_days(:test_day_1).participant.survey
+    sq = schedule_days(:test_day_1).scheduled_questions.build(
+      scheduled_at: Time.now - 1.minute,
+      survey_question: q)
+    sq.deliver_and_save_if_possible!(msg)
+    refute msg.delivered, "Message should not be delivered"
+    assert sq.participant_inactive?
+  end
+
+  test "completed" do
+    sq = ScheduledQuestion.new
+    refute sq.completed?
+    sq.delivered_at = Time.now
+    assert sq.completed?
+    sq.delivered_at = nil
+    sq.aasm_state = "aged_out"
+    assert sq.completed?
+    sq.aasm_state = "participant_inactive"
+    assert sq.completed?
+    sq.aasm_state = "scheduled"
+    refute sq.completed?
   end
 end

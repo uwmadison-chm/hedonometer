@@ -7,13 +7,15 @@ class ScheduledQuestion < ActiveRecord::Base
 
   validates :scheduled_at, presence: true
 
-  scope :completed, -> { where(aasm_state: ['delivered', 'aged_out'])}
+  scope :completed, -> {
+    where(aasm_state: ['delivered', 'aged_out', 'participant_inactive'])}
 
   include AASM
   aasm do
     state :scheduled, initial: true
     state :delivered, before_enter: :set_delivered_at
     state :aged_out,  before_enter: :log_aging_out
+    state :participant_inactive, before_enter: :log_participant_inactive
 
     event :mark_delivered do
       transitions from: :scheduled, to: :delivered
@@ -22,6 +24,10 @@ class ScheduledQuestion < ActiveRecord::Base
     event :mark_aged_out do
       transitions from: :scheduled, to: :aged_out
     end
+
+    event :mark_participant_inactive do
+      transitions from: :scheduled, to: :participant_inactive
+    end
   end
 
   def set_delivered_at
@@ -29,11 +35,19 @@ class ScheduledQuestion < ActiveRecord::Base
   end
 
   def completed?
-    delivered? or aged_out?
+    delivered? or aged_out? or participant_inactive?
   end
 
   def log_aging_out
     logger.warn "Aging out #{self.to_s}"
+  end
+
+  def log_participant_inactive
+    logger.warn "Participant inactive for #{self.to_s}"
+  end
+
+  def active_participant?
+    self.schedule_day.participant.active?
   end
 
   def deliver_and_save_if_possible!(message)
@@ -43,6 +57,8 @@ class ScheduledQuestion < ActiveRecord::Base
     end
     if too_old_to_deliver?
       self.mark_aged_out
+    elsif not self.schedule_day.participant.active?
+      self.mark_participant_inactive
     end
     save!
   end
@@ -56,7 +72,7 @@ class ScheduledQuestion < ActiveRecord::Base
   end
 
   def can_be_delivered_now?
-    undelivered? and delivery_due? and not too_old_to_deliver?
+    undelivered? and delivery_due? and not too_old_to_deliver? and active_participant?
   end
 
   def delivered?
