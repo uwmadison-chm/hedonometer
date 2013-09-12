@@ -4,6 +4,7 @@ class ScheduleDay < ActiveRecord::Base
   belongs_to :participant
   validates :participant, presence: true
   validates :date, presence: true, uniqueness: {scope: :participant_id}
+  before_validation :adjust_day_length_to_match_survey
 
   serialize :time_ranges
 
@@ -37,7 +38,6 @@ class ScheduleDay < ActiveRecord::Base
   end
 
   def time_ranges_string=(str)
-    #TODO move this to a before_save handler
     if str == ""
       self.time_ranges = []
     end
@@ -45,6 +45,9 @@ class ScheduleDay < ActiveRecord::Base
   end
 
   def adjust_day_length_to(length)
+    # Either extends the last time_range to make the total day length
+    # equal to length, or trims the last time_range. Will drop extra time_ranges
+    # entirely, if needed.
     self.time_ranges = time_ranges.take_while {|tr|
       (length > 0).tap do |take|
         if take
@@ -61,6 +64,14 @@ class ScheduleDay < ActiveRecord::Base
 
   def survey
     self.participant.survey
+  end
+
+  def adjust_day_length_to_match_survey
+    adjust_day_length_to(survey.day_length)
+  end
+
+  def day_length
+    time_ranges.map {|r| r.duration}.reduce(:+)
   end
 
   def completed_question_count

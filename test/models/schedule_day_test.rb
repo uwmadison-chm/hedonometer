@@ -57,6 +57,13 @@ class ScheduleDayTest < ActiveSupport::TestCase
     assert_equal 15.minutes, @sd.time_ranges.last.duration
   end
 
+  test "adjusting day length to survey" do
+    survey = @sd.survey
+    @sd.adjust_day_length_to(5.minutes)
+    @sd.adjust_day_length_to_match_survey
+    assert_equal survey.day_length, @sd.day_length
+  end
+
   test "has time for another question with deliveries" do
     survey = @sd.survey
     t1 = Time.now
