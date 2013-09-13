@@ -33,7 +33,7 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "building schedule works" do
     p = participants(:ppt2)
-    p.build_schedule_days
+    p.build_schedule_days(Date.today, 9.hours)
     assert_equal p.survey.sampled_days, p.schedule_days.length
   end
 
@@ -44,6 +44,29 @@ class ParticipantTest < ActiveSupport::TestCase
     refute_nil unused
     assert_equal (p.survey.survey_questions.count - 1), unused.length
     refute_includes p.question_chooser_state[:unused_ids], sq.id
+  end
+
+  test "creating schedule days" do
+    s = surveys(:test)
+    p = s.participants.create(
+      phone_number: '608-555-9999', schedule_start_date: Date.today,
+      schedule_time_after_midnight: 9.hours)
+    p.rebuild_schedule_days!
+    assert_equal s.sampled_days, p.schedule_days.length
+    assert_equal p.schedule_days.first.date, Date.today
+  end
+
+  test "schedule days get rescheduled" do
+    p = participants(:ppt2)
+    p.schedule_start_date = Date.today
+    p.schedule_time_after_midnight = 9.hours
+    p.rebuild_schedule_days!
+    assert_equal p.schedule_days.first.date, Date.today
+    p.schedule_start_date = Date.tomorrow
+    p.rebuild_schedule_days!
+    p.reload
+    assert_equal p.survey.sampled_days, p.schedule_days.length
+    assert_equal p.schedule_days.first.date, Date.tomorrow
   end
 
   test "first potential schedule day" do

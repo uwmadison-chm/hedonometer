@@ -16,7 +16,7 @@ class Participant < ActiveRecord::Base
   validates :time_zone, presence: true
   before_validation :copy_time_zone_from_survey, on: :create
 
-  has_many :schedule_days, -> { order('date') } do
+  has_many :schedule_days, {dependent: :destroy}, -> { order('date') } do
     def potential_run_targets
       where(aasm_state: ['waiting', 'running']).order('date')
     end
@@ -38,19 +38,21 @@ class Participant < ActiveRecord::Base
 
   serialize :question_chooser_state
 
+  # Used to create schedule_days and stuff.
+  attr_accessor :schedule_start_date
+  attr_accessor :schedule_time_after_midnight
+
   def schedule_empty?
     self.schedule_days.empty?
   end
 
-  def build_schedule_days
-    start_date = Time.zone.now.to_date
+  def build_schedule_days(start_date, time_after_midnight)
     self.survey.sampled_days.times do |t|
-      sample_date = start_date + (t + 1).days
-      # TODO replace 9.hours with a survey-level preference
-      first = sample_date + 9.hours
-      last = first + survey.day_length_minutes.minutes
-      time_range = TimeRange.new(first, last)
-      self.schedule_days.build(date: sample_date, time_ranges: [time_range])
+      sample_date = start_date + t.days
+      first = sample_date + time_after_midnight
+      last = first + survey.day_length
+      self.schedule_days.build(
+        date: sample_date, time_ranges: [TimeRange.new(first, last)])
     end
   end
 
@@ -92,6 +94,26 @@ class Participant < ActiveRecord::Base
     q.save!
     self.save! # Because we've updated our chooser state
     q
+  end
+
+  def has_delivered_a_question?
+    sd = self.schedule_days.first
+    sd and sd.scheduled_questions.delivered.first
+  end
+
+  def rebuild_schedule_days!
+    self.schedule_days.destroy_all
+    self.build_schedule_days(self.schedule_start_date, self.schedule_time_after_midnight)
+    self.schedule_days.each do |sd|
+      sd.save
+    end
+  end
+
+  def can_schedule_days?
+    # We can do this if we have a start date and time and we haven't yet
+    # delvered any scheduled_questions
+    self.schedule_start_date and
+      self.schedule_time_after_midnight and not has_delivered_a_question?
   end
 
   class << self

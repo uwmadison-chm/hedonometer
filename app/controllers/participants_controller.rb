@@ -7,7 +7,11 @@ class ParticipantsController < SurveyedController
 
   def edit
     @participant = current_participant
-    @participant.build_schedule_days if @participant.schedule_empty?
+    if @participant.schedule_empty?
+      @participant.schedule_start_date = Date.tomorrow
+      @participant.schedule_time_after_midnight = 9.hours
+      @participant.rebuild_schedule_days!
+    end
   end
 
   def update
@@ -43,7 +47,7 @@ class ParticipantsController < SurveyedController
   def create_participant_params
     params.
     require(:participant).
-    permit(:phone_number)
+    permit(:phone_number, :schedule_start_date, :schedule_time_after_midnight)
   end
 
   def update_participant_params
