@@ -56,6 +56,20 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal p.schedule_days.first.date, Date.today
   end
 
+  test "can_schedule_days? method" do
+    p = participants(:ppt1)
+    refute p.can_schedule_days?
+    p.schedule_start_date = Date.today
+    refute p.can_schedule_days?
+    p.schedule_time_after_midnight = 9.hours
+    assert p.can_schedule_days?
+    p.schedule_days.first.scheduled_questions.create!(
+      survey_question: survey_questions(:test_what),
+      scheduled_at: Time.now,
+      aasm_state: 'delivered')
+    refute p.can_schedule_days?
+  end
+
   test "schedule days get rescheduled" do
     p = participants(:ppt2)
     p.schedule_start_date = Date.today
