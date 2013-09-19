@@ -55,3 +55,5 @@ Each message in the day will be scheuled at `start_time + random_range/2 + ((sam
 Any participant-added gaps will simply push all scheduled messages into the future by the length of the gap. This way, no gaming of the system is possible; there's no way to force a message to come at a given time.
 
 _TODO_ add graphic illustrating this. Also fix terminology.
+
+[![Stories in Ready](https://badge.waffle.io/njvack/hedonometer.png)](http://waffle.io/njvack/hedonometer)
