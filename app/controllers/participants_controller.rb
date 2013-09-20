@@ -33,9 +33,9 @@ class ParticipantsController < SurveyedController
   def create
     # Will primarily be called by other apps via API
     @participant = current_survey.participants.build create_participant_params
-    # All solutions are hacks; move to survey
-    @participant.time_zone = "Central Time (US & Canada)"
     if @participant.save
+      # Timezone is copied from survey
+      Time.zone = @participant.time_zone
       if @participant.can_schedule_days?
         @participant.rebuild_schedule_days!
       end
