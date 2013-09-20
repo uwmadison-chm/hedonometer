@@ -74,6 +74,15 @@ class ParticipantsControllerTest < ActionController::TestCase
     assert_response 409
   end
 
+  test "creating participants can send a welcome message" do
+    twilio_mock(TwilioResponses.create_sms)
+    params = params_for_create
+    params[:send_welcome_message] = 1
+    post :create, params
+    assert_response :success
+    assert_requested :post, /.*@api.twilio.com/
+  end
+
   test "edit requires login" do
     get :edit, params_for_edit(surveys(:test))
     assert_redirected_to survey_login_path()

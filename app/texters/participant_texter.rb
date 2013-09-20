@@ -1,7 +1,13 @@
 class ParticipantTexter < ActionTexter::Base
   class << self
     def login_code_message(participant)
-      message_for_participant(participant, "Your login code is #{participant.login_code}. Quit at any time by texting STOP.")
+      message_for_participant(participant,
+        "Your login code is #{participant.login_code}. Quit at any time by texting STOP.")
+    end
+
+    def welcome_message(participant)
+      message_for_participant(participant,
+        "Welcome! Your login code is #{participant.login_code}. Quit at any time by texting STOP.")
     end
 
     def deliver_scheduled_question!(scheduled_question_id)

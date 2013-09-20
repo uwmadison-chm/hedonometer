@@ -39,6 +39,7 @@ class ParticipantsController < SurveyedController
       if @participant.can_schedule_days?
         @participant.rebuild_schedule_days!
       end
+      send_welcome_message_if_requested!
       render text: "Created", status: :created
     else
       render text: @participant.errors.to_json, status: :conflict
@@ -46,6 +47,12 @@ class ParticipantsController < SurveyedController
   end
 
   protected
+
+  def send_welcome_message_if_requested!
+    return unless params[:send_welcome_message].present?
+    message = ParticipantTexter.welcome_message(@participant)
+    message.deliver_and_save!
+  end
 
   def create_participant_params
     params.
