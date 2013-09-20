@@ -101,6 +101,14 @@ class Participant < ActiveRecord::Base
     sd and sd.scheduled_questions.delivered.first
   end
 
+  def schedule_start_date=(d)
+    @schedule_start_date = Date.parse(d.to_s)
+  end
+
+  def schedule_time_after_midnight=(sec)
+    @schedule_time_after_midnight = sec.to_i.seconds
+  end
+
   def rebuild_schedule_days!
     self.schedule_days.destroy_all
     self.build_schedule_days(self.schedule_start_date, self.schedule_time_after_midnight)

@@ -50,7 +50,7 @@ class ParticipantTest < ActiveSupport::TestCase
     s = surveys(:test)
     p = s.participants.create(
       phone_number: '608-555-9999', schedule_start_date: Date.today,
-      schedule_time_after_midnight: 9.hours)
+      schedule_time_after_midnight: 9.hours.to_i)
     p.rebuild_schedule_days!
     assert_equal s.sampled_days, p.schedule_days.length
     assert_equal p.schedule_days.first.date, Date.today
