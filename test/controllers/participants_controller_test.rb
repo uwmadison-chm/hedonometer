@@ -52,7 +52,19 @@ class ParticipantsControllerTest < ActionController::TestCase
     post :create, params_for_create
     assert_response :success
     assert_not_nil assigns(:participant)
+    p = assigns(:participant)
+    assert_empty p.schedule_days
     refute assigns(:participant).new_record?, assigns(:participant).errors.full_messages
+  end
+
+  test "participant create with schedule days" do
+    params = params_for_create
+    params[:participant][:schedule_start_date] = Date.today.to_s
+    params[:participant][:schedule_time_after_midnight] = 9.hours.to_i
+    post :create, params
+    assert_response :success
+    p = assigns(:participant)
+    refute_empty p.schedule_days
   end
 
   test "participant should not create duplicate" do

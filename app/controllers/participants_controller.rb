@@ -36,6 +36,9 @@ class ParticipantsController < SurveyedController
     # All solutions are hacks; move to survey
     @participant.time_zone = "Central Time (US & Canada)"
     if @participant.save
+      if @participant.can_schedule_days?
+        @participant.rebuild_schedule_days!
+      end
       render text: "Created", status: :created
     else
       render text: @participant.errors.to_json, status: :conflict
