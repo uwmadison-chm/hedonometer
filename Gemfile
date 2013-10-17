@@ -19,7 +19,7 @@ gem 'aasm', '~> 3.0.20'
 
 
 group :development do
-  gem 'capistrano'
+  gem 'capistrano', '~> 2.15.5'
   gem 'mysql2', '~> 0.3.11'
 
   # Testing stuff
