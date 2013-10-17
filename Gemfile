@@ -5,15 +5,15 @@ gem 'haml', '~> 4.0.0'
 
 gem 'twilio-ruby', '~> 3.9.0'
 
-gem 'jquery-rails'
+gem 'jquery-rails', '3.0.4'
 gem 'json', '~> 1.7.7'
 
 # To use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.0.0', require: 'bcrypt'
 
-gem 'daemons'
-gem 'delayed_job'
-gem 'delayed_job_active_record'
+gem 'daemons', '~> 1.1.9'
+gem 'delayed_job', '~> 4.0.0'
+gem 'delayed_job_active_record', '~> 4.0.0'
 
 gem 'aasm', '~> 3.0.20'
 
@@ -26,12 +26,12 @@ group :development do
   gem 'rb-inotify', require: false
   gem 'rb-fsevent', require: false
   gem 'rb-fchange', require: false
-  gem 'guard'
-  gem 'guard-minitest', git: 'git://github.com/guard/guard-minitest.git'
-  gem 'spring', git: 'git://github.com/jonleighton/spring.git'
+  gem 'guard', '~> 2.1.0'
+  gem 'guard-minitest', '~> 2.0.0'
+  # gem 'spring', git: 'git://github.com/jonleighton/spring.git'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
-  gem 'pry-debugger'
+  gem 'pry-debugger', '~> 0.2.2'
   gem 'uglifier', '>= 1.0.3'
   gem 'webmock', '~> 1.13.0'
 
