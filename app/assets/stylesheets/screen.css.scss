@@ -34,6 +34,16 @@ form {
     .col2 {
       @include span-columns(8 omega,12);
     }
+
+    span.status {
+      padding-left: 1em;
+    }
+    span.success {
+      color: #0F8A17;
+    }
+    span.failure {
+      color: #A6030E;
+    }
   }
 }
 

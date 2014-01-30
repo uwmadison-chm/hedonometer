@@ -14,7 +14,7 @@ class SessionController < SurveyedController
 
   def create
     if params[:send_code]
-      send_login_code and return
+      return send_login_code
     end
     @participant = current_survey.participants.authenticate(
       login_params[:phone_number],
@@ -30,12 +30,15 @@ class SessionController < SurveyedController
   def send_login_code
     number = PhoneNumber.new(params[:participant][:phone_number])
     participant = current_survey.participants.where(phone_number: number.to_e164).first
-    status = participant ? :ok : :not_found
     if participant
       message = ParticipantTexter.login_code_message(participant)
       message.deliver_and_save!
+      redirect_to survey_login_path current_survey, {participant: {phone_number: number.to_s}}
+    else
+      @participant = Participant.new(login_form_params)
+      render action: 'new', status: :not_found
+      return false
     end
-    redirect_to survey_login_path current_survey, {participant: {phone_number: number.to_s}}
   end
 
 
