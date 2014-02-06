@@ -77,7 +77,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   test "creating participants can send a welcome message" do
     twilio_mock(TwilioResponses.create_sms)
     params = params_for_create
-    params[:send_welcome_message] = 1
+    params[:participant][:send_welcome_message] = 1
     post :create, params
     assert_response :success
     assert_requested :post, /.*@api.twilio.com/

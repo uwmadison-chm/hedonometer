@@ -38,8 +38,15 @@ class ParticipantsController < SurveyedController
       Time.zone = @participant.time_zone
       if @participant.can_schedule_days?
         @participant.rebuild_schedule_days!
+        q = @participant.schedule_survey_question_and_save!
+        if q
+          logger.debug("Scheduled #{q.inspect}")
+          ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+        else
+          logger.warn("Could not schedule a question for #{@participant}")
+        end
       end
-      send_welcome_message_if_requested!
+      send_welcome_message_if_requested!(@participant)
       render text: "Created", status: :created
     else
       render text: @participant.errors.to_json, status: :conflict
@@ -48,8 +55,8 @@ class ParticipantsController < SurveyedController
 
   protected
 
-  def send_welcome_message_if_requested!
-    return unless params[:send_welcome_message].present?
+  def send_welcome_message_if_requested!(participant)
+    return unless participant.send_welcome_message
     message = ParticipantTexter.welcome_message(@participant)
     message.deliver_and_save!
   end
@@ -57,7 +64,7 @@ class ParticipantsController < SurveyedController
   def create_participant_params
     params.
     require(:participant).
-    permit(:phone_number, :schedule_start_date, :schedule_time_after_midnight)
+    permit(:phone_number, :schedule_start_date, :schedule_time_after_midnight, :send_welcome_message)
   end
 
   def update_participant_params

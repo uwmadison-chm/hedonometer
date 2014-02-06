@@ -41,6 +41,7 @@ class Participant < ActiveRecord::Base
   # Used to create schedule_days and stuff.
   attr_accessor :schedule_start_date
   attr_accessor :schedule_time_after_midnight
+  attr_accessor :send_welcome_message
 
   def schedule_empty?
     self.schedule_days.empty?
