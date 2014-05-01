@@ -28,9 +28,6 @@ group :development do
   gem 'rb-fchange', require: false
   gem 'guard', '~> 2.1.0'
   gem 'guard-minitest', '~> 2.0.0'
-  # gem 'spring', git: 'git://github.com/jonleighton/spring.git'
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
   gem 'pry-debugger', '~> 0.2.2'
   gem 'uglifier', '>= 1.0.3'
   gem 'webmock', '~> 1.13.0'
@@ -39,11 +36,10 @@ group :development do
   gem 'sass', '~> 3.2.8'
   gem 'sass-rails', '~> 4.0.0'
   gem 'compass', '~> 0.12.2'
-  gem 'compass-rails', '~> 2.0.alpha.0'
+  gem 'compass-rails', '1.1.7'
 
   gem 'susy', '~> 1.0.5'
   gem 'coffee-rails', '~> 4.0.0'
-
 end
 
 
