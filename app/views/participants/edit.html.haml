@@ -1,6 +1,6 @@
 #logout= link_to "Log out", survey_logout_path(current_survey)
 %h3 Please set your availability for text messaging.
-%p Enter your availability for each day in the form: <code>8:00 AM - 12:00 PM, 3:00 PM - 9:00 PM</code>.
+%p Enter your availability for each day in the form: <code>9:00 AM - 5:15 PM</code>. Your daily schedule can have breaks; separate blocks of time with commas — for example: <code>9:00 AM - 12:00 PM, 2:00 PM - 7:15 PM</code>.
 %p Your availability for each day must add up to <strong>#{day_length_string(@participant.survey.day_length_minutes)}</strong>. If it is longer or shorter than that, it will be automatically adjusted.
 
 %p You may return to this page at any time to update your availability.
