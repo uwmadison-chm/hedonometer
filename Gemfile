@@ -21,6 +21,7 @@ gem 'aasm', '~> 3.0.20'
 group :development do
   gem 'capistrano', '~> 2.15.5'
   gem 'mysql2', '~> 0.3.11'
+  gem 'ffi', '<1.9.3'
 
   # Testing stuff
   gem 'rb-inotify', require: false
