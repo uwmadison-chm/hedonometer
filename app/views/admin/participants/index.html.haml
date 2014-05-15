@@ -1,12 +1,14 @@
 = link_to "Back", admin_root_path
 
-= form_for [:admin, current_survey, current_survey.participants.build] do |f|
-  = f.text_field :phone_number
-  = submit_tag "Save"
-
 %table
   %tr
     %th Phone number
-  - current_survey.participants.each do |ppt|
+    %th Active
+    %th Login code
+    %th
+  - current_survey.participants.each do |participant|
     %tr
-      %td= ppt.phone_number.humanize
+      %td= participant.phone_number.humanize
+      %td= participant.active?
+      %td= participant.login_code
+      %td= link_to "View details", admin_survey_participant_path(current_survey, participant)
