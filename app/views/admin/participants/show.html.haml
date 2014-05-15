@@ -1,5 +1,20 @@
 = link_to "Back to participant list", admin_survey_participants_path(current_survey)
 
+%h3 Schedule
 %ol.schedule
   - current_participant.schedule_days.each do |schedule_day|
     %li #{schedule_day.date}: #{schedule_day.time_ranges_string}
+
+%h3 Text messages
+%table.messages
+  %tr
+    %th Delivered at
+    %th From
+    %th To
+    %th Message
+  - current_participant.text_messages.each do |message|
+    %tr
+      %td= message.delivered_at
+      %td= message.from
+      %td= message.to
+      %td= message.message

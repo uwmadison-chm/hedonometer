@@ -36,6 +36,11 @@ class Participant < ActiveRecord::Base
   end
   accepts_nested_attributes_for :schedule_days
 
+  has_many :text_messages, ->(p) {
+    where('`from`=? or `to`=?', p.phone_number.to_s, p.phone_number.to_s)
+    .order('delivered_at DESC')},
+    through: :survey
+
   serialize :question_chooser_state
 
   # Used to create schedule_days and stuff.
