@@ -46,7 +46,48 @@ class Participant < ActiveRecord::Base
   # Used to create schedule_days and stuff.
   attr_accessor :schedule_start_date
   attr_accessor :schedule_time_after_midnight
+  attr_accessor :schedule_human_time_after_midnight
   attr_accessor :send_welcome_message
+
+  def schedule_human_time_after_midnight=(time_string)
+    return if time_string.blank?
+    @schedule_human_time_after_midnight = time_string
+    logger.debug("Parsing time string #{time_string}")
+    begin
+      self.schedule_time_after_midnight = Time.parse(time_string).
+        seconds_since_midnight
+      logger.debug("Setting schedule_time_after_midnight to #{self.schedule_time_after_midnight}")
+    rescue ArgumentError => e
+      logger.debug(e.to_s)
+    end
+  end
+
+  def build_schedule_and_schedule_first_question_if_possible!
+    if self.can_schedule_days?
+      Time.zone = self.time_zone
+      logger.debug("Setting schedule, generating first question!")
+      self.rebuild_schedule_days!
+      q = self.schedule_survey_question_and_save!
+      if q
+        logger.debug("Scheduled #{q.inspect}")
+        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+      else
+        logger.warn("Could not schedule a question for #{@participant}")
+      end
+    else
+      logger.debug("Not setting schedule.")
+    end
+  end
+
+  def send_welcome_message_if_requested!
+    if self.send_welcome_message
+      logger.debug("Sending welcome message: #{self.send_welcome_message}")
+      message = ParticipantTexter.welcome_message(self)
+      message.deliver_and_save!
+    else
+      logger.debug("Not sending welcome message: #{self.send_welcome_message}")
+    end
+  end
 
   def schedule_empty?
     self.schedule_days.empty?
@@ -66,7 +107,7 @@ class Participant < ActiveRecord::Base
     chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
     chooser.choose.tap {
       self.question_chooser_state = chooser.serialize_state
-      logger.debug("New question chooser state: chooser.serialize_state")
+      logger.debug("New question chooser state: #{self.question_chooser_state}")
     }
   end
 
@@ -108,7 +149,7 @@ class Participant < ActiveRecord::Base
   end
 
   def schedule_start_date=(d)
-    @schedule_start_date = Date.parse(d.to_s)
+    @schedule_start_date = Date.parse(d.to_s) rescue nil
   end
 
   def schedule_time_after_midnight=(sec)
@@ -124,6 +165,10 @@ class Participant < ActiveRecord::Base
   end
 
   def can_schedule_days?
+    logger.debug("schedule_start_date: #{schedule_start_date}")
+    logger.debug("schedule_time_after_midnight: #{schedule_time_after_midnight}")
+    logger.debug("has_delivered_a_question?: #{has_delivered_a_question?}")
+
     # We can do this if we have a start date and time and we haven't yet
     # delvered any scheduled_questions
     self.schedule_start_date and
