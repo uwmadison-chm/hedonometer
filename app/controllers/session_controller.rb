@@ -4,7 +4,6 @@ class SessionController < SurveyedController
   skip_before_action :require_participant_login!
 
   def new
-    reset_session
     @participant = Participant.new(login_form_params)
   end
 
@@ -25,6 +24,7 @@ class SessionController < SurveyedController
       redirect_to survey_path(current_survey) and return
     end
     # login failed, fall through
+    reset_session
     render action: 'new'
   end
 
@@ -36,6 +36,7 @@ class SessionController < SurveyedController
       message.deliver_and_save!
       redirect_to survey_login_path current_survey, {participant: {phone_number: number.to_s}}
     else
+      reset_session
       @participant = Participant.new(login_form_params)
       render action: 'new', status: :not_found
       return false
