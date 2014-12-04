@@ -4,6 +4,7 @@ class SessionController < SurveyedController
   skip_before_action :require_participant_login!
 
   def new
+    reset_session
     @participant = Participant.new(login_form_params)
   end
 
