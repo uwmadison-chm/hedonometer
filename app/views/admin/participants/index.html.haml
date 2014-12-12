@@ -1,15 +1,14 @@
 = link_to "Back", admin_root_path
-
 %h3 Add a participant
 = form_for current_participant, url: admin_survey_participants_path(current_survey), builder: TwoColumnFormBuilder  do |f|
-  = f.text_field :phone_number
+  = f.text_field :phone_number, autofocus: true, :placeholder => "608-555-1212"
   = f.check_box :send_welcome_message, label: "Send welcome text"
   .line
     .col1 &nbsp;
     .col2
       %h5 Optional fields
-  = f.text_field :schedule_start_date, label: "Start date"
-  = f.text_field :schedule_human_time_after_midnight, label: "Start time (eg: 9 am)"
+  = f.date_field :schedule_start_date, label: "Start date", placeholder: "yyyy-mm-dd"
+  = f.text_field :schedule_human_time_after_midnight, label: "Start time", placeholder: "9am"
   = f.submit "Create participant"
 
 
