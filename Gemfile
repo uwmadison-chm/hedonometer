@@ -17,7 +17,6 @@ gem 'delayed_job_active_record', '~> 4.0.0'
 
 gem 'aasm', '~> 3.0.20'
 
-
 group :development do
   gem 'capistrano', '~> 2.15.5'
   gem 'mysql2', '~> 0.3.11'
