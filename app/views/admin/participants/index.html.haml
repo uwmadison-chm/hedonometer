@@ -9,6 +9,7 @@
       %h5 Optional fields
   = f.date_field :schedule_start_date, label: "Start date", placeholder: "yyyy-mm-dd"
   = f.text_field :schedule_human_time_after_midnight, label: "Start time", placeholder: "9am"
+  = f.text_field :external_key, label: "Participant key", placeholder: "2000-b"
   = f.submit "Create participant"
 
 
@@ -17,10 +18,12 @@
     %th Phone number
     %th Active
     %th Login code
-    %th
+    %th Participant key
+    %th Details
   - current_survey.participants.each do |participant|
     %tr
       %td= participant.phone_number.humanize
       %td= participant.active?
       %td= participant.login_code
+      %td= participant.external_key
       %td= link_to "View details", admin_survey_participant_path(current_survey, participant)

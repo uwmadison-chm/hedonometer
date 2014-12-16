@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130906213306) do
+ActiveRecord::Schema.define(version: 20141216162025) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20130906213306) do
     t.datetime "updated_at"
     t.string   "time_zone"
     t.text     "question_chooser_state"
+    t.string   "external_key"
   end
 
   create_table "schedule_days", force: true do |t|
