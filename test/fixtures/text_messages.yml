@@ -1,0 +1,13 @@
+ppt1_outgoing_1:
+  type: OutgoingTextMessage
+  survey: test
+  from: "+16085559990"
+  to: "+16085551212"
+  message: Are you there?
+
+ppt1_incoming_1:
+  type: IncomingTextMessage
+  survey: test
+  from: "+16085551212"
+  to: "+16085559990"
+  message: I sure am.

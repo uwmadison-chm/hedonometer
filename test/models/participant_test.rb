@@ -144,4 +144,9 @@ class ParticipantTest < ActiveSupport::TestCase
     q = ppt.schedule_survey_question_and_save!
     refute q.new_record?
   end
+
+  test "can find text messages" do
+    all_messages = participants(:ppt1).text_messages
+    assert_equal 2, all_messages.length
+  end
 end
