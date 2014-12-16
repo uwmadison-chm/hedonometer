@@ -1,9 +1,15 @@
+require 'csv'
+
 class Admin::ParticipantsController < AdminController
   def index
     @participant = Participant.new
   end
 
   def show
+    respond_to do |format|
+      format.html {}
+      format.csv { render layout: false }
+    end
   end
 
   def create

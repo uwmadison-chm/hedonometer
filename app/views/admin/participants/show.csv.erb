@@ -1,0 +1,4 @@
+<%= CSV.generate_line ["participant_key", "from", "to", "direction", "time", "message"] -%>
+<%- current_participant.text_messages.each do |m| -%>
+<%= CSV.generate_line([current_participant.external_key, m.from, m.to, m.direction, m.delivered_at, m.message]).html_safe -%>
+<%- end -%>
