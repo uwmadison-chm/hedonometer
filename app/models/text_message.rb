@@ -14,6 +14,14 @@ class TextMessage < ActiveRecord::Base
     'Error'
   end
 
+  def participant
+    nil
+  end
+
+  def participant_external_key
+    participant.external_key if participant
+  end
+
   class DeliveryError < RuntimeError
   end
 end

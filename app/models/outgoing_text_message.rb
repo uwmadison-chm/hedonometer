@@ -11,6 +11,10 @@ class OutgoingTextMessage < TextMessage
     @twilio_message and SUCCESS_STATUSES.include? @twilio_message.status
   end
 
+  def participant
+    survey.participants.find_by_phone_number(self.to.to_s)
+  end
+
   def deliver!
     t = Time.now
     self.scheduled_at ||= t

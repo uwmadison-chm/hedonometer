@@ -6,6 +6,10 @@ class IncomingTextMessage < TextMessage
     'incoming'
   end
 
+  def participant
+    survey.participants.find_by_phone_number(self.from.to_s)
+  end
+
   protected
   def set_delivered_at
     self.delivered_at = Time.now
