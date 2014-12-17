@@ -38,10 +38,4 @@ class SurveyTest < ActiveSupport::TestCase
   test "phone number serialization" do
     assert_kind_of PhoneNumber, surveys(:test).phone_number
   end
-
-  test "will make me some csv" do
-    c = surveys(:test).to_csv
-    refute_nil c
-  end
-
 end

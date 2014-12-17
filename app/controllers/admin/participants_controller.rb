@@ -7,7 +7,7 @@ class Admin::ParticipantsController < AdminController
 
   def show
     respond_to do |format|
-      format.html {}
+      format.html
       format.csv { render layout: false }
     end
   end

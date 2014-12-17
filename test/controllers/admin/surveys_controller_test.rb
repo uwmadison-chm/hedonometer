@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'test_helper'
+require 'csv'
 
 class Admin::SurveysControllerTest < ActionController::TestCase
   def setup
@@ -78,8 +79,10 @@ class Admin::SurveysControllerTest < ActionController::TestCase
 
   test "data downloads" do
     s = surveys(:test)
-    get :download, id: s, format: 'csv'
+    get :show, id: s, format: 'csv'
     assert_response :success
+    lines = CSV.parse(response.body)
+    assert_equal lines.length, (s.text_messages.count + 1)
   end
 
 end

@@ -26,7 +26,6 @@ Hedonometer::Application.routes.draw do
 
     resources :surveys do
       resources :participants
-      get 'download', on: :member
     end
 
 

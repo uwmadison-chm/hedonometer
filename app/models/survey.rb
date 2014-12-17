@@ -30,17 +30,8 @@ class Survey < ActiveRecord::Base
   has_many :incoming_text_messages
   has_many :text_messages
 
-  def to_csv
-    CSV.generate { |csv|
-      csv << ['survey', 'from', 'to', 'direction', 'time', 'message']
-      text_messages.order('created_at').find_each do |m|
-        csv << [name, m.from.humanize, m.to.humanize, m.direction, m.delivered_at, m.message]
-      end
-    }
-  end
-
   def twilio_client
-    cli = Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
+    Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
   end
 
   def day_length_minutes

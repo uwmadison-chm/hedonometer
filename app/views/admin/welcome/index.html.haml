@@ -20,4 +20,4 @@
         %td= survey.active?
         %td false
         %td #{survey.outgoing_text_messages.count} : #{survey.incoming_text_messages.count}
-        %td= link_to "Download data", download_admin_survey_path(survey, format: :csv)
+        %td= link_to "Download data", admin_survey_path(survey, format: :csv)
