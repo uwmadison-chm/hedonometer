@@ -14,7 +14,7 @@ class TextMessageTest < ActiveSupport::TestCase
   end
 
   test "participant_external_key not nil for found ppt" do
-    assert_not_nil text_messages(:test_ppt1_outgoing_1).participant_external_key
+    refute_nil text_messages(:test_ppt1_outgoing_1).participant_external_key
   end
 
   test "participant_external_key nil for missing ppt" do

@@ -29,7 +29,7 @@ class Admin::WelcomeControllerTest < ActionController::TestCase
     admin_logout
     get :index
     assert_response :redirect
-    assert_not_nil session[:destination]
+    refute_nil session[:destination]
   end
 
 end

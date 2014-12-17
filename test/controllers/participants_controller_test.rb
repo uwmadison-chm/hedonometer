@@ -51,7 +51,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   test "participant should create" do
     post :create, params_for_create
     assert_response :success
-    assert_not_nil assigns(:participant)
+    refute_nil assigns(:participant)
     p = assigns(:participant)
     assert_empty p.schedule_days
     refute assigns(:participant).new_record?, assigns(:participant).errors.full_messages

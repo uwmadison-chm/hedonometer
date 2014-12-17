@@ -21,8 +21,8 @@ class AdminTest < ActiveSupport::TestCase
   test "creating a user encrypts password" do
     a = Admin.create(email:'foo@example.com', password:'password')
     assert a.valid?
-    assert_not_nil a.password_salt
-    assert_not_nil a.password_hash
+    refute_nil a.password_salt
+    refute_nil a.password_hash
   end
 
   test "admins must have unique email addresses" do
