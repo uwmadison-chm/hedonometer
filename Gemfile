@@ -43,6 +43,6 @@ end
 
 
 group :production do
-  gem 'sqlite3'
+  gem 'pg', '~> 0.18.1'
   gem 'unicorn'
 end
