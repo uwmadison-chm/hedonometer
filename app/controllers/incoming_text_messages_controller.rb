@@ -13,8 +13,8 @@ class IncomingTextMessagesController < SurveyedController
   def create
     logger.debug "Incoming text message: #{params.inspect}"
     itm = current_survey.incoming_text_messages.create!(
-      to: params[:to],
-      from: params[:from],
+      to_number: params[:to],
+      from_number: params[:from],
       message: params[:body],
       server_response: params)
     method = lookup_route(itm.message)

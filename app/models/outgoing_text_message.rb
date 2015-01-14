@@ -12,7 +12,7 @@ class OutgoingTextMessage < TextMessage
   end
 
   def participant
-    survey.participants.find_by_phone_number(self.to.to_s)
+    survey.participants.find_by_phone_number(self.to_number.to_s)
   end
 
   def deliver!
@@ -20,8 +20,8 @@ class OutgoingTextMessage < TextMessage
     self.scheduled_at ||= t
     client = survey.twilio_client
     @twilio_message = client.account.sms.messages.create({
-      to: self.to,
-      from: self.from,
+      to: self.to_number,
+      from: self.from_number,
       body: self.message
     })
     self.server_response = JSON.parse(client.last_response.body)

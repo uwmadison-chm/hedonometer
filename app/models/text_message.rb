@@ -2,11 +2,11 @@ class TextMessage < ActiveRecord::Base
   belongs_to :survey
   serialize :server_response, JSON
 
-  serialize :from, PhoneNumber
-  serialize :to, PhoneNumber
+  serialize :from_number, PhoneNumber
+  serialize :to_number, PhoneNumber
 
-  validates :from, presence: true
-  validates :to, presence: true
+  validates :from_number, presence: true
+  validates :to_number, presence: true
 
   validates :survey, presence: true
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141216162025) do
+ActiveRecord::Schema.define(version: 20150114165032) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -114,8 +114,8 @@ ActiveRecord::Schema.define(version: 20141216162025) do
   create_table "text_messages", force: true do |t|
     t.integer  "survey_id",       null: false
     t.string   "type",            null: false
-    t.string   "from",            null: false
-    t.string   "to",              null: false
+    t.string   "from_number",     null: false
+    t.string   "to_number",       null: false
     t.string   "message",         null: false
     t.text     "server_response"
     t.datetime "scheduled_at"
@@ -124,8 +124,8 @@ ActiveRecord::Schema.define(version: 20141216162025) do
     t.datetime "updated_at"
   end
 
-  add_index "text_messages", ["survey_id", "from"], name: "index_text_messages_on_survey_id_and_from", using: :btree
-  add_index "text_messages", ["survey_id", "to"], name: "index_text_messages_on_survey_id_and_to", using: :btree
+  add_index "text_messages", ["survey_id", "from_number"], name: "index_text_messages_on_survey_id_and_from_number", using: :btree
+  add_index "text_messages", ["survey_id", "to_number"], name: "index_text_messages_on_survey_id_and_to_number", using: :btree
   add_index "text_messages", ["survey_id", "type"], name: "index_text_messages_on_survey_id_and_type", using: :btree
 
 end

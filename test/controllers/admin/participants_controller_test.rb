@@ -18,6 +18,11 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "show renders" do
+    get :show, survey_id: surveys(:test), id: participants(:ppt1)
+    assert_response :success
+  end
+
   test "show renders as csv" do
     get :show, survey_id: surveys(:test), id: participants(:ppt1),
       format: :csv

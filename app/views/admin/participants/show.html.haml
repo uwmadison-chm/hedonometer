@@ -15,6 +15,6 @@
   - current_participant.text_messages.each do |message|
     %tr
       %td= message.delivered_at
-      %td= message.from
-      %td= message.to
+      %td= message.from_number.humanize
+      %td= message.to_number.humanize
       %td= message.message
