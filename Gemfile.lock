@@ -1,3 +1,11 @@
+GIT
+  remote: git@github.com:panter/delayed_job_active_record.git
+  revision: 111a122cdc4d5cdae027691ef7c68c5a76470df7
+  specs:
+    delayed_job_active_record (4.0.0)
+      activerecord (>= 3.0)
+      delayed_job (>= 3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -58,9 +66,6 @@ GEM
     daemons (1.1.9)
     delayed_job (4.0.4)
       activesupport (>= 3.0, < 4.2)
-    delayed_job_active_record (4.0.2)
-      activerecord (>= 3.0, < 4.2)
-      delayed_job (>= 3.0, < 4.1)
     erubis (2.7.0)
     execjs (2.2.2)
     ffi (1.9.0)
@@ -162,7 +167,7 @@ DEPENDENCIES
   compass-rails (= 1.1.7)
   daemons (~> 1.1.9)
   delayed_job (~> 4.0.0)
-  delayed_job_active_record (~> 4.0.0)
+  delayed_job_active_record!
   ffi (< 1.9.3)
   haml (~> 4.0.0)
   jquery-rails (= 3.0.4)

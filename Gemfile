@@ -13,7 +13,7 @@ gem 'bcrypt-ruby', '~> 3.0.0', require: 'bcrypt'
 
 gem 'daemons', '~> 1.1.9'
 gem 'delayed_job', '~> 4.0.0'
-gem 'delayed_job_active_record', '~> 4.0.0'
+gem 'delayed_job_active_record', :git => 'git@github.com:panter/delayed_job_active_record.git'
 
 gem 'aasm', '~> 3.0.20'
 
