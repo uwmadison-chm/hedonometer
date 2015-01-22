@@ -23,6 +23,10 @@ code { font-family: Consolas, Monaco, monospace; }
   @include susy-grid-background;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 form {
   overflow: auto;
   .line {

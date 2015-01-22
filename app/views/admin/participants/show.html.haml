@@ -14,7 +14,7 @@
     %th Message
   - current_participant.text_messages.each do |message|
     %tr
-      %td= message.delivered_at
-      %td= message.from_number.humanize
-      %td= message.to_number.humanize
+      %td.nowrap= message.delivered_at.in_time_zone(current_survey.time_zone).to_s(:us_time)
+      %td.nowrap= message.from_number.humanize
+      %td.nowrap= message.to_number.humanize
       %td= message.message
