@@ -4,6 +4,7 @@ test_ppt1_outgoing_1:
   from_number: "+16085559990"
   to_number: "+16085551212"
   message: Are you there?
+  delivered_at: "2015-01-22 13:44:51"
 
 test_ppt1_incoming_1:
   type: IncomingTextMessage
@@ -11,6 +12,7 @@ test_ppt1_incoming_1:
   from_number: "+16085551212"
   to_number: "+16085559990"
   message: I sure am.
+  delivered_at: "2015-01-22 13:44:51"
 
 test_unknown_ppt:
   type: IncomingTextMessage
@@ -18,3 +20,4 @@ test_unknown_ppt:
   from_number: "+16085550000"
   to_number: "+16085559990"
   message: You don't know me.
+  delivered_at: "2015-01-22 13:44:51"
