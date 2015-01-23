@@ -46,7 +46,7 @@ class ParticipantsController < SurveyedController
           logger.warn("Could not schedule a question for #{@participant}")
         end
       end
-      send_welcome_message_if_requested!(@participant)
+      @participant.send_welcome_message_if_requested!
       render text: "Created", status: :created
     else
       render text: @participant.errors.to_json, status: :conflict
@@ -54,12 +54,6 @@ class ParticipantsController < SurveyedController
   end
 
   protected
-
-  def send_welcome_message_if_requested!(participant)
-    return unless participant.send_welcome_message
-    message = ParticipantTexter.welcome_message(@participant)
-    message.deliver_and_save!
-  end
 
   def create_participant_params
     params.

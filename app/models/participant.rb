@@ -80,13 +80,17 @@ class Participant < ActiveRecord::Base
   end
 
   def send_welcome_message_if_requested!
-    if self.send_welcome_message
+    if self.send_welcome_message?
       logger.debug("Sending welcome message: #{self.send_welcome_message}")
       message = ParticipantTexter.welcome_message(self)
       message.deliver_and_save!
     else
       logger.debug("Not sending welcome message: #{self.send_welcome_message}")
     end
+  end
+
+  def send_welcome_message?
+    self.send_welcome_message.to_s == "1"
   end
 
   def schedule_empty?

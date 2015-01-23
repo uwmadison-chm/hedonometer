@@ -76,7 +76,7 @@ class ParticipantsControllerTest < ActionController::TestCase
 
   test "creating participants can send a welcome message" do
     params = params_for_create
-    params[:participant][:send_welcome_message] = 1
+    params[:participant][:send_welcome_message] = "1"
     post :create, params
     assert_response :success
     assert_requested :post, /.*@api.twilio.com/
@@ -84,6 +84,7 @@ class ParticipantsControllerTest < ActionController::TestCase
 
   test "creating participants doesn't always send a welcome message" do
     params = params_for_create
+    params[:participant][:send_welcome_message] = "0"
     post :create, params
     assert_response :success
     assert_not_requested :post, /.*@api.twilio.com/
