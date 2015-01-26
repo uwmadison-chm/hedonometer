@@ -23,6 +23,16 @@ code { font-family: Consolas, Monaco, monospace; }
   @include susy-grid-background;
 }
 
+table {
+  margin-top: 1em;
+  font-size: 80%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0 8px;
+}
+
 .nowrap {
   white-space: nowrap;
 }
