@@ -53,7 +53,7 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
       follow_content = options.delete :follow_field_with
       field_content = super(attribute, priority_zones, options) + follow_content
       left_label attribute, field_content, label_content
-    end
+  end
 
   def check_box(attribute, options={})
     label_content = options.delete(:label)
@@ -67,14 +67,18 @@ class TwoColumnFormBuilder < ActionView::Helpers::FormBuilder
     @template.content_tag(:span, error_str, class: "error")
   end
 
-  def submit(value, options = {})
+  def right_content(value, options={})
     @template.content_tag(:div, class: "line") do
 
       @template.content_tag(:div, "&nbsp;", {class: "col1"}, false) +
       @template.content_tag(:div, {class: "col2"}) do
-        @template.submit_tag(value, options)
+        value
       end
 
     end
+  end
+
+  def submit(value, options = {})
+    right_content(@template.submit_tag(value, options))
   end
 end
