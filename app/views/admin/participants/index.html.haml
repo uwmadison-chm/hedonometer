@@ -21,6 +21,7 @@
     %th Participant key
     %th
     %th
+    %th
   - current_survey.participants.each do |participant|
     %tr
       %td= participant.phone_number.humanize
@@ -29,3 +30,4 @@
       %td= participant.external_key
       %td= link_to "View messages", admin_survey_participant_path(current_survey, participant)
       %td= link_to "Download data", admin_survey_participant_path(current_survey, participant, format: :csv)
+      %td= link_to "Edit", edit_admin_survey_participant_path(current_survey, participant)

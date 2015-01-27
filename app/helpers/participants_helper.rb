@@ -10,4 +10,12 @@ module ParticipantsHelper
         end
         "#{pluralize(hours, 'hour')}#{minutes_string}"
     end
+
+    def allow_texting_check_box(form)
+      if form.object.active?
+        form.check_box :active, label: "Allow texts to this participant."
+      else
+        form.right_content "Stopped. To restart, have participant text START to #{form.object.survey.phone_number.humanize}."
+      end
+    end
 end

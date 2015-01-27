@@ -1,0 +1,14 @@
+= link_to "◀ Participant list", admin_survey_participants_path(current_survey)
+
+%h2 Participant #{number_with_external_key(current_participant)}
+
+= form_for [:admin, current_survey, current_participant], builder: TwoColumnFormBuilder do |f|
+  = f.text_field :phone_number, autofocus: true, value: current_participant.phone_number.humanize
+  = f.text_field :external_key, label: "Participant key"
+  = allow_texting_check_box(f)
+
+  = f.submit "Save my settings"
+  - if flash[:save_message]
+    .line
+      .col1 &nbsp;
+      .col2= flash[:save_message]
