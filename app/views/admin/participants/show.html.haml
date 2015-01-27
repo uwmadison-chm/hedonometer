@@ -1,5 +1,5 @@
-= link_to "Back to participant list", admin_survey_participants_path(current_survey)
-
+= link_to "◀ Participant list", admin_survey_participants_path(current_survey)
+%h2 Participant #{number_with_external_key(current_participant)}
 %h3 Schedule
 %ol.schedule
   - current_participant.schedule_days.each do |schedule_day|
@@ -9,12 +9,10 @@
 %table.messages
   %tr
     %th Delivered at
-    %th From
-    %th To
+    %th Direction
     %th Message
   - current_participant.text_messages.each do |message|
     %tr
       %td.nowrap= message.delivered_at.in_time_zone(current_survey.time_zone).to_s(:us_time)
-      %td.nowrap= message.from_number.humanize
-      %td.nowrap= message.to_number.humanize
+      %td.nowrap= message.direction
       %td= message.message

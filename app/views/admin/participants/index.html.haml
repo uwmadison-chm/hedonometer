@@ -19,13 +19,13 @@
     %th Active
     %th Login code
     %th Participant key
-    %th Details
-    %th Download
+    %th
+    %th
   - current_survey.participants.each do |participant|
     %tr
       %td= participant.phone_number.humanize
       %td= participant.active?
       %td= participant.login_code
       %td= participant.external_key
-      %td= link_to "View details", admin_survey_participant_path(current_survey, participant)
+      %td= link_to "View messages", admin_survey_participant_path(current_survey, participant)
       %td= link_to "Download data", admin_survey_participant_path(current_survey, participant, format: :csv)
