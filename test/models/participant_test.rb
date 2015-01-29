@@ -2,6 +2,15 @@
 require 'test_helper'
 
 class ParticipantTest < ActiveSupport::TestCase
+
+  def create_params
+    {
+      phone_number: '608-555-9999',
+      schedule_start_date: '2014-01-01',
+      schedule_time_after_midnight: 0
+    }
+  end
+
   test "participants get their time zone copied" do
     p = surveys(:test).participants.build(phone_number: '1')
     p.valid?
@@ -9,14 +18,40 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal surveys(:test).time_zone, p.time_zone
   end
 
+  test "participants need schedule data at creation time" do
+    p = surveys(:test).participants.build(phone_number: '1')
+    refute p.valid?, "Should not be valid!"
+    refute_empty p.errors[:schedule_start_date], "No error on schedule_start_date"
+    refute_empty p.errors[:schedule_time_after_midnight], "No error on schedule_time_after_midnight"
+    p.schedule_start_date = '2014-01-01'
+    p.schedule_time_after_midnight = 0
+    assert p.valid?
+  end
+
+  test "schedule_human_time_after_midnight sets schedule_start_date" do
+    p = Participant.new
+    p.schedule_human_time_after_midnight = "8:00"
+    assert_equal p.schedule_time_after_midnight, 8*60*60 # It's in seconds
+  end
+
+  test "participants need schedule data if updating with requests_new_schedule" do
+    p = participants(:ppt1)
+    p.requests_new_schedule = true
+    refute p.valid?
+    refute_empty p.errors[:schedule_start_date], "No error on schedule_start_date"
+    refute_empty p.errors[:schedule_time_after_midnight], "No error on schedule_time_after_midnight"
+    p.requests_new_schedule = false
+    assert p.valid?
+  end
+
   test "participants are generated with login codes" do
-    p = surveys(:test).participants.create(phone_number: '1')
+    p = surveys(:test).participants.create(create_params)
     refute p.new_record?, p.errors.full_messages
     assert_equal p.login_code.length, Participant::LOGIN_CODE_LENGTH
   end
 
   test "phone numbers get serialized" do
-    p = surveys(:test).participants.create(phone_number: '608-555-9999')
+    p = surveys(:test).participants.create(create_params)
     assert_equal PhoneNumber, p.phone_number.class
   end
 

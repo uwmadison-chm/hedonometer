@@ -14,15 +14,20 @@ class ParticipantsControllerTest < ActionController::TestCase
 
   def params_for_create
     {
-      :participant => {:phone_number => '(608) 555-9999'},
-      :survey_id => surveys(:test)
+      participant: {
+        phone_number: '(608) 555-9999',
+        schedule_start_date: '2014-01-01',
+        schedule_time_after_midnight: '8:00'
+
+      },
+      survey_id: surveys(:test)
     }
   end
 
   def params_for_find
     {
-      :participant => {:phone_number => '(608) 555-1212'},
-      :survey_id => surveys(:test)
+      participant: {phone_number: '(608) 555-1212'},
+      survey_id: surveys(:test)
     }
   end
 
@@ -52,8 +57,6 @@ class ParticipantsControllerTest < ActionController::TestCase
     post :create, params_for_create
     assert_response :success
     refute_nil assigns(:participant)
-    p = assigns(:participant)
-    assert_empty p.schedule_days
     refute assigns(:participant).new_record?, assigns(:participant).errors.full_messages
   end
 

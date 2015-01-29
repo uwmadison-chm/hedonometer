@@ -16,6 +16,9 @@ class Participant < ActiveRecord::Base
   validates :time_zone, presence: true
   before_validation :copy_time_zone_from_survey, on: :create
 
+  before_validation :set_requests_new_schedule, on: :create
+  validate :valid_schedule_start, if: :requests_new_schedule?
+
   has_many :schedule_days, {dependent: :destroy}, -> { order('date') } do
     def potential_run_targets
       where(aasm_state: ['waiting', 'running']).order('date')
@@ -47,7 +50,16 @@ class Participant < ActiveRecord::Base
   attr_accessor :schedule_start_date
   attr_accessor :schedule_time_after_midnight
   attr_accessor :schedule_human_time_after_midnight
+  attr_accessor :requests_new_schedule
   attr_accessor :send_welcome_message
+
+  def set_requests_new_schedule
+    @requests_new_schedule = true
+  end
+
+  def requests_new_schedule?
+    @requests_new_schedule
+  end
 
   def schedule_human_time_after_midnight=(time_string)
     return if time_string.blank?
@@ -193,5 +205,10 @@ class Participant < ActiveRecord::Base
 
    def copy_time_zone_from_survey
      self.time_zone = survey.time_zone
+   end
+
+   def valid_schedule_start
+    errors.add(:schedule_start_date, "must be a valid date") if schedule_start_date.nil?
+    errors.add(:schedule_time_after_midnight, "must be a valid time") if schedule_time_after_midnight.nil?
    end
 end
