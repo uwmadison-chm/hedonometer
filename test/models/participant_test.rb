@@ -28,6 +28,12 @@ class ParticipantTest < ActiveSupport::TestCase
     assert p.valid?
   end
 
+  test "creating a participant creates a schedule and schedules a message" do
+    p = surveys(:test).participants.create(create_params)
+    refute_empty p.schedule_days
+    refute_empty p.schedule_days.first.scheduled_questions
+  end
+
   test "schedule_human_time_after_midnight sets schedule_start_date" do
     p = Participant.new
     p.schedule_human_time_after_midnight = "8:00"

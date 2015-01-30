@@ -19,6 +19,8 @@ class Participant < ActiveRecord::Base
   before_validation :set_requests_new_schedule, on: :create
   validate :valid_schedule_start, if: :requests_new_schedule?
 
+  after_save :build_schedule_and_schedule_first_question_if_possible!, if: :requests_new_schedule?
+
   has_many :schedule_days, {dependent: :destroy}, -> { order('date') } do
     def potential_run_targets
       where(aasm_state: ['waiting', 'running']).order('date')
@@ -153,6 +155,7 @@ class Participant < ActiveRecord::Base
   end
 
   def schedule_survey_question_and_save!
+    self.requests_new_schedule = false
     q = schedule_survey_question
     q.save!
     self.save! # Because we've updated our chooser state

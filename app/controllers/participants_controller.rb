@@ -36,16 +36,6 @@ class ParticipantsController < SurveyedController
     if @participant.save
       # Timezone is copied from survey
       Time.zone = @participant.time_zone
-      if @participant.can_schedule_days?
-        @participant.rebuild_schedule_days!
-        q = @participant.schedule_survey_question_and_save!
-        if q
-          logger.debug("Scheduled #{q.inspect}")
-          ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
-        else
-          logger.warn("Could not schedule a question for #{@participant}")
-        end
-      end
       @participant.send_welcome_message_if_requested!
       render text: "Created", status: :created
     else

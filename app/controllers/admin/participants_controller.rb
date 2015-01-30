@@ -27,12 +27,12 @@ class Admin::ParticipantsController < AdminController
   end
 
   def create
-    @participant = current_survey.participants.build(create_params)
-    if @participant.save
-      @participant.build_schedule_and_schedule_first_question_if_possible!
+    @participant = current_survey.participants.create(create_params)
+    if not @participant.new_record?
       @participant.send_welcome_message_if_requested!
       redirect_to admin_survey_participants_path(current_survey)
     else
+      current_survey.reload # Force us to remove the ppt from our collection
       render action: :index
     end
   end
