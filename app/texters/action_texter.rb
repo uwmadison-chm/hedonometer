@@ -1,14 +1,13 @@
 module ActionTexter
   class Base < AbstractController::Base
     class << self
-      def message_for_participant(participant, message)
-        Rails.logger.info("Sending #{message} to #{participant}")
-        survey = participant.survey
-        survey.outgoing_text_messages.build({
-                to_number: participant.phone_number.to_e164,
-                from_number: survey.phone_number.to_e164,
-                message: message
-              })
+
+      def do_replacements(message, replacements)
+        msg_out = message.dup
+        replacements.each do |target, replacement|
+          msg_out.gsub! target, replacement.to_s
+        end
+        msg_out
       end
     end
   end

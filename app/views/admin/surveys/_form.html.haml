@@ -17,8 +17,8 @@
   = f.text_field :twilio_auth_token, size: 50
   = f.text_field :phone_number
   = f.text_area :help_message, label: raw("Help message for participants<br/>HTML OK"), rows: 5, cols: 60, value: survey_help_with_default(survey)
-  =# f.check_box :active
+  = f.text_field :welcome_message, size: 110
   = f.fields_for :survey_questions, survey.survey_questions do |question_form|
-    = question_form.text_field :question_text, size: 110
+    = question_form.text_field :question_text, size: 110, maxlength: 160
 
   = f.submit "Save"

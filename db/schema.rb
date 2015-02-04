@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150114165032) do
+ActiveRecord::Schema.define(version: 20150130174424) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -96,19 +96,20 @@ ActiveRecord::Schema.define(version: 20150114165032) do
   end
 
   create_table "surveys", force: true do |t|
-    t.string   "name",                                         null: false
-    t.integer  "samples_per_day",              default: 4,     null: false
-    t.integer  "mean_minutes_between_samples", default: 60,    null: false
-    t.integer  "sample_minutes_plusminus",     default: 15,    null: false
-    t.boolean  "active",                       default: false, null: false
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.string   "name",                                                                                             null: false
+    t.integer  "samples_per_day",              default: 4,                                                         null: false
+    t.integer  "mean_minutes_between_samples", default: 60,                                                        null: false
+    t.integer  "sample_minutes_plusminus",     default: 15,                                                        null: false
+    t.boolean  "active",                       default: false,                                                     null: false
+    t.datetime "created_at",                                                                                       null: false
+    t.datetime "updated_at",                                                                                       null: false
     t.string   "twilio_account_sid"
     t.string   "twilio_auth_token"
     t.string   "phone_number"
-    t.integer  "sampled_days",                 default: 1,     null: false
+    t.integer  "sampled_days",                 default: 1,                                                         null: false
     t.string   "time_zone"
     t.text     "help_message"
+    t.string   "welcome_message",              default: "Welcome to the study! Quit at any time by texting STOP.", null: false
   end
 
   create_table "text_messages", force: true do |t|

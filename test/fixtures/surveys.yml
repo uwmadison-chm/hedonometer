@@ -11,6 +11,7 @@ test:
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   time_zone: Central Time (US & Canada)
+  welcome_message: Welcome! Your login code is {{login_code}}.
 
 someone_elses:
   name: Survey that Nate can't change!
@@ -23,6 +24,7 @@ someone_elses:
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: 7896f62400694bbb39cf3ab76a470aec7cb7ab99
   time_zone: Central Time (US & Canada)
+  welcome_message: Welcome! Your login code is {{login_code}}.
 
 
 orphaned:
@@ -36,3 +38,4 @@ orphaned:
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
+  welcome_message: Welcome! Your login code is {{login_code}}.

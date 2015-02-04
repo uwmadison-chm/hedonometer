@@ -1,16 +1,41 @@
 class ParticipantTexter < ActionTexter::Base
   class << self
-    def login_code_message(participant)
+    def message_for_participant(participant, message)
+      Rails.logger.info("Sending #{message} to #{participant}")
+      survey = participant.survey
+      survey.outgoing_text_messages.build({
+              to_number: participant.phone_number.to_e164,
+              from_number: survey.phone_number.to_e164,
+              message: message
+            })
+    end
+
+    def build_replacements(participant)
+      {
+        '{{samples_per_day}}' => participant.survey.samples_per_day,
+        '{{login_code}}' => participant.login_code,
+      }
+    end
+
+    def message_with_replacements(message, participant)
       message_for_participant(participant,
-        "Your login code is #{participant.login_code}. Quit at any time by texting STOP.")
+        do_replacements(message, build_replacements(participant)))
     end
 
     def welcome_message(participant)
-      message_for_participant(participant,
-        "Welcome! Your login code is #{participant.login_code}. Quit at any time by texting STOP.")
+      message_with_replacements(
+        participant.survey.welcome_message,
+        participant)
+    end
+
+    def login_code_message(participant)
+      message_with_replacements(
+        "Your login code is {{login_code}}. Quit at any time by texting STOP.",
+        participant)
     end
 
     def deliver_scheduled_question!(scheduled_question_id)
+      # This one doesn't get replacements; I think that would be a surprise.
       scheduled_question = ScheduledQuestion.find scheduled_question_id
       participant = scheduled_question.schedule_day.participant
       message = message_for_participant(participant, scheduled_question.survey_question.question_text)

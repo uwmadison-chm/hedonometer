@@ -20,6 +20,7 @@ class Survey < ActiveRecord::Base
   validates :samples_per_day, numericality: {only_integer: true, greater_than: 0}
   validates :mean_minutes_between_samples, numericality: {only_integer: true, greater_than: 0}
   validates :sample_minutes_plusminus, numericality: {only_integer: true, greater_than: 0}
+  validates :welcome_message, presence: true
 
   validates :creator, on: :create, presence: true
   after_create :assign_creator_as_admin
