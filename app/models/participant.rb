@@ -21,7 +21,7 @@ class Participant < ActiveRecord::Base
 
   after_save :build_schedule_and_schedule_first_question_if_possible!, if: :requests_new_schedule?
 
-  has_many :schedule_days, {dependent: :destroy}, -> { order('date') } do
+  has_many :schedule_days, -> { order('date') }, {dependent: :destroy} do
     def potential_run_targets
       where(aasm_state: ['waiting', 'running']).order('date')
     end
