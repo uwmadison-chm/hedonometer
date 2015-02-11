@@ -13,9 +13,4 @@ namespace :test do
   end
 end
 
-# Rake::Task[:test].enhance { Rake::Task["test:texters"].invoke }
 Hedonometer::Application.load_tasks
-
-texter_task = Rake::Task["test:texters"]
-test_task = Rake::Task[:test]
-test_task.enhance ["test:texters"]
