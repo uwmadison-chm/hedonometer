@@ -1,61 +1,34 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
+$ ->
+  update_twilio_status = (url, sid_field, token_field, status_element) ->
+    sid = $(sid_field).val().trim()
+    token = $(token_field).val().trim()
+    if sid != '' and token != ''
+      check_twilio_account(url, sid, token, status_element)
+    else
+      $(status_element).removeClass().text("")
 
-px_per_minute = 1
+  check_twilio_account = (url, sid, token, status_element) ->
+    $.ajax
+      url: url
+      type: 'GET'
+      data:
+        sid: sid
+        auth_token: token
+      success: (data, status, response) ->
+        result = data.status
+        $(status_element).removeClass().addClass(result).text(result)
+      error: (req, status, exc) ->
+        $(status_element).removeClass().addClass("error").text("error")
+      dataType: "json"
 
-sample_count = ->
-  $('#num_samples').val() - 1
-
-day_len_minutes = ->
-  $('#mean_time').val() * sample_count() + $('#time_range').val()*2
-
-day_width_px = ->
-  day_len_minutes() * px_per_minute + 'px'
-
-set_demo_width = ->
-  $('#demo').css('width', day_width_px())
-
-draw_sampling_periods = ->
-  demo = $('#demo')
-  periods = sample_count();
-  width = $('#time_range').val()* 2 * px_per_minute + 'px'
-  i = 0
-  while i < periods+1
-    start_time = i * $('#mean_time').val()
-    start_px = start_time * px_per_minute + 'px'
-    $('<div class="sp"></div>').appendTo(demo).css
-      width: width,
-      left: start_px
-    i++
-
-
-draw_hours = ->
-  demo = $('#demo')
-  cur_min = 0
-  i = 0
-  hour_width = 60 * px_per_minute + 'px'
-  demo.empty()
-
-  while cur_min < day_len_minutes()
-    left_pos = 60*px_per_minute * i + 'px'
-    $('<div class="hour"></div>').appendTo(demo).css
-      width: hour_width
-      left: left_pos
-    cur_min += 60
-    i += 1
-
-do_demo = ->
-  set_demo_width()
-  draw_hours()
-  draw_sampling_periods()
-
-do ($ = jQuery) ->
-  $.fn.foo= ->
-    console.log("shit")
-
-jQuery ->
-  do_demo()
-  $('input').on('change', ->
-    do_demo()
-  )
+  $("input[data-twilio-account-check-url]").each (i, element) ->
+    e = $(element)
+    url = e.data('twilio-account-check-url')
+    sid_field = e.data('sid-field')
+    token_field = e.data('token-field')
+    status_element = e.data('status-element')
+    update_twilio_status url, sid_field, token_field, status_element
+    $(sid_field).change ->
+      update_twilio_status url, sid_field, token_field, status_element
+    $(token_field).change ->
+      update_twilio_status url, sid_field, token_field, status_element

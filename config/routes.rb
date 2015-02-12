@@ -28,6 +28,7 @@ Hedonometer::Application.routes.draw do
       resources :participants
     end
 
+    resource :twilio_account
 
     # Authn
     get  'login'  => 'session#new'

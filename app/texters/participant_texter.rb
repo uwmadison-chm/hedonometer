@@ -14,8 +14,8 @@ class ParticipantTexter < ActionTexter::Base
       {
         '{{samples_per_day}}' => participant.survey.samples_per_day,
         '{{login_code}}' => participant.login_code,
-        '{{first_day}}' => participant.schedule_days.first.date.to_s(:for_sms),
-        '{{last_day}}' => participant.schedule_days.last.date.to_s(:for_sms),
+        '{{first_date}}' => participant.schedule_days.first.date.to_s(:for_sms),
+        '{{last_date}}' => participant.schedule_days.last.date.to_s(:for_sms),
       }
     end
 

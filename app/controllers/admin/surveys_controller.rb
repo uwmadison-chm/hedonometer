@@ -51,6 +51,7 @@ class Admin::SurveysController < AdminController
         :phone_number,
         :help_message,
         :time_zone,
+        :welcome_message,
         :survey_questions_attributes => [:id, :question_text])
   end
 end

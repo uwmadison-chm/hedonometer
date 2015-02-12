@@ -16,6 +16,23 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     }}
   end
 
+  def params_for_update(survey)
+    {
+      id: survey.id,
+      name: survey.name,
+      samples_per_day: survey.samples_per_day,
+      mean_minutes_between_samples: survey.mean_minutes_between_samples,
+      sample_minutes_plusminus: survey.sample_minutes_plusminus,
+      time_zone: survey.time_zone,
+      active: survey.active,
+      twilio_account_sid: survey.twilio_account_sid,
+      twilio_auth_token: survey.twilio_auth_token,
+      phone_number: survey.phone_number,
+      help_message: survey.help_message,
+      welcome_message: survey.welcome_message
+    }
+  end
+
   test "new requires login" do
     admin_logout
     get :new
@@ -64,9 +81,11 @@ class Admin::SurveysControllerTest < ActionController::TestCase
 
   test "update a survey" do
     s = surveys(:test)
-    post :update, id: s, survey: {name: "freeeow"}
+    params = params_for_update(s)
+    params[:name] = "freeow"
+    post :update, id: s, survey: params
     assert assigns(:survey)
-    assert_equal "freeeow", assigns(:survey).name
+    assert_equal params[:name], assigns(:survey).name
     assert_redirected_to edit_admin_survey_path(s)
   end
 

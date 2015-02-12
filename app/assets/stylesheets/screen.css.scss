@@ -6,6 +6,21 @@
 /* -------------------------------------------------------------------------*/
 /* Layout */
 
+$small-text: 72%;
+
+$ok-foreground: #4F4F4F;
+$ok-background: #C5FCA9;
+$ok-highlight: #89B076;
+
+$warn-foreground: #030303;
+$warn-background: #FBFC92;
+$warn-highlight: #FCB892;
+
+$error-foreground: #4F4F4F;
+$error-background: #FCACAC;
+$error-highlight: #B07878;
+
+
 body { font: 100%/1.5 Verdana, sans-serif; }
 
 code { font-family: Consolas, Monaco, monospace; }
@@ -58,6 +73,33 @@ form {
     span.failure {
       color: #A6030E;
     }
+  }
+  .instructions {
+    font-size: $small-text;
+    color: #333;
+    margin-bottom: 0.5em;
+  }
+}
+
+#twilio_status {
+  font-size: $small-text;
+  margin-left: 1.2em;
+  border: 1px solid transparent;
+  padding: .3em .5em;
+  &.active {
+    background-color: $ok-background;
+    color: $ok-foreground;
+    border-color: $ok-highlight;
+  }
+  &.closed, &.suspended {
+    background-color: $warn-background;
+    color: $warn-foreground;
+    border-color: $warn-highlight;
+  }
+  &.error {
+    background-color: $error-background;
+    color: $error-foreground;
+    border-color: $error-highlight;
   }
 }
 
