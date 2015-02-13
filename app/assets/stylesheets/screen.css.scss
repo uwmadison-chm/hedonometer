@@ -1,37 +1,35 @@
 // ---------------------------------------------------------------------------
 // Imports
 
-@import "_base";
+@import 'base';
 
-/* -------------------------------------------------------------------------*/
-/* Layout */
+// Layout
 
 $small-text: 72%;
 
-$ok-foreground: #4F4F4F;
-$ok-background: #C5FCA9;
-$ok-highlight: #89B076;
+$ok-foreground: #29580c;
+$ok-background: #bbedc3;
 
-$warn-foreground: #030303;
-$warn-background: #FBFC92;
-$warn-highlight: #FCB892;
+$warn-foreground: #986319;
+$warn-background: #fee98b;
 
-$error-foreground: #4F4F4F;
-$error-background: #FCACAC;
-$error-highlight: #B07878;
+$error-foreground: #8f1919;
+$error-background: #f1b8c2;
 
 
 body { font: 100%/1.5 Verdana, sans-serif; }
 
 code { font-family: Consolas, Monaco, monospace; }
 
-#page {
+.page {
   @include container;
   position: relative;
 }
 
-#logout {
-  position: absolute; top: 0; right: 0;
+.top-nav {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .grid {
@@ -39,12 +37,13 @@ code { font-family: Consolas, Monaco, monospace; }
 }
 
 table {
-  margin-top: 1em;
-  font-size: 80%;
   border-collapse: collapse;
+  font-size: 80%;
+  margin-top: 1em;
 }
 
-th, td {
+th,
+td {
   padding: 0 8px;
 }
 
@@ -54,56 +53,62 @@ th, td {
 
 form {
   overflow: auto;
+
   .line {
     @include span-columns(12 omega);
+
     .col1 {
-      @include span-columns(4,12);
+      @include span-columns(4, 12);
       text-align: right;
     }
+
     .col2 {
-      @include span-columns(8 omega,12);
+      @include span-columns(8 omega, 12);
     }
 
-    span.status {
+    .status {
       padding-left: 1em;
     }
-    span.success {
-      color: #0F8A17;
+
+    .success {
+      color: $ok-foreground;
     }
-    span.failure {
-      color: #A6030E;
+
+    .failure {
+      color: $error-foreground;
     }
   }
+
   .instructions {
-    font-size: $small-text;
     color: #333;
-    margin-bottom: 0.5em;
+    font-size: $small-text;
+    margin-bottom: .5em;
   }
 }
 
-#twilio_status {
+.status-light {
   font-size: $small-text;
   margin-left: 1.2em;
-  border: 1px solid transparent;
-  padding: .3em .5em;
+  padding: .1em .3em;
+
   &.active {
     background-color: $ok-background;
     color: $ok-foreground;
-    border-color: $ok-highlight;
   }
-  &.closed, &.suspended {
+
+  &.closed,
+  &.suspended {
     background-color: $warn-background;
     color: $warn-foreground;
-    border-color: $warn-highlight;
   }
+
   &.error {
     background-color: $error-background;
     color: $error-foreground;
-    border-color: $error-highlight;
   }
 }
 
-#help {
+.help {
   clear: both;
   margin-top: 1em;
 }

@@ -13,9 +13,8 @@
         minutes between samples
   = f.number_field :sampled_days, label: "Number of days to sample"
   = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: "Central Time (US & Canada)"
-  = f.text_field :twilio_account_sid, label: 'Twilio account SID', size: 55, data: {twilio_account_check_url: admin_twilio_account_url, status_element: '#twilio_status', sid_field: '#survey_twilio_account_sid', token_field: '#survey_twilio_auth_token'}
-  = f.text_field :twilio_auth_token, size: 40, follow_field_with: '<span id="twilio_status"></span>'.html_safe
-  = f.text_field :phone_number
+  = f.text_field :twilio_account_sid, label: 'Twilio account SID', size: 55, data: {twilio_account_check_url: admin_twilio_account_url, status_element: '#twilio-status', sid_field: '#survey_twilio_account_sid', token_field: '#survey_twilio_auth_token'}
+  = f.text_field :twilio_auth_token, size: 40, follow_field_with: '<span id="twilio-status" id="status-light"></span>'.html_safe
   = f.text_area :help_message, label: raw("Help message for participants<br/>HTML OK"), rows: 5, cols: 60, value: survey_help_with_default(survey)
   = f.text_field :welcome_message, size: 110, follow_field_with: '<div class="instructions">Template fields: {{samples_per_day}}, {{first_date}}, {{last_date}}, {{login_code}}</div>'.html_safe
   = f.fields_for :survey_questions, survey.survey_questions do |question_form|
