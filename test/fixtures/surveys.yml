@@ -7,7 +7,7 @@ test:
   sample_minutes_plusminus: 15
   sampled_days: 2
   active: true
-  phone_number: +16085559990
+  phone_number: "+16085559990"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   time_zone: Central Time (US & Canada)
@@ -20,7 +20,7 @@ someone_elses:
   sample_minutes_plusminus: 15
   sampled_days: 5
   active: false
-  phone_number: +16085559991
+  phone_number: "+16085559991"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: 7896f62400694bbb39cf3ab76a470aec7cb7ab99
   time_zone: Central Time (US & Canada)
@@ -34,7 +34,7 @@ orphaned:
   sample_minutes_plusminus: 15
   sampled_days: 3
   active: false
-  phone_number: +16085559992
+  phone_number: "+16085559992"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)

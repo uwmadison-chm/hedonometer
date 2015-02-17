@@ -36,6 +36,14 @@ class ActiveSupport::TestCase
     stub_http_request(:any, /.*@api.twilio.com/).to_return(
       body: body, status: status)
   end
+
+  def used_numbers
+    Survey.all.select(:phone_number).map {|s| s.phone_number }
+  end
+
+  def numbers_with_extra
+    used_numbers + ["+16085551212"]
+  end
 end
 
 module TwilioResponses
@@ -79,43 +87,59 @@ resp
 resp
   end
 
-  def self.get_account(status="active")
-<<-resp
-{
-    "sid": "ACba8bc05eacf94afdae398e642c9cc32d",
-    "friendly_name": "Do you like my friendly name?",
-    "type": "Full",
-    "status": "#{status}",
-    "date_created": "Wed, 04 Aug 2010 21:37:41 +0000",
-    "date_updated": "Fri, 06 Aug 2010 01:15:02 +0000",
-    "auth_token": "redacted",
-    "uri": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d.json",
-    "subresource_uris": {
-        "available_phone_numbers": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/AvailablePhoneNumbers.json",
-        "calls": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/Calls.json",
-        "conferences": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/Conferences.json",
-        "incoming_phone_numbers": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/IncomingPhoneNumbers.json",
-        "notifications": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/Notifications.json",
-        "outgoing_caller_ids": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/OutgoingCallerIds.json",
-        "recordings": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/Recordings.json",
-        "sandbox": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/Sandbox.json",
-        "sms_messages": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/SMS\/Messages.json",
-        "transcriptions": "\/2010-04-01\/Accounts\/ACba8bc05eacf94afdae398e642c9cc32d\/Transcriptions.json"
-    }
-}
-resp
-  end
-
-  def self.get_active_account
-    get_account("active")
-  end
-
-  def self.get_closed_account
-    get_account("closed")
-  end
-
   def self.auth_failure
     "{\"code\":20003,\"message\":\"Authenticate\",\"more_info\":\"https:\\/\\/www.twilio.com\\/docs\\/errors\\/20003\",\"status\":401}"
+  end
+
+  def self.incoming_phone_numbers(number_list)
+    first = <<-resp
+{
+    "page": 0,
+    "num_pages": 1,
+    "page_size": 50,
+    "total": 6,
+    "start": 0,
+    "end": 5,
+    "uri": "\/2010-04-01\/Accounts\/ACdc5f1e11047ebd6fe7a55f120be3a900\/IncomingPhoneNumbers.json",
+    "first_page_uri": "\/2010-04-01\/Accounts\/ACdc5f1e11047ebd6fe7a55f120be3a900\/IncomingPhoneNumbers.json?Page=0&PageSize=50",
+    "previous_page_uri": null,
+    "next_page_uri": null,
+    "last_page_uri": "\/2010-04-01\/Accounts\/ACdc5f1e11047ebd6fe7a55f120be3a900\/IncomingPhoneNumbers.json?Page=0&PageSize=50",
+    "incoming_phone_numbers": [
+resp
+    number_jsons = number_list.map { |num|
+      <<-resp
+        {
+            "sid": "PN3f94c94562ac88dccf16f8859a1a8b25",
+            "account_sid": "ACdc5f1e11047ebd6fe7a55f120be3a900",
+            "friendly_name": "Long Play",
+            "phone_number": "#{num}",
+            "voice_url": "http:\/\/demo.twilio.com\/docs/voice.xml",
+            "voice_method": "GET",
+            "voice_fallback_url": null,
+            "voice_fallback_method": null,
+            "voice_caller_id_lookup": null,
+            "voice_application_sid": null,
+            "date_created": "Thu, 13 Nov 2008 07:56:24 +0000",
+            "date_updated": "Thu, 13 Nov 2008 08:45:58 +0000",
+            "sms_url": null,
+            "sms_method": null,
+            "sms_fallback_url": null,
+            "sms_fallback_method": null,
+            "sms_application_sid": "AP9b2e38d8c592488c397fc871a82a74ec",
+            "capabilities": {
+                "voice": true,
+                "sms": false,
+                "mms": false
+            },
+            "status_callback": null,
+            "status_callback_method": null,
+            "api_version": "2010-04-01",
+            "uri": "\/2010-04-01\/Accounts\/ACdc5f1e11047ebd6fe7a55f120be3a900\/IncomingPhoneNumbers\/PN3f94c94562ac88dccf16f8859a1a8b25.json"
+        }
+      resp
+    }.join(",\n")
+    first + number_jsons + "]\n}"
   end
 
   def self.incoming_params(survey, body, from_phone)

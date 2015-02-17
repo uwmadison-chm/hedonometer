@@ -1,16 +1,19 @@
 class Admin::TwilioAccountsController < AdminController
   def show
+    begin
+      number_list = TwilioIncomingNumber.available_unavailable_numbers(
+        params[:sid], params[:auth_token])
+    rescue Twilio::REST::RequestError => exc
+      render text: exc.message, status: TwilioIncomingNumber.client.last_response.code
+      return
+    end
+    data = {
+      status: "active",
+      numbers: number_list
+    }
     respond_to do |format|
-      client = Twilio::REST::Client.new(params[:sid], params[:auth_token])
-      act = client.accounts.get params[:sid]
-      begin
-        act.status  # Force the client to load data
-      rescue Twilio::REST::RequestError => exc
-        render(text: exc.message, status: client.last_response.code)
-        return
-      end
       format.json {
-        render text: client.last_response.body
+        render text: JSON.dump(data)
       }
     end
   end

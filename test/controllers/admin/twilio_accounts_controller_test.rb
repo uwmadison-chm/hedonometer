@@ -20,7 +20,7 @@ class Admin::TwilioAccountsControllerTest < ActionController::TestCase
   end
 
   test "get json for good account" do
-    twilio_mock(TwilioResponses.get_active_account)
+    twilio_mock(TwilioResponses.incoming_phone_numbers(used_numbers))
     get :show, sid: 'test', auth_token: 'test', format: 'json'
     assert_response :success
     assert JSON.parse(response.body)

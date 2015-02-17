@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150130174424) do
+ActiveRecord::Schema.define(version: 20150217163204) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                              null: false
@@ -111,6 +111,8 @@ ActiveRecord::Schema.define(version: 20150130174424) do
     t.text     "help_message"
     t.string   "welcome_message",              default: "Welcome to the study! Quit at any time by texting STOP.", null: false
   end
+
+  add_index "surveys", ["phone_number", "active"], name: "index_surveys_on_phone_number_and_active", using: :btree
 
   create_table "text_messages", force: true do |t|
     t.integer  "survey_id",       null: false
