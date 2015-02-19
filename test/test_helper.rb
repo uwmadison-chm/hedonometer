@@ -33,8 +33,11 @@ class ActiveSupport::TestCase
   end
 
   def twilio_mock(body, status=200)
-    stub_http_request(:any, /.*@api.twilio.com/).to_return(
-      body: body, status: status)
+    twilio_mock_multi([{status: status, body: body}])
+  end
+
+  def twilio_mock_multi(option_hashes)
+    stub_http_request(:any, /.*@api.twilio.com/).to_return(option_hashes)
   end
 
   def used_numbers
