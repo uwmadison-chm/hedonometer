@@ -12,7 +12,7 @@ class SurveyTest < ActiveSupport::TestCase
       samples_per_day: 1,
       mean_minutes_between_samples: 15,
       sample_minutes_plusminus: 5,
-      active: false
+      active: false,
     }
   end
 
@@ -37,5 +37,14 @@ class SurveyTest < ActiveSupport::TestCase
 
   test "phone number serialization" do
     assert_kind_of PhoneNumber, surveys(:test).phone_number
+  end
+
+  test "failed stuff adds twilio_errors" do
+    twilio_mock(TwilioResponses.auth_failure, 401)
+    s = surveys(:test)
+    s.phone_number = "+16085551212"
+    s.save
+    s.set_twilio_number_handlers!("http://test.domain")
+    refute_empty s.twilio_errors
   end
 end

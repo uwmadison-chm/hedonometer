@@ -145,6 +145,65 @@ resp
     first + number_jsons + "]\n}"
   end
 
+  def self.responses_for_activate(number)
+    [
+      {
+        status: 200,
+        body: TwilioResponses.incoming_phone_numbers([number])
+      },
+      {
+        status: 200,
+        body: TwilioResponses.single_incoming_number_response(number)
+      }
+    ]
+  end
+
+  def self.responses_for_deactivate(number)
+    [
+      {
+        status: 200,
+        body: TwilioResponses.incoming_phone_numbers([number])
+      },
+      {
+        status: 200,
+        body: TwilioResponses.single_incoming_number_response(number)
+      }
+    ]
+  end
+
+  def self.single_incoming_number_response(number)
+    <<-resp
+{
+    "sid": "PN2a0747eba6abf96b7e3c3ff0b4530f6e",
+    "account_sid": "AC755325d45d80675a4727a7a54e1b4ce4",
+    "friendly_name": "My Company Line",
+    "phone_number": "#{number}",
+    "voice_url": "http://demo.twilio.com/docs/voice.xml",
+    "voice_method": "POST",
+    "voice_fallback_url": null,
+    "voice_fallback_method": "POST",
+    "voice_caller_id_lookup": null,
+    "voice_application_sid": null,
+    "date_created": "Mon, 16 Aug 2010 23:00:23 +0000",
+    "date_updated": "Mon, 16 Aug 2010 23:00:23 +0000",
+    "sms_url": "http://demo.twilio.com/docs/sms.xml",
+    "sms_method": "POST",
+    "sms_fallback_url": null,
+    "sms_fallback_method": "GET",
+    "sms_application_sid": null,
+    "capabilities": {
+        "voice": true,
+        "sms": true,
+        "mms": false
+    },
+    "status_callback": null,
+    "status_callback_method": null,
+    "api_version": "2010-04-01",
+    "uri": "\/2010-04-01\/Accounts\/AC755325d45d80675a4727a7a54e1b4ce4\/IncomingPhoneNumbers\/PN2a0747eba6abf96b7e3c3ff0b4530f6e.json"
+}
+    resp
+  end
+
   def self.incoming_params(survey, body, from_phone)
     {
       "AccountSid"=>"ACf20086b4a32fd314cb912316f2890564",

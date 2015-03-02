@@ -20,5 +20,8 @@
   = f.text_field :welcome_message, size: 110, follow_field_with: '<div class="instructions">Template fields: {{samples_per_day}}, {{first_date}}, {{last_date}}, {{login_code}}</div>'.html_safe
   = f.fields_for :survey_questions, survey.survey_questions do |question_form|
     = question_form.text_field :question_text, size: 110, maxlength: 160
+  %ul.twilio_errors
+    - (flash[:twilio_errors] || []).each do |err|
+      %li #{err}
 
   = f.submit "Save"

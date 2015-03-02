@@ -12,7 +12,10 @@ class Admin::SurveysControllerTest < ActionController::TestCase
           name: "New survey!",
           mean_minutes_between_samples: 60,
           sample_minutes_plusminus: 10,
-          active: true
+          active: true,
+          twilio_account_sid: "test",
+          twilio_auth_token: "test",
+          phone_number: "+16085551212",
     }}
   end
 
@@ -63,12 +66,41 @@ class Admin::SurveysControllerTest < ActionController::TestCase
   end
 
   test "create a survey" do
+    num = "+16085551212"
+    twilio_mock_multi(TwilioResponses.responses_for_activate(num))
+
     assert_difference 'Survey.count' do
       post :create, sample_data
     end
     s = assigns(:survey)
     assert s
     assert_redirected_to edit_admin_survey_path(s)
+  end
+
+  test "creating a survey makes API calls to twilio for setting sms url" do
+    num = "+16085551212"
+    twilio_mock_multi(TwilioResponses.responses_for_activate(num))
+    post :create, sample_data
+    assert_requested :get, /.*@api.twilio.com/, times: 1
+    assert_requested :post, /.*@api.twilio.com/, times: 1
+  end
+
+  test "updating a survey makes API calls for setting and deleteing sms" do
+    s = surveys(:test)
+    num = "+16085551212"
+    twilio_mock_multi(
+      TwilioResponses.responses_for_activate(num) +
+      TwilioResponses.responses_for_deactivate(num)
+    )
+
+    params = params_for_update(s)
+    params[:phone_number] = num
+    post :update, id: s, survey: params
+    assert assigns(:survey)
+    assert_equal params[:name], assigns(:survey).name
+    assert_redirected_to edit_admin_survey_path(s)
+    assert_requested :get, /.*@api.twilio.com/, times: 2
+    assert_requested :post, /.*@api.twilio.com/, times: 2
   end
 
   test "failed survey creation renders new" do
@@ -87,6 +119,9 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     assert assigns(:survey)
     assert_equal params[:name], assigns(:survey).name
     assert_redirected_to edit_admin_survey_path(s)
+    # Also we should not hit Twilio's API
+    assert_requested :get, /.*@api.twilio.com/, times: 0
+    assert_requested :post, /.*@api.twilio.com/, times: 0
   end
 
   test "bad update sends to edit" do

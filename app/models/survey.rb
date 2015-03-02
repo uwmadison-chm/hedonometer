@@ -31,6 +31,9 @@ class Survey < ActiveRecord::Base
   has_many :incoming_text_messages
   has_many :text_messages
 
+  attr_reader :twilio_errors
+  after_initialize :clear_twilio_errors
+
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
   end
@@ -55,8 +58,48 @@ class Survey < ActiveRecord::Base
     RandomNoReplacementRecordChooser
   end
 
+  def has_twilio_credentials?
+    val = self.twilio_account_sid.present? and self.twilio_auth_token.present?
+    logger.debug("Has twilio credentials: #{val}")
+    val
+  end
+
+  def changed_phone_number?
+    logger.debug("Changed phone number: #{previous_changes.include? :phone_number}")
+    previous_changes.include? :phone_number
+  end
+
+  def set_twilio_number_handlers!(sms_handler_url)
+    return unless has_twilio_credentials? and changed_phone_number?
+    old_number, new_number = previous_changes[:phone_number]
+    begin
+      TwilioIncomingNumber.deactivate_sms_handler!(
+        self.twilio_account_sid,
+        self.twilio_auth_token,
+        old_number)
+    rescue Exception => exc
+      logger.debug("Exception in deactivate: #{exc.inspect}")
+      @twilio_errors.append("Error deactivating SMS handler for #{old_number}: #{exc.message}")
+    end
+
+    begin
+      TwilioIncomingNumber.activate_sms_handler!(
+        self.twilio_account_sid,
+        self.twilio_auth_token,
+        new_number,
+        sms_handler_url)
+    rescue Exception => exc
+      logger.debug("Exception in activate: #{exc.inspect}")
+      @twilio_errors.append("Error activating SMS handler for #{new_number}: #{exc.message}. Should be #{sms_handler_url}.")
+    end
+  end
+
   private
   def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true
+  end
+
+  def clear_twilio_errors
+    @twilio_errors = []
   end
 end

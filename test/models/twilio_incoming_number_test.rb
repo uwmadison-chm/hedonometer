@@ -22,4 +22,21 @@ class TwilioIncomingNumberTest < ActiveSupport::TestCase
     assert_equal 1, number_groups[:available].length
   end
 
+  test "deactivate makes API calls" do
+    num = "+16085551212"
+    twilio_mock_multi(TwilioResponses.responses_for_deactivate(num))
+    TwilioIncomingNumber.deactivate_sms_handler!("test", "test", num)
+    assert_requested :get, /.*@api.twilio.com/, times: 1
+    assert_requested :post, /.*@api.twilio.com/, times: 1
+  end
+
+  test "activate makes API calls" do
+    num = "+16085551212"
+    twilio_mock_multi(TwilioResponses.responses_for_activate(num))
+    TwilioIncomingNumber.activate_sms_handler!(
+      "test", "test", num, "http://www.google.com")
+    assert_requested :get, /.*@api.twilio.com/, times: 1
+    assert_requested :post, /.*@api.twilio.com/, times: 1
+  end
+
 end
