@@ -1,5 +1,5 @@
-= link_to "Back", admin_root_path
-%h3 Add a participant
+= link_to "◀ Survey list", admin_root_path
+%h3 Add a participant to #{current_survey.name}
 = form_for current_participant, url: admin_survey_participants_path(current_survey), builder: TwoColumnFormBuilder  do |f|
   = f.text_field :phone_number, autofocus: true, :placeholder => "608-555-1212"
   = f.date_field :schedule_start_date, label: "Start date", placeholder: "yyyy-mm-dd"

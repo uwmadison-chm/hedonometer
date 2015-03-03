@@ -1,4 +1,6 @@
-%h2 Edit survey - #{link_to "Back to list", admin_root_path}
+= link_to "◀ Survey list", admin_root_path
+
+%h2 Edit survey
 - if @survey
   = render 'form', survey: @survey
 - else
