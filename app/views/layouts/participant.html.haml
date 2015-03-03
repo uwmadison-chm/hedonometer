@@ -1,6 +1,6 @@
 !!!html5
 %html
-  %head
+  %head{class: Rails.env}
     %meta{charset: 'utf-8'}
     %title= @page_title || "Welcome"
     = stylesheet_link_tag    "application", :media => "all"

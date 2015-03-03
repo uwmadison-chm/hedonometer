@@ -21,6 +21,11 @@ body { font: 100%/1.5 Verdana, sans-serif; }
 
 code { font-family: Consolas, Monaco, monospace; }
 
+// Disable column-show widget in production.
+head.production {
+  display: none;
+}
+
 .page {
   @include container;
   position: relative;
