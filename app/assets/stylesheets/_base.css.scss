@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // Imports
 
-@import "susy";
+@import 'susy';
 
 // ---------------------------------------------------------------------------
 // Basic Grid
@@ -9,4 +9,9 @@
 $total-columns  : 12;
 $column-width   : 4em;
 $gutter-width   : 1em;
-$grid-padding   : $gutter-width;
+
+$susy: (
+    columns: $total-columns,
+    column-width: $column-width,
+    gutters: $gutter-width / $column-width
+);

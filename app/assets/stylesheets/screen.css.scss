@@ -33,7 +33,7 @@ code { font-family: Consolas, Monaco, monospace; }
 }
 
 .grid {
-  @include susy-grid-background;
+  @include container(show overlay);
 }
 
 table {
@@ -55,15 +55,15 @@ form {
   overflow: auto;
 
   .line {
-    @include span-columns(12 omega);
+    @include span(last 12);
 
     .col1 {
-      @include span-columns(4, 12);
+      @include span(4 of 12);
       text-align: right;
     }
 
     .col2 {
-      @include span-columns(8 omega, 12);
+      @include span(last 8 of 12);
     }
 
     .status {
