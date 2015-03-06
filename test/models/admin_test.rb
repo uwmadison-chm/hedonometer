@@ -2,6 +2,14 @@
 require 'test_helper'
 
 class AdminTest < ActiveSupport::TestCase
+  test "active admin scope" do
+    assert_equal Admin.where(deleted_at: nil).count, Admin.active.count
+  end
+
+  test "inactive admin scope" do
+    assert_equal Admin.where("deleted_at is not null").count, Admin.inactive.count
+  end
+
   test "password checking works" do
     a = admins(:nate)
     t = Admin.authenticate(a.email, 'password')
@@ -28,6 +36,20 @@ class AdminTest < ActiveSupport::TestCase
   test "admins must have unique email addresses" do
     a = Admin.new(email:admins(:nate).email, password:'foo')
     refute a.valid?
+  end
+
+  test "deactivating sets deleted_at" do
+    a = Admin.new
+    a.active = 0
+    refute a.active?
+    a.active = ""
+    refute a.active?
+    refute_nil a.deleted_at
+    a.active = 1
+    assert a.active?
+    a.active = ""
+    assert a.active?
+    assert_nil a.deleted_at
   end
 
   test "admins can find modifiable surveys" do

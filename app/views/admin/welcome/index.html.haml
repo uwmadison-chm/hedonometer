@@ -1,4 +1,8 @@
-%p= link_to "Create a survey", new_admin_survey_path
+%nav
+  =link_to "Create a survey", new_admin_survey_path
+  - if current_admin.can_change_admins?
+    |
+    =link_to "Manage admins", admin_admins_path, id: "manage-admins"
 
 %table#active_surveys
   %thead

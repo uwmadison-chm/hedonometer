@@ -1,0 +1,10 @@
+%nav
+  = link_to "◀ Manage admins", admin_admins_path
+
+= form_for [:admin, @edit_admin], builder: TwoColumnFormBuilder do |f|
+  = f.email_field :email
+  = f.password_field :password
+  = f.check_box :can_change_admins
+  = f.check_box :active
+  = f.submit "Save"
+  = f.right_content("<div class='notice'>#{flash[:notice]}</div>".html_safe)

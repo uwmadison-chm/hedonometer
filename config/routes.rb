@@ -28,6 +28,8 @@ Hedonometer::Application.routes.draw do
       resources :participants
     end
 
+    resources :admins
+
     resource :twilio_account
 
     # Authn

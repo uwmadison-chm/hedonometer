@@ -27,9 +27,14 @@ class AdminController < ApplicationController
   private
   def require_admin_login!
     unless active_current_admin?
-      reset_session
-      session[:destination] = request.url
-      redirect_to admin_login_path
+      admin_logout!
     end
+  end
+
+  def admin_logout!
+    logger.debug("Forcing logout.")
+    reset_session
+    session[:destination] = request.url
+    redirect_to admin_login_path
   end
 end

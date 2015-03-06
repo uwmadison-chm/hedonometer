@@ -1,0 +1,4 @@
+%tr
+  %td= admin.email
+  %td= admin.active? ? "Active" : "Inactive"
+  %td= link_to "Edit", edit_admin_admin_path(admin)

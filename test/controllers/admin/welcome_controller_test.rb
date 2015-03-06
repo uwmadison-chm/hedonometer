@@ -18,6 +18,17 @@ class Admin::WelcomeControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "manage admins link shows if you can change admins" do
+    get :index
+    assert_select "#manage-admins", 1
+  end
+
+  test "manage admins link doesn't show if you can't do it" do
+    admin_login_as :limited
+    get :index
+    assert_select "#manage-admins", 0
+  end
+
   test "inactive users get logged out" do
     admin_login_as :deleted
     get :index

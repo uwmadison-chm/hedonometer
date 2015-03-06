@@ -1,10 +1,14 @@
 # -*- encoding : utf-8 -*-
 class Admin < ActiveRecord::Base
   attr_accessor :password
+  attr_accessor :deactivate
 
   before_save :encrypt_password
 
   validates :email, uniqueness:true
+
+  scope :active, -> { where("deleted_at IS NULL").order("email") }
+  scope :inactive, -> { where("deleted_at IS NOT NULL").order("email") }
 
   has_many :survey_permissions
   has_many :surveys, :through => :survey_permissions do
@@ -17,9 +21,19 @@ class Admin < ActiveRecord::Base
     self.surveys.modifiable.where("survey_permissions.survey_id" => survey).first
   end
 
-  def active?
-    deleted_at.nil?
+  def active=(val)
+    return if val.blank?
+    if val.to_s == "0"
+      self.deleted_at = Time.now
+    else
+      self.deleted_at = nil
+    end
   end
+
+  def active
+    self.deleted_at.nil?
+  end
+  alias_method :active?, :active
 
   def password_match?(pw)
     self if (
