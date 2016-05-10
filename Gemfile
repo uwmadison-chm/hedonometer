@@ -17,6 +17,9 @@ gem 'delayed_job_active_record', '~> 4.1.0'
 
 gem 'aasm', '~> 3.0.20'
 
+gem 'unicorn', '~> 5.1.0'
+
+
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'capistrano', '~> 2.15.5'
@@ -38,5 +41,4 @@ end
 
 group :production do
   gem 'pg', '~> 0.18.1'
-  gem 'unicorn'
 end
