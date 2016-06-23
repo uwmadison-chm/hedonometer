@@ -9,6 +9,7 @@ class Admin::ParticipantsController < AdminController
   end
 
   def update
+    return destroy if params[:delete]
     if current_participant.update(update_params)
       flash[:save_message] = "Settings saved!"
     else
@@ -16,7 +17,15 @@ class Admin::ParticipantsController < AdminController
     end
     redirect_to edit_admin_survey_participant_path(
       current_survey, current_participant)
+  end
 
+  def destroy
+    unless params[:confirm_delete]
+      flash[:save_message] = "You need to confirm when deleting!"
+      return render :edit
+    end
+    current_participant.delete
+    redirect_to admin_survey_participants_path(current_survey)
   end
 
   def show

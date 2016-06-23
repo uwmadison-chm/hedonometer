@@ -8,6 +8,13 @@
   = allow_texting_check_box(f)
 
   = f.submit "Save my settings"
+  .line
+    %br
+    .col1 &nbsp;
+    .col2
+      = submit_tag "Delete this participant", :name => :delete
+      = check_box_tag :confirm_delete
+      %label{:for => :confirm_delete} Really delete this participant!
   - if flash[:save_message]
     .line
       .col1 &nbsp;
