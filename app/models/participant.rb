@@ -65,6 +65,8 @@ class Participant < ActiveRecord::Base
 
   def schedule_human_time_after_midnight=(time_string)
     return if time_string.blank?
+
+    Time.zone = self.time_zone
     @schedule_human_time_after_midnight = time_string
     logger.debug("Parsing time string #{time_string}")
     begin
@@ -112,6 +114,8 @@ class Participant < ActiveRecord::Base
   end
 
   def build_schedule_days(start_date, time_after_midnight)
+    Time.zone = self.time_zone
+    logger.debug { "build_schedule_days: in #{Time.zone} set by #{self.time_zone}" }
     self.survey.sampled_days.times do |t|
       sample_date = start_date + t.days
       first = sample_date + time_after_midnight
@@ -207,7 +211,7 @@ class Participant < ActiveRecord::Base
   end
 
    def copy_time_zone_from_survey
-     self.time_zone = survey.time_zone
+     self.time_zone ||= survey.time_zone
    end
 
    def valid_schedule_start

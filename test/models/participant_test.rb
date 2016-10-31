@@ -50,6 +50,22 @@ class ParticipantTest < ActiveSupport::TestCase
     assert p.valid?
   end
 
+  test "schedule days TimeRanges depend on ppt time zones" do
+    s = surveys(:test)
+    p1 = s.participants.create(
+      phone_number: '608-555-9999', schedule_start_date: Date.today,
+      schedule_time_after_midnight: 9.hours.to_i, time_zone: "America/Chicago")
+    p1.rebuild_schedule_days!
+    p2 = s.participants.create(
+      phone_number: '608-555-9998', schedule_start_date: Date.today,
+      schedule_time_after_midnight: 9.hours.to_i, time_zone: "Pacific/Midway")
+    p2.rebuild_schedule_days!
+    p1_tr = p1.schedule_days.first.time_ranges.first
+    p2_tr = p2.schedule_days.first.time_ranges.first
+
+    refute_equal p1_tr.first, p2_tr.first
+  end
+
   test "participants are generated with login codes" do
     p = surveys(:test).participants.create(create_params)
     refute p.new_record?, p.errors.full_messages
