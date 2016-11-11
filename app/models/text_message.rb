@@ -22,6 +22,14 @@ class TextMessage < ActiveRecord::Base
     participant.external_key if participant
   end
 
+  def time_zone
+    participant.try(:time_zone) || survey.try(:time_zone) || "UTC"
+  end
+
+  def delivered_at_in_zone
+    delivered_at.in_time_zone(time_zone)
+  end
+
   class DeliveryError < RuntimeError
   end
 end
