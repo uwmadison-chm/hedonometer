@@ -16,7 +16,7 @@ class ParticipantsController < SurveyedController
 
   def update
     @participant = current_participant
-    logger.debug "  update_participant_params: #{update_participant_params}"
+    logger.debug { "  update_participant_params: #{update_participant_params}" }
     if @participant.update_attributes(update_participant_params)
       q = @participant.schedule_survey_question_and_save!
       logger.debug("Scheduled #{q.inspect}")
