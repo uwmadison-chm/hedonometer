@@ -56,7 +56,7 @@ class Admin::ParticipantsController < AdminController
     params.require(:participant).
       permit(
         :phone_number, :schedule_start_date, :schedule_human_time_after_midnight,
-        :send_welcome_message, :external_key)
+        :send_welcome_message, :external_key, :time_zone)
   end
 
   def update_params

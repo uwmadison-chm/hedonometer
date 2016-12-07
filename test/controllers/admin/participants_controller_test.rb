@@ -77,4 +77,22 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
       surveys(:test), participants(:ppt1))
     assert_equal assigns(:participant).phone_number.humanize, params[:participant][:phone_number]
   end
+
+  test "participant time zone affects start time" do
+    params = params_for_create(surveys(:test))
+    params[:participant][:time_zone] = "Central Time (US & Canada)"
+    post :create, params
+    assert_redirected_to admin_survey_participants_path(surveys(:test))
+    ppt1 = assigns(:participant)
+    msg1 = ppt1.schedule_days.first.scheduled_questions.first
+    params[:participant][:time_zone] = "UTC"
+    params[:participant][:phone_number] = "(608) 555-9998"
+    post :create, params
+    assert_redirected_to admin_survey_participants_path(surveys(:test))
+    ppt2 = assigns(:participant)
+    msg2 = ppt2.schedule_days.first.scheduled_questions.first
+
+    assert_operator (msg1.scheduled_at - msg2.scheduled_at), :>, 4.hours
+
+  end
 end
