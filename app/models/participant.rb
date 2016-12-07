@@ -161,7 +161,7 @@ class Participant < ActiveRecord::Base
   def schedule_survey_question_and_save!
     self.requests_new_schedule = false
     q = schedule_survey_question
-    q.save!
+    q.save! if q
     self.save! # Because we've updated our chooser state
     q
   end
