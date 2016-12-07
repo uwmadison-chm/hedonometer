@@ -42,6 +42,7 @@ class ScheduleDay < ActiveRecord::Base
       self.time_ranges = []
     end
     self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.date, range_str)}
+    logger.debug { "time_ranges_string: parsed #{str} as #{self.time_ranges.map {|tr| tr.to_s}}" }
   end
 
   def adjust_day_length_to(length)
