@@ -15,6 +15,7 @@ class Participant < ActiveRecord::Base
 
   validates :time_zone, presence: true
   before_validation :copy_time_zone_from_survey, on: :create
+  before_validation :set_system_time_zone
 
   before_validation :set_requests_new_schedule, on: :create
   validate :valid_schedule_start, if: :requests_new_schedule?
@@ -205,6 +206,10 @@ class Participant < ActiveRecord::Base
   end
 
   protected
+  def set_system_time_zone
+    Time.zone = self.time_zone
+  end
+
   def set_login_code
     ## All numeric, with LOGIN_CODE_LENGTH digits
     self.login_code = rand(10**LOGIN_CODE_LENGTH).to_s.rjust(LOGIN_CODE_LENGTH, '0')
