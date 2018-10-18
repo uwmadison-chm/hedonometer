@@ -1,6 +1,6 @@
 class ParticipantTexter < ActionTexter::Base
   class << self
-    def message_for_participant(participant, message)
+    def message_for_participant(message, participant)
       Rails.logger.info("Sending #{message} to #{participant.phone_number}")
       survey = participant.survey
       survey.outgoing_text_messages.build({
@@ -12,6 +12,7 @@ class ParticipantTexter < ActionTexter::Base
 
     def build_replacements(participant)
       {
+        '{{external_key}}' => participant.external_key,
         '{{samples_per_day}}' => participant.survey.samples_per_day,
         '{{login_code}}' => participant.login_code,
         '{{first_date}}' => participant.schedule_days.first.date.to_s(:for_sms),
@@ -20,8 +21,10 @@ class ParticipantTexter < ActionTexter::Base
     end
 
     def message_with_replacements(message, participant)
-      message_for_participant(participant,
-        do_replacements(message, build_replacements(participant)))
+      message_for_participant(
+        do_replacements(message, build_replacements(participant)),
+        participant
+      )
     end
 
     def welcome_message(participant)
@@ -37,10 +40,11 @@ class ParticipantTexter < ActionTexter::Base
     end
 
     def deliver_scheduled_question!(scheduled_question_id)
-      # This one doesn't get replacements; I think that would be a surprise.
       scheduled_question = ScheduledQuestion.find scheduled_question_id
       participant = scheduled_question.schedule_day.participant
-      message = message_for_participant(participant, scheduled_question.survey_question.question_text)
+      message = message_with_replacements(
+        scheduled_question.survey_question.question_text,
+        participant)
       scheduled_question.deliver_and_save_if_possible!(message)
       if scheduled_question.completed?
         new_question = participant.schedule_survey_question_and_save!

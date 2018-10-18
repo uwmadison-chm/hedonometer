@@ -17,3 +17,8 @@ test_how:
   survey: test
   question_text: "How are you feeling?"
   position: 4
+
+test_replace:
+  survey: test
+  question_text: "{{external_key}}"
+  position: 5
