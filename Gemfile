@@ -21,6 +21,8 @@ gem 'unicorn', '~> 5.1.0'
 
 
 group :development do
+  gem 'bcrypt_pbkdf', '~> 1.0'
+  gem 'ed25519', '~> 1.2'
   gem 'web-console', '~> 2.0'
   gem 'capistrano', '~> 2.15.5'
   gem 'mysql2', '~> 0.3.11'
