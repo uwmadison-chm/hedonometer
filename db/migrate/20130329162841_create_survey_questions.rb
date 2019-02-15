@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CreateSurveyQuestions < ActiveRecord::Migration
+class CreateSurveyQuestions < ActiveRecord::Migration[4.2]
   def change
     create_table :survey_questions do |t|
       t.references :survey

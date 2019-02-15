@@ -1,4 +1,4 @@
-class AddAasmToScheduleDayAndScheduledQuestion < ActiveRecord::Migration
+class AddAasmToScheduleDayAndScheduledQuestion < ActiveRecord::Migration[4.2]
   def change
     add_column :schedule_days, :aasm_state, :string
     add_column :scheduled_questions, :aasm_state, :string

@@ -28,25 +28,25 @@ class Admin::SessionControllerTest < ActionController::TestCase
 
   test "login with good password sets admin_id" do
     refute admin_id_set?
-    post :create, {email:admins(:nate).email, password:'password'}
+    post :create, params: {email: admins(:nate).email, password: 'password'}
     assert admin_id_set?
   end
 
   test "login with good password works" do
     post :create,
-      {email:admins(:nate).email, password:'password'},
-      {destination:'foo'}
+      params: {email: admins(:nate).email, password: 'password'},
+      session: {destination: 'foo'}
     assert_response :redirect
     assert_redirected_to 'foo'
   end
 
   test "default redirect to root url" do
-    post :create, {email:admins(:nate).email, password:'password'}
+    post :create, params: {email: admins(:nate).email, password: 'password'}
     assert_redirected_to admin_root_url
   end
 
   test "bad password renders new" do
-    post :create, {email:admins(:nate).email, password:'bad_password'}
+    post :create, params: {email: admins(:nate).email, password: 'bad'}
     assert_response :success
     assert_template :new
   end

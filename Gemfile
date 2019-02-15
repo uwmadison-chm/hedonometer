@@ -1,46 +1,91 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'rails', '~> 4.2.0'
-gem 'haml', '~> 4.0.0'
+ruby '2.6.0'
+
+# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'rails', '~> 5.2.2'
+# Use Puma as the app server
+gem 'puma', '~> 3.11'
+# Use SCSS for stylesheets
+gem "sass-rails", "~> 5.0"
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+# See https://github.com/rails/execjs#readme for more supported runtimes
+# gem 'mini_racer', platforms: :ruby
+
+# Use CoffeeScript for .coffee assets and views
+gem 'coffee-rails', '~> 4.2'
+# Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
+gem 'turbolinks', '~> 5'
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 2.5'
+# Use Redis adapter to run Action Cable in production
+# gem 'redis', '~> 4.0'
+
+# Use ActiveModel has_secure_password
+gem 'bcrypt', '~> 3.1.7'
+
+# Use ActiveStorage variant
+# gem 'mini_magick', '~> 4.8'
+
+# Use Capistrano for deployment
+# gem 'capistrano-rails', group: :development
+
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.1.0', require: false
+
+group :development, :test do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  # Use sqlite3 as the database for Active Record
+  gem 'sqlite3'
+end
+
+group :development do
+  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
+  gem 'web-console', '>= 3.3.0'
+  gem 'listen', '>= 3.0.5', '< 3.2'
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  # Guard for autotesting
+  gem 'guard'
+  gem 'guard-minitest'
+end
+
+group :test do
+  # Adds support for Capybara system testing and selenium driver
+  gem 'capybara', '>= 2.15'
+  gem 'selenium-webdriver'
+  # Easy installation and use of chromedriver to run system tests with Chrome
+  gem 'chromedriver-helper'
+end
+
+
+# ===========================
+# Gems specific to hedonometer
+# ===========================
+
+gem "rails-controller-testing", "~> 1.0"
+
+gem 'haml', '~> 5.0.4'
 
 gem 'twilio-ruby', '~> 3.9.0'
 
-gem 'jquery-rails', '3.0.4'
+gem 'jquery-rails', '4.3.3'
 gem 'json', '~> 1.8.2'
 
-# To use ActiveModel has_secure_password
-gem 'bcrypt-ruby', '~> 3.0.0', require: 'bcrypt'
-
 gem 'daemons', '~> 1.1.9'
-gem 'delayed_job', '~> 4.0.0'
-gem 'delayed_job_active_record', '~> 4.1.0'
+gem 'delayed_job', '~> 4.1.5'
+gem 'delayed_job_active_record', '~> 4.1.3'
 
 gem 'aasm', '~> 3.0.20'
 
-gem 'unicorn', '~> 5.1.0'
-
-
-group :development do
-  gem 'bcrypt_pbkdf', '~> 1.0'
-  gem 'ed25519', '~> 1.2'
-  gem 'web-console', '~> 2.0'
-  gem 'capistrano', '~> 2.15.5'
-  gem 'mysql2', '~> 0.3.11'
-  gem 'ffi', '<1.9.3'
-  gem 'spring', '~> 1.2.0'
-  gem 'webmock', '~> 1.13.0'
-
-  # Gems used only for assets and not required in production
-  gem 'sass', '~> 3.4.13'
-  gem 'sass-rails', '~> 5.0.0'
-  gem 'compass', '~> 1.0.3'
-  gem 'compass-rails', '2.0.4'
-  gem 'uglifier', '>= 2.7.1'
-  gem 'susy', '~> 2.2.2'
-  gem 'coffee-rails', '~> 4.1.0'
-end
-
-
 group :production do
+  # Use postgres as the database for Active Record in production
   gem 'pg', '~> 0.18.1'
 end
+
+
+gem "webmock", "~> 3.5"

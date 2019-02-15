@@ -1,0 +1,118 @@
+// ---------------------------------------------------------------------------
+// Imports
+
+@import 'base';
+
+// Layout
+
+$small-text: 72%;
+
+$ok-foreground: #29580c;
+$ok-background: #bbedc3;
+
+$warn-foreground: #986319;
+$warn-background: #fee98b;
+
+$error-foreground: #8f1919;
+$error-background: #f1b8c2;
+
+
+body { font: 100%/1.5 Verdana, sans-serif; }
+
+code { font-family: Consolas, Monaco, monospace; }
+
+// Disable column-show widget in production.
+head.production {
+  display: none;
+}
+
+.page {
+  position: relative;
+}
+
+.top-nav {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.grid {
+  /* TODO */
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 80%;
+  margin-top: 1em;
+}
+
+th,
+td {
+  padding: 0 8px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+form {
+  overflow: auto;
+
+  .line {
+    /* TODO */
+
+    .col1 {
+      /* TODO */
+      text-align: right;
+    }
+
+    .col2 {
+      /* TODO */
+    }
+
+    .status {
+      padding-left: 1em;
+    }
+
+    .success {
+      color: $ok-foreground;
+    }
+
+    .failure {
+      color: $error-foreground;
+    }
+  }
+
+  .instructions {
+    color: #333;
+    font-size: $small-text;
+    margin-bottom: .5em;
+  }
+}
+
+.status-light {
+  font-size: $small-text;
+  margin-left: 1.2em;
+  padding: .1em .3em;
+
+  &.active {
+    background-color: $ok-background;
+    color: $ok-foreground;
+  }
+
+  &.closed,
+  &.suspended {
+    background-color: $warn-background;
+    color: $warn-foreground;
+  }
+
+  &.error {
+    background-color: $error-background;
+    color: $error-foreground;
+  }
+}
+
+.help {
+  clear: both;
+  margin-top: 1em;
+}

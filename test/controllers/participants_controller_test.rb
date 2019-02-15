@@ -54,7 +54,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   end
 
   test "participant should create" do
-    post :create, params_for_create
+    post :create, params: params_for_create
     assert_response :success
     refute_nil assigns(:participant)
     refute assigns(:participant).new_record?, assigns(:participant).errors.full_messages
@@ -64,43 +64,43 @@ class ParticipantsControllerTest < ActionController::TestCase
     params = params_for_create
     params[:participant][:schedule_start_date] = Date.today.to_s
     params[:participant][:schedule_time_after_midnight] = 9.hours.to_i
-    post :create, params
+    post :create, params: params
     assert_response :success
     p = assigns(:participant)
     refute_empty p.schedule_days
   end
 
   test "participant should not create duplicate" do
-    post :create, params_for_create
+    post :create, params: params_for_create
     assert_response :success
-    post :create, params_for_create
+    post :create, params: params_for_create
     assert_response 409
   end
 
   test "creating participants can send a welcome message" do
     params = params_for_create
     params[:participant][:send_welcome_message] = "1"
-    post :create, params
+    post :create, params: params
     assert_response :success
-    assert_requested :post, /.*@api.twilio.com/
+    assert_requested :post, /api.twilio.com/
   end
 
   test "creating participants doesn't always send a welcome message" do
     params = params_for_create
     params[:participant][:send_welcome_message] = "0"
-    post :create, params
+    post :create, params: params
     assert_response :success
-    assert_not_requested :post, /.*@api.twilio.com/
+    assert_not_requested :post, /api.twilio.com/
   end
 
   test "edit requires login" do
-    get :edit, params_for_edit(surveys(:test))
+    get :edit, params: params_for_edit(surveys(:test))
     assert_redirected_to survey_login_path()
   end
 
   test "edit renders" do
     participant_login_as participants(:ppt1)
-    get :edit, params_for_edit(surveys(:test))
+    get :edit, params: params_for_edit(surveys(:test))
     assert_response :success
   end
 
@@ -109,7 +109,7 @@ class ParticipantsControllerTest < ActionController::TestCase
     participant_login_as ppt
     params = params_for_update(ppt)
     params[:participant][:time_zone] = "Hawaii"
-    post :update, params
+    post :update, params: params
     assert_equal "Hawaii", ppt.reload.time_zone
     assert_redirected_to survey_path(ppt.survey)
   end
@@ -119,8 +119,8 @@ class ParticipantsControllerTest < ActionController::TestCase
     participant_login_as ppt
     day = ppt.schedule_days.order('date').first
     assert_equal 0, day.scheduled_questions.count
-    assert_changes day.scheduled_questions, :count, 1 do
-      post :update, params_for_update(ppt)
+    assert_difference "day.scheduled_questions.count", 1 do
+      post :update, params: params_for_update(ppt)
       assert_redirected_to survey_path(ppt.survey)
     end
   end
@@ -129,11 +129,11 @@ class ParticipantsControllerTest < ActionController::TestCase
     ppt = participants(:ppt1)
     participant_login_as ppt
     day = ppt.schedule_days.order('date').first
-    post :update, params_for_update(ppt)
+    post :update, params: params_for_update(ppt)
     assert_redirected_to survey_path(ppt.survey)
     assert_equal 1, day.scheduled_questions.count
     assert_no_change day.scheduled_questions, :count do
-      post :update, params_for_update(ppt)
+      post :update, params: params_for_update(ppt)
     end
   end
 end

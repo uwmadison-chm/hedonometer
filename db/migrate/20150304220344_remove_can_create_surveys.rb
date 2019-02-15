@@ -1,4 +1,4 @@
-class RemoveCanCreateSurveys < ActiveRecord::Migration
+class RemoveCanCreateSurveys < ActiveRecord::Migration[4.2]
   def change
     reversible do |dir|
       dir.up do

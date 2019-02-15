@@ -21,7 +21,7 @@ class IncomingTextMessagesController < SurveyedController
     if method
       self.send method, itm
     end
-    render nothing: true
+    head :ok
   end
 
   protected

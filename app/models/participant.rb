@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'time_range'
 
-class Participant < ActiveRecord::Base
+class Participant < ApplicationRecord
   LOGIN_CODE_LENGTH = 5
 
   validates :phone_number, presence: true, uniqueness: {scope: :survey_id}
@@ -33,8 +33,11 @@ class Participant < ActiveRecord::Base
 
     def advance_to_day_with_time_for_question!
       potential_run_targets.each do |day|
+        logger.debug("Checking day #{day.date}")
+        logger.debug("Starting status: #{day.aasm_state}")
         day.run! if day.waiting?
         day.finish! if not day.has_time_for_another_question?
+        logger.debug("Final status: #{day.aasm_state}")
         return day if day.running?
       end
       nil
@@ -67,6 +70,7 @@ class Participant < ActiveRecord::Base
   def schedule_human_time_after_midnight=(time_string)
     return if time_string.blank?
 
+    # TODO: This feels nasty to set system timezone
     Time.zone = self.time_zone
     @schedule_human_time_after_midnight = time_string
     logger.debug("Parsing time string #{time_string}")
@@ -82,14 +86,15 @@ class Participant < ActiveRecord::Base
   def build_schedule_and_schedule_first_question_if_possible!
     if self.can_schedule_days?
       Time.zone = self.time_zone
-      logger.debug("Setting schedule, generating first question!")
+      logger.debug("Setting schedule, generating first question")
       self.rebuild_schedule_days!
-      q = self.schedule_survey_question_and_save!
-      if q
-        logger.debug("Scheduled #{q.inspect}")
-        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+      logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
+      question = self.schedule_survey_question_and_save!
+      if question
+        logger.debug("Scheduled #{question.inspect}")
+        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
       else
-        logger.warn("Could not schedule a question for #{@participant}")
+        logger.warn("Could not schedule a question for participant #{self.id}")
       end
     else
       logger.debug("Not setting schedule.")
@@ -122,7 +127,9 @@ class Participant < ActiveRecord::Base
       first = sample_date + time_after_midnight
       last = first + survey.day_length
       self.schedule_days.build(
-        date: sample_date, time_ranges: [TimeRange.new(first, last)])
+        date: sample_date,
+        time_ranges: [TimeRange.new(first, last)]
+      )
     end
   end
 
@@ -182,7 +189,7 @@ class Participant < ActiveRecord::Base
 
   def rebuild_schedule_days!
     self.schedule_days.destroy_all
-    self.build_schedule_days(self.schedule_start_date, self.schedule_time_after_midnight)
+    self.build_schedule_days(self.schedule_start_date.to_datetime, self.schedule_time_after_midnight)
     self.schedule_days.each do |sd|
       sd.save
     end

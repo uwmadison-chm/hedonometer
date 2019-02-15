@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'csv'
 
-class Survey < ActiveRecord::Base
+class Survey < ApplicationRecord
   attr_accessor :creator
 
   has_many :survey_permissions

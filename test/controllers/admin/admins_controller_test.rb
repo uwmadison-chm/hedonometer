@@ -23,20 +23,20 @@ class Admin::AdminsControllerTest < ActionController::TestCase
   end
 
   test "create works" do
-    assert_changes Admin, :count, 1 do
-      post :create, {admin: {email: "new@example.com", password: "testit"}}
+    assert_difference "Admin.count", 1 do
+      post :create, params: {admin: {email: "new@example.com", password: "testit"}}
       assert_response :redirect
     end
   end
 
   test "edit renders" do
-    get :edit, id: admins(:nate)
+    get :edit, params: {id: admins(:nate)}
   end
 
   test "update changes things" do
     new_email = 'nate@example.com'
     admin = admins(:nate)
-    post :update, {
+    post :update, params: {
       id: admin,
       admin: {
         email: new_email
@@ -51,7 +51,7 @@ class Admin::AdminsControllerTest < ActionController::TestCase
 
   test "update can deactivate" do
     admin = admins(:nate)
-    post :update, {
+    post :update, params: {
       id: admin,
       admin: {
         active: 0
@@ -63,7 +63,7 @@ class Admin::AdminsControllerTest < ActionController::TestCase
 
   test "update can activate" do
     admin = admins(:deleted)
-    post :update, {
+    post :update, params: {
       id: admin,
       admin: {
         active: 1

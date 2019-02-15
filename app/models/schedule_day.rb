@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'time_range'
-class ScheduleDay < ActiveRecord::Base
+class ScheduleDay < ApplicationRecord
   belongs_to :participant
   validates :participant, presence: true
   validates :date, presence: true, uniqueness: {scope: :participant_id}

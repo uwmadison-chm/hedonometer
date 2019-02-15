@@ -48,19 +48,19 @@ class Admin::SurveysControllerTest < ActionController::TestCase
   end
 
   test "should get edit for editable survey" do
-    get :edit, id:surveys(:test)
+    get :edit, params: {id: surveys(:test)}
     assert_response :success
     assert assigns(:survey)
   end
 
   test "should not make form for orphaned survey" do
-    get :edit, id:surveys(:orphaned)
+    get :edit, params: {id: surveys(:orphaned)}
     assert_response :success
     assert_nil assigns(:survey)
   end
 
   test "should not make form for noneditable survey" do
-    get :edit, id:surveys(:someone_elses)
+    get :edit, params: {id: surveys(:someone_elses)}
     assert_response :success
     assert_nil assigns(:survey)
   end
@@ -70,7 +70,7 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     twilio_mock_multi(TwilioResponses.responses_for_activate(num))
 
     assert_difference 'Survey.count' do
-      post :create, sample_data
+      post :create, params: sample_data
     end
     s = assigns(:survey)
     assert s
@@ -80,9 +80,9 @@ class Admin::SurveysControllerTest < ActionController::TestCase
   test "creating a survey makes API calls to twilio for setting sms url" do
     num = "+16085551212"
     twilio_mock_multi(TwilioResponses.responses_for_activate(num))
-    post :create, sample_data
-    assert_requested :get, /.*@api.twilio.com/, times: 1
-    assert_requested :post, /.*@api.twilio.com/, times: 1
+    post :create, params: sample_data
+    assert_requested :get, /api.twilio.com/, times: 1
+    assert_requested :post, /api.twilio.com/, times: 1
   end
 
   test "updating a survey makes API calls for setting and deleteing sms" do
@@ -95,18 +95,18 @@ class Admin::SurveysControllerTest < ActionController::TestCase
 
     params = params_for_update(s)
     params[:phone_number] = num
-    post :update, id: s, survey: params
+    post :update, params: {id: s, survey: params}
     assert assigns(:survey)
     assert_equal params[:name], assigns(:survey).name
     assert_redirected_to edit_admin_survey_path(s)
-    assert_requested :get, /.*@api.twilio.com/, times: 2
-    assert_requested :post, /.*@api.twilio.com/, times: 2
+    assert_requested :get, /api.twilio.com/, times: 2
+    assert_requested :post, /api.twilio.com/, times: 2
   end
 
   test "failed survey creation renders new" do
     d = sample_data
     d[:survey][:name] = ''
-    post :create, d
+    post :create, params: d
     assert assigns(:survey).new_record?
     assert_template :new
   end
@@ -115,25 +115,25 @@ class Admin::SurveysControllerTest < ActionController::TestCase
     s = surveys(:test)
     params = params_for_update(s)
     params[:name] = "freeow"
-    post :update, id: s, survey: params
+    post :update, params: {id: s, survey: params}
     assert assigns(:survey)
     assert_equal params[:name], assigns(:survey).name
     assert_redirected_to edit_admin_survey_path(s)
     # Also we should not hit Twilio's API
-    assert_requested :get, /.*@api.twilio.com/, times: 0
-    assert_requested :post, /.*@api.twilio.com/, times: 0
+    assert_requested :get, /api.twilio.com/, times: 0
+    assert_requested :post, /api.twilio.com/, times: 0
   end
 
   test "bad update sends to edit" do
     s = surveys(:test)
-    post :update, id: s, survey: {name: ""}
+    post :update, params: {id: s, survey: {name: ""}}
     assert_response :success
     assert_template :edit
   end
 
   test "data downloads" do
     s = surveys(:test)
-    get :show, id: s, format: 'csv'
+    get :show, params: {id: s, format: 'csv'}
     assert_response :success
     lines = CSV.parse(response.body)
     assert_equal lines.length, (s.text_messages.count + 1)

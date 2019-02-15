@@ -37,7 +37,7 @@ class ActiveSupport::TestCase
   end
 
   def twilio_mock_multi(option_hashes)
-    stub_http_request(:any, /.*@api.twilio.com/).to_return(option_hashes)
+    stub_request(:any, /api.twilio.com/).to_return(option_hashes)
   end
 
   def used_numbers
@@ -230,15 +230,6 @@ resp
 end
 
 module MiniTest::Assertions
-  def assert_changes(obj, method, exp_diff)
-    before = obj.send method
-    yield
-    after  = obj.send method
-    diff = after - before
-
-    assert_equal exp_diff, diff, "Expected #{obj.class.name}##{method} to change by #{exp_diff}, changed by #{diff}"
-  end
-
   def assert_no_change(obj, method)
     before = obj.send method
     yield

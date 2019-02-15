@@ -34,35 +34,35 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
 
   test "index requires login" do
     admin_logout
-    get :index, survey_id: surveys(:test)
+    get :index, params: {survey_id: surveys(:test)}
     assert_response :redirect
   end
 
   test "index renders" do
-    get :index, survey_id: surveys(:test)
+    get :index, params: {survey_id: surveys(:test)}
     assert_response :success
   end
 
   test "show renders" do
-    get :show, survey_id: surveys(:test), id: participants(:ppt1)
+    get :show, params: {survey_id: surveys(:test), id: participants(:ppt1)}
     assert_response :success
   end
 
   test "show renders as csv" do
-    get :show, survey_id: surveys(:test), id: participants(:ppt1),
-      format: :csv
+    get :show, params: {survey_id: surveys(:test), id: participants(:ppt1),
+      format: :csv}
     assert_response :success
     rows = CSV.parse(response.body)
     assert rows.length == (participants(:ppt1).text_messages.count + 1)
   end
 
   test "edit renders" do
-    get :edit, survey_id: surveys(:test), id: participants(:ppt1)
+    get :edit, params: {survey_id: surveys(:test), id: participants(:ppt1)}
     assert_response :success
   end
 
   test "creating schedules days and message" do
-    post :create, params_for_create(surveys(:test))
+    post :create, params: params_for_create(surveys(:test))
     ppt = assigns(:participant)
     assert_empty ppt.errors
     assert_redirected_to admin_survey_participants_path(surveys(:test))
@@ -72,7 +72,7 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
 
   test "update participant" do
     params = params_for_update(participants(:ppt1))
-    put :update, params
+    put :update, params: params
     assert_redirected_to edit_admin_survey_participant_path(
       surveys(:test), participants(:ppt1))
     assert_equal assigns(:participant).phone_number.humanize, params[:participant][:phone_number]
@@ -81,13 +81,13 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
   test "participant time zone affects start time" do
     params = params_for_create(surveys(:test))
     params[:participant][:time_zone] = "Central Time (US & Canada)"
-    post :create, params
+    post :create, params: params
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     ppt1 = assigns(:participant)
     msg1 = ppt1.schedule_days.first.scheduled_questions.first
     params[:participant][:time_zone] = "UTC"
     params[:participant][:phone_number] = "(608) 555-9998"
-    post :create, params
+    post :create, params: params
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     ppt2 = assigns(:participant)
     msg2 = ppt2.schedule_days.first.scheduled_questions.first

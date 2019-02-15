@@ -1,4 +1,4 @@
-class TextMessage < ActiveRecord::Base
+class TextMessage < ApplicationRecord
   belongs_to :survey
   serialize :server_response, JSON
 
