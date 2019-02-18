@@ -15,7 +15,6 @@ class Participant < ApplicationRecord
 
   validates :time_zone, presence: true
   before_validation :copy_time_zone_from_survey, on: :create
-  before_validation :set_system_time_zone
 
   before_validation :set_requests_new_schedule, on: :create
   validate :valid_schedule_start, if: :requests_new_schedule?
@@ -70,31 +69,31 @@ class Participant < ApplicationRecord
   def schedule_human_time_after_midnight=(time_string)
     return if time_string.blank?
 
-    # TODO: This feels nasty to set system timezone
-    Time.zone = self.time_zone
-    @schedule_human_time_after_midnight = time_string
-    logger.debug("Parsing time string #{time_string}")
-    begin
-      self.schedule_time_after_midnight = Time.parse(time_string).
-        seconds_since_midnight
-      logger.debug("Setting schedule_time_after_midnight to #{self.schedule_time_after_midnight}")
-    rescue ArgumentError => e
-      logger.debug(e.to_s)
+    Time.use_zone(self.time_zone) do
+      @schedule_human_time_after_midnight = time_string
+      logger.debug("Parsing time string #{time_string}")
+      begin
+        self.schedule_time_after_midnight = Time.parse(time_string).seconds_since_midnight
+        logger.debug("Setting schedule_time_after_midnight to #{self.schedule_time_after_midnight}")
+      rescue ArgumentError => e
+        logger.debug(e.to_s)
+      end
     end
   end
 
   def build_schedule_and_schedule_first_question_if_possible!
     if self.can_schedule_days?
-      Time.zone = self.time_zone
-      logger.debug("Setting schedule, generating first question")
-      self.rebuild_schedule_days!
-      logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
-      question = self.schedule_survey_question_and_save!
-      if question
-        logger.debug("Scheduled #{question.inspect}")
-        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
-      else
-        logger.warn("Could not schedule a question for participant #{self.id}")
+      Time.use_zone(self.time_zone) do
+        logger.debug("Setting schedule, generating first question")
+        self.rebuild_schedule_days!
+        logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
+        question = self.schedule_survey_question_and_save!
+        if question
+          logger.debug("Scheduled #{question.inspect}")
+          ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
+        else
+          logger.warn("Could not schedule a question for participant #{self.id}")
+        end
       end
     else
       logger.debug("Not setting schedule.")
@@ -120,20 +119,21 @@ class Participant < ApplicationRecord
   end
 
   def build_schedule_days(start_date, time_after_midnight)
-    Time.zone = self.time_zone
-    logger.debug { "build_schedule_days: in #{Time.zone} set by #{self.time_zone}" }
-    self.survey.sampled_days.times do |t|
-      sample_date = start_date + t.days
-      first = sample_date + time_after_midnight
-      last = first + survey.day_length
-      self.schedule_days.build(
-        date: sample_date,
-        time_ranges: [TimeRange.new(first, last)]
-      )
+    Time.use_zone(self.time_zone) do
+      logger.debug { "build_schedule_days: in #{Time.zone} set by #{self.time_zone}" }
+      self.survey.sampled_days.times do |t|
+        sample_date = start_date + t.days
+        first = sample_date + time_after_midnight
+        last = first + survey.day_length
+        self.schedule_days.build(
+          date: sample_date,
+          time_ranges: [TimeRange.new(first, last)]
+        )
+      end
     end
   end
 
-  def choose_question
+  private def choose_question
     chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
     chooser.choose.tap {
       self.question_chooser_state = chooser.serialize_state
@@ -210,11 +210,6 @@ class Participant < ApplicationRecord
     def authenticate(phone_number, login_code)
       Participant.where(phone_number: PhoneNumber.to_e164(phone_number), login_code: login_code).first
     end
-  end
-
-  protected
-  def set_system_time_zone
-    Time.zone = self.time_zone
   end
 
   def set_login_code
