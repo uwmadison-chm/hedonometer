@@ -9,6 +9,7 @@ class IncomingTextMessagesControllerTest < ActionController::TestCase
   end
 
   test "deactivates participants when we get a STOP message" do
+    twilio_mock(TwilioResponses.create_sms)
     ppt = participants(:ppt1)
     post :create, params: TwilioResponses.incoming_params(surveys(:test), "stop", ppt.phone_number)
     ppt.reload
@@ -16,6 +17,7 @@ class IncomingTextMessagesControllerTest < ActionController::TestCase
   end
 
   test "activates participants when we get a START message" do
+    twilio_mock(TwilioResponses.create_sms)
     ppt = participants(:ppt1)
     ppt.active = false
     ppt.save!

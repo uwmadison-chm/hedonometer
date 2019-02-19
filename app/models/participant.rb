@@ -133,7 +133,7 @@ class Participant < ApplicationRecord
     end
   end
 
-  private def choose_question
+  def choose_question
     chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
     chooser.choose.tap {
       self.question_chooser_state = chooser.serialize_state
