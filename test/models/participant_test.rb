@@ -110,7 +110,7 @@ class ParticipantTest < ActiveSupport::TestCase
       schedule_time_after_midnight: 9.hours.to_i)
     p.rebuild_schedule_days!
     assert_equal s.sampled_days, p.schedule_days.length
-    assert_equal p.schedule_days.first.date, Date.today
+    assert_equal Date.today, p.schedule_days.first.starts_at.to_date
   end
 
   test "can_schedule_days? method" do
@@ -132,12 +132,12 @@ class ParticipantTest < ActiveSupport::TestCase
     p.schedule_start_date = Date.today
     p.schedule_time_after_midnight = 9.hours
     p.rebuild_schedule_days!
-    assert_equal p.schedule_days.first.date, Date.today
+    assert_equal Date.today, p.schedule_days.first.starts_at.to_date
     p.schedule_start_date = Date.tomorrow
     p.rebuild_schedule_days!
     p.reload
     assert_equal p.survey.sampled_days, p.schedule_days.length
-    assert_equal p.schedule_days.first.date, Date.tomorrow
+    assert_equal Date.tomorrow, p.schedule_days.first.starts_at.to_date
   end
 
   test "first potential schedule day" do

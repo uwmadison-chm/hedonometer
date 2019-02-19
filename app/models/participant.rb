@@ -69,31 +69,27 @@ class Participant < ApplicationRecord
   def schedule_human_time_after_midnight=(time_string)
     return if time_string.blank?
 
-    Time.use_zone(self.time_zone) do
-      @schedule_human_time_after_midnight = time_string
-      logger.debug("Parsing time string #{time_string}")
-      begin
-        self.schedule_time_after_midnight = Time.parse(time_string).seconds_since_midnight
-        logger.debug("Setting schedule_time_after_midnight to #{self.schedule_time_after_midnight}")
-      rescue ArgumentError => e
-        logger.debug(e.to_s)
-      end
+    @schedule_human_time_after_midnight = time_string
+    logger.debug("Parsing time string #{time_string}")
+    begin
+      self.schedule_time_after_midnight = Time.parse(time_string).seconds_since_midnight
+      logger.debug("Setting schedule_time_after_midnight to #{self.schedule_time_after_midnight}")
+    rescue ArgumentError => e
+      logger.debug(e.to_s)
     end
   end
 
   def build_schedule_and_schedule_first_question_if_possible!
     if self.can_schedule_days?
-      Time.use_zone(self.time_zone) do
-        logger.debug("Setting schedule, generating first question")
-        self.rebuild_schedule_days!
-        logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
-        question = self.schedule_survey_question_and_save!
-        if question
-          logger.debug("Scheduled #{question.inspect}")
-          ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
-        else
-          logger.warn("Could not schedule a question for participant #{self.id}")
-        end
+      logger.debug("Setting schedule, generating first question")
+      self.rebuild_schedule_days!
+      logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
+      question = self.schedule_survey_question_and_save!
+      if question
+        logger.debug("Scheduled #{question.inspect}")
+        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
+      else
+        logger.warn("Could not schedule a question for participant #{self.id}")
       end
     else
       logger.debug("Not setting schedule.")
@@ -119,17 +115,21 @@ class Participant < ApplicationRecord
   end
 
   def build_schedule_days(start_date, time_after_midnight)
-    Time.use_zone(self.time_zone) do
-      logger.debug { "build_schedule_days: in #{Time.zone} set by #{self.time_zone}" }
-      self.survey.sampled_days.times do |t|
-        sample_date = start_date + t.days
-        first = sample_date + time_after_midnight
-        last = first + survey.day_length
-        self.schedule_days.build(
-          date: sample_date,
-          time_ranges: [TimeRange.new(first, last)]
-        )
-      end
+    # TODO: Wait. Start_date as passed in is supposed to be UTC, or in study time_zone?
+
+    # TODO: There has to be a better way to get the time zone offset. Right?
+    offset = Time.use_zone(self.time_zone) do
+      Time.zone.utc_offset / 1.hour
+    end
+    utc_start = start_date + offset.hours
+    self.survey.sampled_days.times do |t|
+      sample_date = utc_start + t.days
+      first = sample_date + time_after_midnight
+      last = first + survey.day_length
+      self.schedule_days.build(
+        date: sample_date,
+        time_ranges: [TimeRange.new(first, last)]
+      )
     end
   end
 
@@ -180,7 +180,9 @@ class Participant < ApplicationRecord
   end
 
   def schedule_start_date=(d)
-    @schedule_start_date = Date.parse(d.to_s) rescue nil
+    Time.use_zone(self.time_zone) do
+      @schedule_start_date = Date.parse(d.to_s) rescue nil
+    end
   end
 
   def schedule_time_after_midnight=(sec)
