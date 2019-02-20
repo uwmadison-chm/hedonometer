@@ -85,14 +85,13 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     ppt1 = assigns(:participant)
     msg1 = ppt1.schedule_days.first.scheduled_questions.first
-    params[:participant][:time_zone] = "UTC"
+    params[:participant][:time_zone] = "Pacific/Honolulu"
     params[:participant][:phone_number] = "(608) 555-9998"
     post :create, params: params
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     ppt2 = assigns(:participant)
     msg2 = ppt2.schedule_days.first.scheduled_questions.first
 
-    assert_operator (msg1.scheduled_at - msg2.scheduled_at), :>, 4.hours
-
+    assert_operator (msg2.scheduled_at - msg1.scheduled_at), :>, 2.hours
   end
 end

@@ -6,9 +6,9 @@ class TimeRange
 
   def initialize(first_at, end_at)
     # These can come in as ActiveSupport::TimeWithZone or DateTime or... who knows
-    # TODO: we don't force time zone to be correct on DateTime yet
-    @first = first_at
-    @end = end_at
+    # They should always be in UTC
+    @first = first_at.utc
+    @end = end_at.utc
   end
 
   def last

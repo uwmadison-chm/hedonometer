@@ -115,13 +115,10 @@ class Participant < ApplicationRecord
   end
 
   def build_schedule_days(start_date, time_after_midnight)
-    # TODO: Wait. Start_date as passed in is supposed to be UTC, or in study time_zone?
-
-    # TODO: There has to be a better way to get the time zone offset. Right?
     offset = Time.use_zone(self.time_zone) do
       Time.zone.utc_offset / 1.hour
     end
-    utc_start = start_date + offset.hours
+    utc_start = start_date - offset.hours
     self.survey.sampled_days.times do |t|
       sample_date = utc_start + t.days
       first = sample_date + time_after_midnight
