@@ -21,15 +21,6 @@ body { font: 100%/1.5 Verdana, sans-serif; }
 
 code { font-family: Consolas, Monaco, monospace; }
 
-// Disable column-show widget in production.
-head.production {
-  display: none;
-}
-
-.page {
-  position: relative;
-}
-
 .top-nav {
   position: absolute;
   right: 0;
@@ -37,7 +28,9 @@ head.production {
 }
 
 .grid {
-  /* TODO */
+  .col1, .col2 {
+    border: dashed 1px #ccc;
+  }
 }
 
 table {
@@ -59,15 +52,15 @@ form {
   overflow: auto;
 
   .line {
-    /* TODO */
+    display: grid;
+    grid-gap: 6px;
+    grid-template-columns: 40% auto;
 
     .col1 {
-      /* TODO */
       text-align: right;
     }
 
     .col2 {
-      /* TODO */
     }
 
     .status {
