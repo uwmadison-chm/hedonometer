@@ -33,6 +33,24 @@ class ParticipantTexter < ActionTexter::Base
         participant)
     end
 
+    def help_message(participant)
+      message_with_replacements(
+        participant.survey.welcome_message + " ... You can reply STOP to stop all messages or START to start them.",
+        participant)
+    end
+
+    def start_message(participant)
+      message_with_replacements(
+        "You have been resubscribed. Reply HELP for help.",
+        participant)
+    end
+
+    def stop_message(participant)
+      message_with_replacements(
+        "You have been unsubscribed. No more messages will be sent. Reply HELP for help.",
+        participant)
+    end
+
     def login_code_message(participant)
       message_with_replacements(
         "Your login code is {{login_code}}. Quit at any time by texting STOP.",

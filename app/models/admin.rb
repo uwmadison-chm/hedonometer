@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Admin < ActiveRecord::Base
+class Admin < ApplicationRecord
   attr_accessor :password
   attr_accessor :deactivate
 

@@ -37,9 +37,9 @@ class ParticipantsController < SurveyedController
       # Timezone is copied from survey
       Time.zone = @participant.time_zone
       @participant.send_welcome_message_if_requested!
-      render text: "Created", status: :created
+      render plain: "Created", status: :created
     else
-      render text: @participant.errors.to_json, status: :conflict
+      render plain: @participant.errors.to_json, status: :conflict
     end
   end
 

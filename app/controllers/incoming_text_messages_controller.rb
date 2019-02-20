@@ -6,8 +6,9 @@ class IncomingTextMessagesController < SurveyedController
   before_action :underscorify_params!
 
   ROUTING_TABLE = [
-    [/STOP/i,     :handle_stop],
-    [/START/i,    :handle_start]
+    [/^(STOP|END|QUIT|CANCEL|UNSUBSCRIBE)/i, :handle_stop],
+    [/^(START)/i, :handle_start],
+    [/^(HELP|INFO|\?)/i, :handle_help],
   ]
 
   def create
@@ -21,7 +22,7 @@ class IncomingTextMessagesController < SurveyedController
     if method
       self.send method, itm
     end
-    render nothing: true
+    head :ok
   end
 
   protected
@@ -33,15 +34,32 @@ class IncomingTextMessagesController < SurveyedController
   end
 
   def handle_stop(message)
-    set_participant_active(params[:from], false)
+    ppt = set_participant_active(params[:from], false)
+    if ppt
+      ParticipantTexter.stop_message(ppt).deliver_and_save!
+    end
   end
 
   def handle_start(message)
-    set_participant_active(params[:from], true)
+    ppt = set_participant_active(params[:from], true)
+    if ppt
+      ParticipantTexter.start_message(ppt).deliver_and_save!
+    end
+  end
+
+  def handle_help(message)
+    ppt = participant_from_phone_number 
+    if ppt
+      ParticipantTexter.help_message(ppt).deliver_and_save!
+    end
+  end
+
+  def participant_from_phone_number(number)
+    current_survey.participants.where(phone_number: number).first
   end
 
   def set_participant_active(phone_number, active_value)
-    ppt = current_survey.participants.where(phone_number: phone_number).first
+    ppt = participant_from_phone_number(phone_number)
     if ppt
       ppt.active = active_value
       ppt.save!

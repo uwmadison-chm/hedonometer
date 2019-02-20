@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CreateSurveyPermissions < ActiveRecord::Migration
+class CreateSurveyPermissions < ActiveRecord::Migration[4.2]
   def change
     create_table :survey_permissions do |t|
       t.references :admin, null: false

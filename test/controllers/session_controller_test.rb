@@ -31,12 +31,12 @@ class SessionControllerTest < ActionController::TestCase
   end
 
   test "login renders" do
-    get :new, {survey_id: surveys(:test).id}
+    get :new, params: {survey_id: surveys(:test).id}
     assert_response :success
   end
 
   test "logout redirects to login" do
-    get :destroy, {survey_id: surveys(:test).id}
+    get :destroy, params: {survey_id: surveys(:test).id}
     assert_response :redirect
     assert_redirected_to survey_login_path(surveys(:test))
   end
@@ -44,34 +44,34 @@ class SessionControllerTest < ActionController::TestCase
   test "send login code succeeds" do
     twilio_mock(TwilioResponses.create_sms)
 
-    post :send_login_code, params_for_login_code(:test, participants(:ppt1).phone_number)
+    post :send_login_code, params: params_for_login_code(:test, participants(:ppt1).phone_number)
     assert_response :redirect
     assert_redirected_to survey_login_path(surveys(:test),
       {participant: {phone_number: participants(:ppt1).phone_number.to_s}})
   end
 
   test "failed login renders new" do
-    post :create, bad_login_params_for(participants(:ppt1))
+    post :create, params: bad_login_params_for(participants(:ppt1))
     assert_response :success
     assert_template :new
   end
 
   test "good login redirects to survey path" do
-    post :create, good_login_params_for(participants(:ppt1))
+    post :create, params: good_login_params_for(participants(:ppt1))
     assert_response :redirect
     assert_redirected_to survey_path(participants(:ppt1).survey)
   end
 
   test "good login sets participant_id in session" do
-    post :create, good_login_params_for(participants(:ppt1))
+    post :create, params: good_login_params_for(participants(:ppt1))
     assert_includes session, :participant_id
   end
 
   test "send login code creates outgoing text message" do
     twilio_mock(TwilioResponses.create_sms)
 
-    assert_changes surveys(:test).outgoing_text_messages, :count, 1 do
-      post :send_login_code, params_for_login_code(:test, participants(:ppt1).phone_number)
+    assert_difference "surveys(:test).outgoing_text_messages.count", 1 do
+      post :send_login_code, params: params_for_login_code(:test, participants(:ppt1).phone_number)
     end
   end
 end

@@ -13,11 +13,13 @@ Many variants on experience sampling exist; however, extant ones tend to rely ei
 
 ## Requirements
 
-This is written and tested in Ruby 2.2.0. Probably it'll work with 1.9, but really, I'm planing to stay edge.
+This is written and tested in Ruby 2.2.0, and then upgraded to 2.6.0.
 
 ## Getting Started
 
-Installing this is the same as installing any Rails app. Clone, `bundle install`, `rake db:migrate`. There isn't yet a rake task to add your first admin, so pull up a Rails console and:
+Installing this is the same as installing any Rails app. Clone, `bundle install`, `rake db:migrate`.
+
+There isn't yet a rake task to add your first admin, so pull up a Rails console and:
 
 ```
 Admin.create(email: "your_email@example.com", password: "some-password", can_change_admins: true)
@@ -32,3 +34,10 @@ On the numbers screen, note your Twilio Account SID and your Authorization Token
 Back in the hedonometer, create a survey. Paste in your Account SID and Auth Token; you should get a little "Active" status light. The "Phone number" field should autocomplete with the number you've purchased.
 
 Play around a bit.
+
+
+### Ubuntu dev packages required
+
+    sudo apt-get install libpq-dev libmysqlclient-dev
+
+

@@ -15,20 +15,20 @@ class Admin::TwilioAccountsControllerTest < ActionController::TestCase
 
   test "login required" do
     admin_logout
-    get :show, sid: 'test', auth_token: 'test', format: 'json'
+    get :show, params: {sid: 'test', auth_token: 'test', format: 'json'}
     assert_response :redirect
   end
 
   test "get json for good account" do
     twilio_mock(TwilioResponses.incoming_phone_numbers(used_numbers))
-    get :show, sid: 'test', auth_token: 'test', format: 'json'
+    get :show, params: {sid: 'test', auth_token: 'test', format: 'json'}
     assert_response :success
     assert JSON.parse(response.body)
   end
 
   test "get error for bad account" do
     twilio_mock(TwilioResponses.auth_failure, 401)
-    get :show, sid: 'test', auth_token: 'test', format: 'json'
+    get :show, params: {sid: 'test', auth_token: 'test', format: 'json'}
     assert_response :unauthorized
   end
 

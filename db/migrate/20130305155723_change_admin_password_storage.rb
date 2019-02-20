@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class ChangeAdminPasswordStorage < ActiveRecord::Migration
+class ChangeAdminPasswordStorage < ActiveRecord::Migration[4.2]
   def change
     remove_column :admins, :password_digest
     add_column :admins, :password_salt, :binary, :limit => 1.kilobyte

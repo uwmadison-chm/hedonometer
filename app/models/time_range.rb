@@ -5,8 +5,10 @@ class TimeRange
   attr_accessor :end
 
   def initialize(first_at, end_at)
-    @first = first_at
-    @end = end_at
+    # These can come in as ActiveSupport::TimeWithZone or DateTime or... who knows
+    # They should always be in UTC
+    @first = first_at.utc
+    @end = end_at.utc
   end
 
   def last
@@ -28,7 +30,12 @@ class TimeRange
   end
 
   def duration
-    (@end - @first)
+    result = @end - @first
+    if result.is_a? Rational then
+      # Return as ActiveSupport::Duration instead of just a rational fraction of days
+      result = result.days
+    end
+    result
   end
 
   def self.from_date_and_string(date, range_string)

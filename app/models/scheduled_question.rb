@@ -1,4 +1,4 @@
-class ScheduledQuestion < ActiveRecord::Base
+class ScheduledQuestion < ApplicationRecord
   belongs_to :schedule_day
   validates :schedule_day, presence: true
 

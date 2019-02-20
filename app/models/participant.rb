@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'time_range'
 
-class Participant < ActiveRecord::Base
+class Participant < ApplicationRecord
   LOGIN_CODE_LENGTH = 5
 
   validates :phone_number, presence: true, uniqueness: {scope: :survey_id}
@@ -15,7 +15,6 @@ class Participant < ActiveRecord::Base
 
   validates :time_zone, presence: true
   before_validation :copy_time_zone_from_survey, on: :create
-  before_validation :set_system_time_zone
 
   before_validation :set_requests_new_schedule, on: :create
   validate :valid_schedule_start, if: :requests_new_schedule?
@@ -33,8 +32,11 @@ class Participant < ActiveRecord::Base
 
     def advance_to_day_with_time_for_question!
       potential_run_targets.each do |day|
+        logger.debug("Checking day #{day.date}")
+        logger.debug("Starting status: #{day.aasm_state}")
         day.run! if day.waiting?
         day.finish! if not day.has_time_for_another_question?
+        logger.debug("Final status: #{day.aasm_state}")
         return day if day.running?
       end
       nil
@@ -67,12 +69,10 @@ class Participant < ActiveRecord::Base
   def schedule_human_time_after_midnight=(time_string)
     return if time_string.blank?
 
-    Time.zone = self.time_zone
     @schedule_human_time_after_midnight = time_string
     logger.debug("Parsing time string #{time_string}")
     begin
-      self.schedule_time_after_midnight = Time.parse(time_string).
-        seconds_since_midnight
+      self.schedule_time_after_midnight = Time.parse(time_string).seconds_since_midnight
       logger.debug("Setting schedule_time_after_midnight to #{self.schedule_time_after_midnight}")
     rescue ArgumentError => e
       logger.debug(e.to_s)
@@ -81,15 +81,15 @@ class Participant < ActiveRecord::Base
 
   def build_schedule_and_schedule_first_question_if_possible!
     if self.can_schedule_days?
-      Time.zone = self.time_zone
-      logger.debug("Setting schedule, generating first question!")
+      logger.debug("Setting schedule, generating first question")
       self.rebuild_schedule_days!
-      q = self.schedule_survey_question_and_save!
-      if q
-        logger.debug("Scheduled #{q.inspect}")
-        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+      logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
+      question = self.schedule_survey_question_and_save!
+      if question
+        logger.debug("Scheduled #{question.inspect}")
+        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
       else
-        logger.warn("Could not schedule a question for #{@participant}")
+        logger.warn("Could not schedule a question for participant #{self.id}")
       end
     else
       logger.debug("Not setting schedule.")
@@ -115,14 +115,18 @@ class Participant < ActiveRecord::Base
   end
 
   def build_schedule_days(start_date, time_after_midnight)
-    Time.zone = self.time_zone
-    logger.debug { "build_schedule_days: in #{Time.zone} set by #{self.time_zone}" }
+    offset = Time.use_zone(self.time_zone) do
+      Time.zone.utc_offset / 1.hour
+    end
+    utc_start = start_date - offset.hours
     self.survey.sampled_days.times do |t|
-      sample_date = start_date + t.days
+      sample_date = utc_start + t.days
       first = sample_date + time_after_midnight
       last = first + survey.day_length
       self.schedule_days.build(
-        date: sample_date, time_ranges: [TimeRange.new(first, last)])
+        date: sample_date,
+        time_ranges: [TimeRange.new(first, last)]
+      )
     end
   end
 
@@ -173,7 +177,9 @@ class Participant < ActiveRecord::Base
   end
 
   def schedule_start_date=(d)
-    @schedule_start_date = Date.parse(d.to_s) rescue nil
+    Time.use_zone(self.time_zone) do
+      @schedule_start_date = Date.parse(d.to_s) rescue nil
+    end
   end
 
   def schedule_time_after_midnight=(sec)
@@ -182,7 +188,7 @@ class Participant < ActiveRecord::Base
 
   def rebuild_schedule_days!
     self.schedule_days.destroy_all
-    self.build_schedule_days(self.schedule_start_date, self.schedule_time_after_midnight)
+    self.build_schedule_days(self.schedule_start_date.to_datetime, self.schedule_time_after_midnight)
     self.schedule_days.each do |sd|
       sd.save
     end
@@ -203,11 +209,6 @@ class Participant < ActiveRecord::Base
     def authenticate(phone_number, login_code)
       Participant.where(phone_number: PhoneNumber.to_e164(phone_number), login_code: login_code).first
     end
-  end
-
-  protected
-  def set_system_time_zone
-    Time.zone = self.time_zone
   end
 
   def set_login_code

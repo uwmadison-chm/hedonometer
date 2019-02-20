@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CreateAdmins < ActiveRecord::Migration
+class CreateAdmins < ActiveRecord::Migration[4.2]
   def change
     create_table :admins do |t|
       t.string :email, null: false, unique: true

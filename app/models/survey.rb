@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'csv'
 
-class Survey < ActiveRecord::Base
+class Survey < ApplicationRecord
   attr_accessor :creator
 
   has_many :survey_permissions
@@ -94,12 +94,12 @@ class Survey < ActiveRecord::Base
     end
   end
 
-  private
-  def assign_creator_as_admin
+
+  private def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true
   end
 
-  def clear_twilio_errors
+  private def clear_twilio_errors
     @twilio_errors = []
   end
 end

@@ -4,7 +4,7 @@ class Admin::TwilioAccountsController < AdminController
       number_list = TwilioIncomingNumber.available_unavailable_numbers(
         params[:sid], params[:auth_token])
     rescue Twilio::REST::RequestError => exc
-      render text: exc.message, status: TwilioIncomingNumber.client.last_response.code
+      render plain: exc.message, status: TwilioIncomingNumber.client.last_response.code
       return
     end
     data = {
@@ -13,7 +13,7 @@ class Admin::TwilioAccountsController < AdminController
     }
     respond_to do |format|
       format.json {
-        render text: JSON.dump(data)
+        render plain: JSON.dump(data)
       }
     end
   end

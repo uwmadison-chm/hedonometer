@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CreateSurveys < ActiveRecord::Migration
+class CreateSurveys < ActiveRecord::Migration[4.2]
   def change
     create_table :surveys do |t|
       t.string :name, null: false

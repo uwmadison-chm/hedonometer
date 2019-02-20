@@ -1,4 +1,4 @@
-class CreateScheduledQuestions < ActiveRecord::Migration
+class CreateScheduledQuestions < ActiveRecord::Migration[4.2]
   def change
     create_table :scheduled_questions do |t|
       t.references :schedule_day, null: false
