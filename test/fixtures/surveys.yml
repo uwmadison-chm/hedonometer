@@ -2,10 +2,6 @@
 
 test:
   name: Test survey!
-  samples_per_day: 4
-  mean_minutes_between_samples: 60
-  sample_minutes_plusminus: 15
-  sampled_days: 2
   active: true
   phone_number: "+16085559990"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
@@ -15,10 +11,6 @@ test:
 
 someone_elses:
   name: Survey that Nate can't change!
-  samples_per_day: 4
-  mean_minutes_between_samples: 60
-  sample_minutes_plusminus: 15
-  sampled_days: 5
   active: false
   phone_number: "+16085559991"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
@@ -29,10 +21,6 @@ someone_elses:
 
 orphaned:
   name: Survey that Nate isn't an admin of at all!
-  samples_per_day: 4
-  mean_minutes_between_samples: 60
-  sample_minutes_plusminus: 15
-  sampled_days: 3
   active: false
   phone_number: "+16085559992"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2

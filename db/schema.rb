@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_21_145222) do
+ActiveRecord::Schema.define(version: 2019_02_21_164459) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -91,9 +91,6 @@ ActiveRecord::Schema.define(version: 2019_02_21_145222) do
 
   create_table "surveys", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "samples_per_day", default: 4, null: false
-    t.integer "mean_minutes_between_samples", default: 60, null: false
-    t.integer "sample_minutes_plusminus", default: 15, null: false
     t.boolean "active", default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -104,6 +101,8 @@ ActiveRecord::Schema.define(version: 2019_02_21_145222) do
     t.string "time_zone"
     t.text "help_message"
     t.string "welcome_message", default: "Welcome to the study! Quit at any time by texting STOP.", null: false
+    t.string "type"
+    t.json "configuration", default: {}
     t.index ["phone_number", "active"], name: "index_surveys_on_phone_number_and_active"
   end
 

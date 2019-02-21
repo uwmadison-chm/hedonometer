@@ -1,0 +1,3 @@
+class SimpleSurvey < Survey
+end
+
