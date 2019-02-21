@@ -54,6 +54,6 @@ class ParticipantsController < SurveyedController
   def update_participant_params
     params.
     require(:participant).
-    permit(:time_zone, :schedule_days_attributes => [:id, :date, :time_ranges_string, :skip])
+    permit(:time_zone, :schedule_days_attributes => [:id, :participant_local_date, :time_ranges_string, :skip])
   end
 end

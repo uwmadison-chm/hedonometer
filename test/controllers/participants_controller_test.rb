@@ -45,7 +45,7 @@ class ParticipantsControllerTest < ActionController::TestCase
         schedule_days_attributes: participant.schedule_days.map {|sd|
           {
             id: sd.id,
-            date: sd.date,
+            participant_local_date: sd.participant_local_date,
             time_ranges_string: sd.time_ranges_string
           }
         }
@@ -117,7 +117,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   test "update schedules a question" do
     ppt = participants(:ppt1)
     participant_login_as ppt
-    day = ppt.schedule_days.order('date').first
+    day = ppt.schedule_days.order('participant_local_date').first
     assert_equal 0, day.scheduled_questions.count
     assert_difference "day.scheduled_questions.count", 1 do
       post :update, params: params_for_update(ppt)
@@ -128,7 +128,7 @@ class ParticipantsControllerTest < ActionController::TestCase
   test "two updates don't add more questions" do
     ppt = participants(:ppt1)
     participant_login_as ppt
-    day = ppt.schedule_days.order('date').first
+    day = ppt.schedule_days.order('participant_local_date').first
     post :update, params: params_for_update(ppt)
     assert_redirected_to survey_path(ppt.survey)
     assert_equal 1, day.scheduled_questions.count

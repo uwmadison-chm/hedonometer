@@ -21,9 +21,9 @@ class Participant < ApplicationRecord
 
   after_save :build_schedule_and_schedule_first_question_if_possible!, if: :requests_new_schedule?
 
-  has_many :schedule_days, -> { order('date') }, {dependent: :destroy} do
+  has_many :schedule_days, -> { order('participant_local_date') }, {dependent: :destroy} do
     def potential_run_targets
-      where(aasm_state: ['waiting', 'running']).order('date')
+      where(aasm_state: ['waiting', 'running']).order('participant_local_date')
     end
 
     def first_potential
@@ -32,7 +32,7 @@ class Participant < ApplicationRecord
 
     def advance_to_day_with_time_for_question!
       potential_run_targets.each do |day|
-        logger.debug("Checking day #{day.date}")
+        logger.debug("Checking day #{day.participant_local_date}")
         logger.debug("Starting status: #{day.aasm_state}")
         day.run! if day.waiting?
         day.finish! if not day.has_time_for_another_question?
@@ -124,7 +124,7 @@ class Participant < ApplicationRecord
       first = sample_date + time_after_midnight
       last = first + survey.day_length
       self.schedule_days.build(
-        date: sample_date,
+        participant_local_date: sample_date,
         time_ranges: [TimeRange.new(first, last)]
       )
     end

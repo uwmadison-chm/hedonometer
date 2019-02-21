@@ -3,7 +3,7 @@ require 'time_range'
 class ScheduleDay < ApplicationRecord
   belongs_to :participant
   validates :participant, presence: true
-  validates :date, presence: true, uniqueness: {scope: :participant_id}
+  validates :participant_local_date, presence: true, uniqueness: {scope: :participant_id}
   before_validation :adjust_day_length_to_match_survey
 
   serialize :time_ranges
@@ -41,7 +41,7 @@ class ScheduleDay < ApplicationRecord
     if str == ""
       self.time_ranges = []
     end
-    self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.date, range_str)}
+    self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.participant_local_date, range_str)}
     logger.debug { "time_ranges_string: parsed #{str} as #{self.time_ranges.map {|tr| tr.to_s}}" }
   end
 

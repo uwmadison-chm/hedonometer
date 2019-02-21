@@ -3,7 +3,7 @@
 %h3 Schedule
 %ol.schedule
   - current_participant.schedule_days.each do |schedule_day|
-    %li #{schedule_day.date}: #{schedule_day.time_ranges_string}
+    %li #{schedule_day.participant_local_date}: #{schedule_day.time_ranges_string}
 
 %h3 Text messages
 %table.messages
