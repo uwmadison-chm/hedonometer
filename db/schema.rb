@@ -97,7 +97,6 @@ ActiveRecord::Schema.define(version: 2019_02_21_164459) do
     t.string "twilio_account_sid"
     t.string "twilio_auth_token"
     t.string "phone_number"
-    t.integer "sampled_days", default: 1, null: false
     t.string "time_zone"
     t.text "help_message"
     t.string "welcome_message", default: "Welcome to the study! Quit at any time by texting STOP.", null: false

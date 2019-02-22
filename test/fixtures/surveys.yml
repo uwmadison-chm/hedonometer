@@ -2,6 +2,7 @@
 
 test:
   name: Test survey!
+  type: SimpleSurvey
   active: true
   phone_number: "+16085559990"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
@@ -11,6 +12,7 @@ test:
 
 someone_elses:
   name: Survey that Nate can't change!
+  type: SimpleSurvey
   active: false
   phone_number: "+16085559991"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
@@ -21,6 +23,7 @@ someone_elses:
 
 orphaned:
   name: Survey that Nate isn't an admin of at all!
+  type: SimpleSurvey
   active: false
   phone_number: "+16085559992"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2

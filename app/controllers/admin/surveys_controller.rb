@@ -4,7 +4,8 @@ class Admin::SurveysController < AdminController
   after_action :set_twilio_errors_flash, only: [:update, :create]
 
   def new
-    @survey = Survey.new
+    # TODO: allow choosing type
+    @survey = SimpleSurvey.new
     @survey.survey_questions.build
   end
 
