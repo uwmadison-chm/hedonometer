@@ -84,7 +84,7 @@ class Participant < ApplicationRecord
       logger.debug("Setting schedule, generating first question")
       self.rebuild_schedule_days!
       logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
-      question = self.schedule_survey_question_and_save!
+      question = self.survey.schedule_survey_question_on_participant! self
       if question
         logger.debug("Scheduled #{question.inspect}")
         ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
@@ -128,10 +128,6 @@ class Participant < ApplicationRecord
         time_ranges: [TimeRange.new(first, last)]
       )
     end
-  end
-
-  def schedule_survey_question_and_save!
-    survey.schedule_survey_question_on_participant! self
   end
 
   def has_delivered_a_question?

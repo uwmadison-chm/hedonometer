@@ -65,7 +65,7 @@ class ParticipantTexter < ActionTexter::Base
         participant)
       scheduled_question.deliver_and_save_if_possible!(message)
       if scheduled_question.completed?
-        new_question = participant.schedule_survey_question_and_save!
+        new_question = participant.survey.schedule_survey_question_on_participant! participant
         if new_question
           self.delay(run_at: new_question.scheduled_at).deliver_scheduled_question!(new_question.id)
         end

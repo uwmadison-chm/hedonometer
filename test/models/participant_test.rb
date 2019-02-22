@@ -192,13 +192,13 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "schedule survey question works" do
     ppt = participants(:ppt1)
-    q = ppt.schedule_survey_question_and_save!
+    q = ppt.survey.schedule_survey_question_on_participant! ppt
     refute_nil q
   end
 
   test "schedule and save works" do
     ppt = participants(:ppt1)
-    q = ppt.schedule_survey_question_and_save!
+    q = ppt.survey.schedule_survey_question_on_participant! ppt
     refute q.new_record?
   end
 

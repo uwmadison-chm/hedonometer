@@ -18,7 +18,7 @@ class ParticipantsController < SurveyedController
     @participant = current_participant
     logger.debug { "  update_participant_params: #{update_participant_params}" }
     if @participant.update_attributes(update_participant_params)
-      q = @participant.schedule_survey_question_and_save!
+      q = @participant.survey.schedule_survey_question_on_participant! @participant
       logger.debug("Scheduled #{q.inspect}")
       if q
         ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)

@@ -46,6 +46,5 @@ class SimpleSurvey < Survey
     }
   end
 
-
 end
 
