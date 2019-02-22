@@ -118,8 +118,8 @@ class ParticipantsControllerTest < ActionController::TestCase
     ppt = participants(:ppt1)
     participant_login_as ppt
     day = ppt.schedule_days.order('participant_local_date').first
-    assert_equal 0, day.scheduled_questions.count
-    assert_difference "day.scheduled_questions.count", 1 do
+    assert_equal 0, day.scheduled_messages.count
+    assert_difference "day.scheduled_messages.count", 1 do
       post :update, params: params_for_update(ppt)
       assert_redirected_to survey_path(ppt.survey)
     end
@@ -131,8 +131,8 @@ class ParticipantsControllerTest < ActionController::TestCase
     day = ppt.schedule_days.order('participant_local_date').first
     post :update, params: params_for_update(ppt)
     assert_redirected_to survey_path(ppt.survey)
-    assert_equal 1, day.scheduled_questions.count
-    assert_no_change day.scheduled_questions, :count do
+    assert_equal 1, day.scheduled_messages.count
+    assert_no_change day.scheduled_messages, :count do
       post :update, params: params_for_update(ppt)
     end
   end

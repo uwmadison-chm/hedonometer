@@ -32,7 +32,7 @@ class SimpleSurveyTest < ActiveSupport::TestCase
 
   test "current or new doesn't find delivered questions" do
     sday = @ppt.schedule_days.first
-    sq = sday.scheduled_questions.create!(
+    sq = sday.scheduled_messages.create!(
       survey_question: survey_questions(:test_what), scheduled_at: Time.now, aasm_state: 'delivered')
     refute_equal sq, @survey.current_question_or_new(@ppt)
   end

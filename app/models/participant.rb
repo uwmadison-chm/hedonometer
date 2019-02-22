@@ -87,7 +87,7 @@ class Participant < ApplicationRecord
       question = self.survey.schedule_survey_question_on_participant! self
       if question
         logger.debug("Scheduled #{question.inspect}")
-        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
+        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_message!(question.id)
       else
         logger.warn("Could not schedule a question for participant #{self.id}")
       end
@@ -132,7 +132,7 @@ class Participant < ApplicationRecord
 
   def has_delivered_a_question?
     sd = self.schedule_days.first
-    sd and sd.scheduled_questions.delivered.first
+    sd and sd.scheduled_messages.delivered.first
   end
 
   def schedule_start_date=(d)

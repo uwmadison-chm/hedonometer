@@ -8,7 +8,7 @@ class ScheduleDay < ApplicationRecord
 
   serialize :time_ranges
 
-  has_many :scheduled_questions
+  has_many :scheduled_messages
 
   validates :aasm_state, presence: true
 
@@ -76,11 +76,11 @@ class ScheduleDay < ApplicationRecord
   end
 
   def completed_question_count
-    scheduled_questions.completed.count
+    scheduled_messages.completed.count
   end
 
   def current_question
-    scheduled_questions.scheduled.first
+    scheduled_messages.scheduled.first
   end
 
   def minimum_time_to_question(question_number)
@@ -122,7 +122,7 @@ class ScheduleDay < ApplicationRecord
   end
 
   def all_questions_delivered?
-    scheduled_questions.delivered.count >= participant.survey.samples_per_day
+    scheduled_messages.delivered.count >= participant.survey.samples_per_day
   end
 
   def can_deliver_more_questions?

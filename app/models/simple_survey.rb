@@ -33,7 +33,7 @@ class SimpleSurvey < Survey
     question = day.current_question
     if question.nil?
       survey_question = choose_question participant
-      question = day.scheduled_questions.build(survey_question: survey_question)
+      question = day.scheduled_messages.build(survey_question: survey_question)
     end
     question
   end

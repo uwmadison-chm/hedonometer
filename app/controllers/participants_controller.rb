@@ -21,7 +21,7 @@ class ParticipantsController < SurveyedController
       q = @participant.survey.schedule_survey_question_on_participant! @participant
       logger.debug("Scheduled #{q.inspect}")
       if q
-        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_message!(q.id)
       end
       flash[:save_message] = "Saved!"
       redirect_to survey_path(current_survey)

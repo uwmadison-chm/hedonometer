@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_21_164459) do
+ActiveRecord::Schema.define(version: 2019_02_22_230454) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 2019_02_21_164459) do
     t.index ["aasm_state"], name: "index_schedule_days_on_aasm_state"
   end
 
-  create_table "scheduled_questions", force: :cascade do |t|
+  create_table "scheduled_messages", force: :cascade do |t|
     t.integer "schedule_day_id", null: false
     t.integer "survey_question_id", null: false
     t.datetime "scheduled_at", null: false
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 2019_02_21_164459) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "aasm_state"
-    t.index ["aasm_state"], name: "index_scheduled_questions_on_aasm_state"
+    t.index ["aasm_state"], name: "index_scheduled_messages_on_aasm_state"
   end
 
   create_table "survey_permissions", force: :cascade do |t|

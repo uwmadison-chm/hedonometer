@@ -1,8 +1,9 @@
-class ScheduledQuestion < ApplicationRecord
+class ScheduledMessage < ApplicationRecord
   belongs_to :schedule_day
   validates :schedule_day, presence: true
 
   belongs_to :survey_question
+  # TODO: This may be allowed to be null for the game mode?
   validates :survey_question, presence: true
 
   validates :scheduled_at, presence: true

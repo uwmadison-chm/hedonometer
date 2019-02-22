@@ -10,6 +10,9 @@ class LinkSurveyTest < ActiveSupport::TestCase
     q = @survey.schedule_survey_question_on_participant! @ppt
     refute_nil q
   end
+
+  test "text contains survey link" do
+  end
 end
 
 

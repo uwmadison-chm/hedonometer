@@ -67,7 +67,7 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
     assert_empty ppt.errors
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     refute_empty ppt.schedule_days
-    refute_nil ppt.schedule_days.first.scheduled_questions
+    refute_nil ppt.schedule_days.first.scheduled_messages
   end
 
   test "update participant" do
@@ -84,13 +84,13 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
     post :create, params: params
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     ppt1 = assigns(:participant)
-    msg1 = ppt1.schedule_days.first.scheduled_questions.first
+    msg1 = ppt1.schedule_days.first.scheduled_messages.first
     params[:participant][:time_zone] = "Pacific/Honolulu"
     params[:participant][:phone_number] = "(608) 555-9998"
     post :create, params: params
     assert_redirected_to admin_survey_participants_path(surveys(:test))
     ppt2 = assigns(:participant)
-    msg2 = ppt2.schedule_days.first.scheduled_questions.first
+    msg2 = ppt2.schedule_days.first.scheduled_messages.first
 
     assert_operator (msg2.scheduled_at - msg1.scheduled_at), :>, 2.hours
   end

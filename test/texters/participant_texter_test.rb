@@ -26,12 +26,12 @@ class ParticipantTexterTest < ActiveSupport::TestCase
     ppt = participants(:ppt1)
     question = survey_questions(:test_replace)
     sday = schedule_days(:test_day_1)
-    scheduled = ScheduledQuestion.create!(
+    scheduled = ScheduledMessage.create!(
       :schedule_day => sday,
       :survey_question => question,
       :scheduled_at => 1.minute.ago
     )
-    ParticipantTexter.deliver_scheduled_question!(scheduled.id)
+    ParticipantTexter.deliver_scheduled_message!(scheduled.id)
     assert_equal ppt.external_key, ppt.text_messages.first.message
   end
 end

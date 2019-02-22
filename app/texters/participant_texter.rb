@@ -57,17 +57,17 @@ class ParticipantTexter < ActionTexter::Base
         participant)
     end
 
-    def deliver_scheduled_question!(scheduled_question_id)
-      scheduled_question = ScheduledQuestion.find scheduled_question_id
-      participant = scheduled_question.schedule_day.participant
+    def deliver_scheduled_message!(scheduled_message_id)
+      scheduled_message = ScheduledMessage.find scheduled_message_id
+      participant = scheduled_message.schedule_day.participant
       message = message_with_replacements(
-        scheduled_question.survey_question.question_text,
+        scheduled_message.survey_question.question_text,
         participant)
-      scheduled_question.deliver_and_save_if_possible!(message)
-      if scheduled_question.completed?
+      scheduled_message.deliver_and_save_if_possible!(message)
+      if scheduled_message.completed?
         new_question = participant.survey.schedule_survey_question_on_participant! participant
         if new_question
-          self.delay(run_at: new_question.scheduled_at).deliver_scheduled_question!(new_question.id)
+          self.delay(run_at: new_question.scheduled_at).deliver_scheduled_message!(new_question.id)
         end
       end
     end

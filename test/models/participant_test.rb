@@ -31,7 +31,7 @@ class ParticipantTest < ActiveSupport::TestCase
   test "creating a participant creates a schedule and schedules a message" do
     p = surveys(:test).participants.create(create_params)
     refute_empty p.schedule_days
-    refute_empty p.schedule_days.first.scheduled_questions
+    refute_empty p.schedule_days.first.scheduled_messages
   end
 
   test "schedule_human_time_after_midnight sets schedule_start_date" do
@@ -111,7 +111,7 @@ class ParticipantTest < ActiveSupport::TestCase
     refute p.can_schedule_days?
     p.schedule_time_after_midnight = 9.hours
     assert p.can_schedule_days?
-    p.schedule_days.first.scheduled_questions.create!(
+    p.schedule_days.first.scheduled_messages.create!(
       survey_question: survey_questions(:test_what),
       scheduled_at: Time.now,
       aasm_state: 'delivered')
@@ -154,13 +154,13 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal schedule_days(:test_day_1), sday
     assert_equal 'running', sday.aasm_state
     ppt.survey.samples_per_day.times do
-      sday.scheduled_questions.create!(
+      sday.scheduled_messages.create!(
         aasm_state: 'delivered', survey_question: survey_questions(:test_what), scheduled_at: Time.now)
     end
     sday = ppt.schedule_days.advance_to_day_with_time_for_question!
     assert_equal schedule_days(:test_day_2), sday
     ppt.survey.samples_per_day.times do
-      sday.scheduled_questions.create!(
+      sday.scheduled_messages.create!(
         aasm_state: 'delivered', survey_question: survey_questions(:test_what), scheduled_at: Time.now)
     end
     assert_nil ppt.schedule_days.advance_to_day_with_time_for_question!
