@@ -3,8 +3,7 @@ class ScheduledMessage < ApplicationRecord
   validates :schedule_day, presence: true
 
   belongs_to :survey_question
-  # TODO: This may be allowed to be null for the game mode?
-  validates :survey_question, presence: true
+  validate :message_or_question
 
   validates :scheduled_at, presence: true
 
@@ -28,6 +27,12 @@ class ScheduledMessage < ApplicationRecord
 
     event :mark_participant_inactive do
       transitions from: :scheduled, to: :participant_inactive
+    end
+  end
+
+  def message_or_question
+    unless message_text.blank? ^ survey_question.blank?
+      errors.add(:base, "Need a message or a survey question, not both")
     end
   end
 

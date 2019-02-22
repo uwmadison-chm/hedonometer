@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_22_230454) do
+ActiveRecord::Schema.define(version: 2019_02_22_232355) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 2019_02_22_230454) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "aasm_state"
+    t.text "message_text"
     t.index ["aasm_state"], name: "index_scheduled_messages_on_aasm_state"
   end
 
