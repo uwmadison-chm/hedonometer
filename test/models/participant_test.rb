@@ -94,15 +94,6 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal p.survey.sampled_days, p.schedule_days.length
   end
 
-  test "getting new question" do
-    p = participants(:ppt1)
-    sq = p.survey.choose_question p
-    unused = p.question_chooser_state[:unused_ids]
-    refute_nil unused
-    assert_equal (p.survey.survey_questions.count - 1), unused.length
-    refute_includes p.question_chooser_state[:unused_ids], sq.id
-  end
-
   test "creating schedule days" do
     s = surveys(:test)
     p = s.participants.create(
@@ -174,32 +165,6 @@ class ParticipantTest < ActiveSupport::TestCase
     end
     assert_nil ppt.schedule_days.advance_to_day_with_time_for_question!
     assert_equal ppt.schedule_days.count, ppt.schedule_days.finished.count
-  end
-
-  test "current or new question basically works" do
-    ppt = participants(:ppt1)
-    q = ppt.survey.current_question_or_new ppt
-    refute_nil q
-  end
-
-  test "current or new doesn't find delivered questions" do
-    ppt = participants(:ppt1)
-    sday = ppt.schedule_days.first
-    sq = sday.scheduled_questions.create!(
-      survey_question: survey_questions(:test_what), scheduled_at: Time.now, aasm_state: 'delivered')
-    refute_equal sq, ppt.survey.current_question_or_new(ppt)
-  end
-
-  test "schedule survey question works" do
-    ppt = participants(:ppt1)
-    q = ppt.survey.schedule_survey_question_on_participant! ppt
-    refute_nil q
-  end
-
-  test "schedule and save works" do
-    ppt = participants(:ppt1)
-    q = ppt.survey.schedule_survey_question_on_participant! ppt
-    refute q.new_record?
   end
 
   test "can find text messages" do

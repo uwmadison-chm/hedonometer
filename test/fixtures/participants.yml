@@ -11,3 +11,15 @@ ppt2:
   phone_number: "+16085551213"
   login_code: 11111
   time_zone: Central Time (US & Canada)
+
+ppt3:
+  survey: game
+  phone_number: "+16085551214"
+  login_code: 99999
+  time_zone: Central Time (US & Canada)
+
+ppt4:
+  survey: link
+  phone_number: "+16085551215"
+  login_code: 99999
+  time_zone: Central Time (US & Canada)

@@ -30,3 +30,23 @@ orphaned:
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: Welcome! Your login code is {{login_code}}.
+
+game:
+  name: Fun Game Time
+  type: GameSurvey
+  active: true
+  phone_number: "+16085559993"
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
+  time_zone: Central Time (US & Canada)
+  welcome_message: HOORAY!! Your login code is {{login_code}}.
+
+link:
+  name: Link That Is Totally Not a Scam Survey
+  type: LinkSurvey
+  active: true
+  phone_number: "+16085559994"
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
+  time_zone: Central Time (US & Canada)
+  welcome_message: Greetings. Your login code is {{login_code}}.
