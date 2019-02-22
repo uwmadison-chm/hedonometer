@@ -96,7 +96,7 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "getting new question" do
     p = participants(:ppt1)
-    sq = p.choose_question
+    sq = p.survey.choose_question p
     unused = p.question_chooser_state[:unused_ids]
     refute_nil unused
     assert_equal (p.survey.survey_questions.count - 1), unused.length
@@ -178,7 +178,7 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "current or new question basically works" do
     ppt = participants(:ppt1)
-    q = ppt.current_question_or_new
+    q = ppt.survey.current_question_or_new ppt
     refute_nil q
   end
 
@@ -187,12 +187,12 @@ class ParticipantTest < ActiveSupport::TestCase
     sday = ppt.schedule_days.first
     sq = sday.scheduled_questions.create!(
       survey_question: survey_questions(:test_what), scheduled_at: Time.now, aasm_state: 'delivered')
-    refute_equal sq, ppt.current_question_or_new
+    refute_equal sq, ppt.survey.current_question_or_new(ppt)
   end
 
   test "schedule survey question works" do
     ppt = participants(:ppt1)
-    q = ppt.schedule_survey_question
+    q = ppt.schedule_survey_question_and_save!
     refute_nil q
   end
 

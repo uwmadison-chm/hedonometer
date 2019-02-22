@@ -83,10 +83,6 @@ class Survey < ApplicationRecord
     (mean_minutes_between_samples + sample_minutes_plusminus).minutes
   end
 
-  def question_chooser
-    RandomNoReplacementRecordChooser
-  end
-
   def has_twilio_credentials?
     val = self.twilio_account_sid.present? and self.twilio_auth_token.present?
     logger.debug("Has twilio credentials: #{val}")

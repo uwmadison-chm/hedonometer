@@ -130,45 +130,8 @@ class Participant < ApplicationRecord
     end
   end
 
-  def choose_question
-    chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
-    chooser.choose.tap {
-      self.question_chooser_state = chooser.serialize_state
-      logger.debug("New question chooser state: #{self.question_chooser_state}")
-    }
-  end
-
-  def current_question_or_new
-    # Returns a question or new -- unsaved.
-    day = schedule_days.advance_to_day_with_time_for_question!
-    logger.debug("Day is #{day}")
-    return nil unless day
-    question = day.current_question
-    if question.nil?
-      survey_question = choose_question
-      question = day.scheduled_questions.build(
-        survey_question: survey_question)
-    end
-    question
-  end
-
-  def schedule_survey_question
-    # Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
-    # question_chooser_state may be updated.
-    question = current_question_or_new
-    return nil unless question
-    # We know question is not delivered; we can set its scheduled_at
-    question.scheduled_at = question.schedule_day.random_time_for_next_question
-    logger.debug("Scheduled #{question}")
-    question
-  end
-
   def schedule_survey_question_and_save!
-    self.requests_new_schedule = false
-    q = schedule_survey_question
-    q.save! if q
-    self.save! # Because we've updated our chooser state
-    q
+    survey.schedule_survey_question_on_participant! self
   end
 
   def has_delivered_a_question?
