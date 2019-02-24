@@ -13,7 +13,7 @@ class SimpleSurvey < Survey
     RandomNoReplacementRecordChooser
   end
 
-  def schedule_survey_question_on_participant! participant
+  def schedule_participant! participant
     participant.requests_new_schedule = false
     question = current_question_or_new participant
     return nil unless question

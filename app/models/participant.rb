@@ -84,10 +84,10 @@ class Participant < ApplicationRecord
       logger.debug("Setting schedule, generating first question")
       self.rebuild_schedule_days!
       logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
-      question = self.survey.schedule_survey_question_on_participant! self
-      if question
-        logger.debug("Scheduled #{question.inspect}")
-        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_message!(question.id)
+      message = self.survey.schedule_participant! self
+      if message
+        logger.debug("Scheduled #{message.inspect}")
+        ParticipantTexter.delay(run_at: message.scheduled_at).deliver_scheduled_message!(message.id)
       else
         logger.warn("Could not schedule a question for participant #{self.id}")
       end

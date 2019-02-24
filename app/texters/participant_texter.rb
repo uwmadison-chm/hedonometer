@@ -60,14 +60,20 @@ class ParticipantTexter < ActionTexter::Base
     def deliver_scheduled_message!(scheduled_message_id)
       scheduled_message = ScheduledMessage.find scheduled_message_id
       participant = scheduled_message.schedule_day.participant
-      message = message_with_replacements(
-        scheduled_message.survey_question.question_text,
-        participant)
+      survey = participant.survey
+      question = scheduled_message.survey_question
+      text =
+        if question then
+          scheduled_message.survey_question.question_text
+        else
+          scheduled_message.message_text
+        end
+      message = message_with_replacements(text, participant)
       scheduled_message.deliver_and_save_if_possible!(message)
       if scheduled_message.completed?
-        new_question = participant.survey.schedule_survey_question_on_participant! participant
-        if new_question
-          self.delay(run_at: new_question.scheduled_at).deliver_scheduled_message!(new_question.id)
+        new_message = survey.schedule_participant! participant
+        if new_message
+          self.delay(run_at: new_message.scheduled_at).deliver_scheduled_message!(new_message.id)
         end
       end
     end

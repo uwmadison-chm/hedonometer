@@ -3,7 +3,7 @@ class GameSurvey < Survey
     Survey.model_name
   end
 
-  def schedule_survey_question_on_participant! participant
+  def schedule_participant! participant
     return false
   end
 end

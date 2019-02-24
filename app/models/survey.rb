@@ -26,6 +26,11 @@ class Survey < ApplicationRecord
   after_initialize :clear_twilio_errors
 
 
+  def schedule_participant! p
+    raise "Abstract surveys can't schedule participants"
+  end
+  
+
   # These properties used to be directly on survey,
   # and it was too much work to refactor everything that referenced them.
   # So for now these are shortcuts
@@ -61,7 +66,8 @@ class Survey < ApplicationRecord
   def sample_minutes_plusminus= x
     configuration['sample_minutes_plusminus'] = x.to_i
   end
-  
+
+
 
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token

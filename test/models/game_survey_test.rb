@@ -7,7 +7,8 @@ class GameSurveyTest < ActiveSupport::TestCase
   end
 
   test "schedule survey question works" do
-    q = @survey.schedule_survey_question_on_participant! @ppt
+    # TODO
+    q = @survey.schedule_participant! @ppt
     refute_nil q
   end
 end

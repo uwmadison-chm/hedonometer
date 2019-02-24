@@ -20,13 +20,13 @@ class SimpleSurveyTest < ActiveSupport::TestCase
     refute_nil q
   end
 
-  test "schedule survey question works" do
-    q = @survey.schedule_survey_question_on_participant! @ppt
+  test "schedule participant works" do
+    q = @survey.schedule_participant! @ppt
     refute_nil q
   end
 
   test "schedule and save works" do
-    q = @survey.schedule_survey_question_on_participant! @ppt
+    q = @survey.schedule_participant! @ppt
     refute q.new_record?
   end
 

@@ -7,11 +7,13 @@ class LinkSurveyTest < ActiveSupport::TestCase
   end
 
   test "schedule survey question works" do
-    q = @survey.schedule_survey_question_on_participant! @ppt
+    # TODO
+    q = @survey.schedule_participant! @ppt
     refute_nil q
   end
 
   test "text contains survey link" do
+    # TODO
   end
 end
 

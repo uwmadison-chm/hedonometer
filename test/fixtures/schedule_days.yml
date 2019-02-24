@@ -9,3 +9,9 @@ test_day_2:
   participant_local_date: <%= Date.tomorrow %>
   time_ranges: <%= [TimeRange.from_date_and_string(Date.tomorrow, '8:00 AM - 12:15 PM')].to_yaml.inspect %>
   aasm_state: waiting
+
+ppt4_test_day_1:
+  participant: ppt4
+  participant_local_date: <%= Date.today %>
+  time_ranges: <%= [TimeRange.from_date_and_string(Date.today, '8:00 AM - 12:15 PM')].to_yaml.inspect %>
+  aasm_state: waiting
