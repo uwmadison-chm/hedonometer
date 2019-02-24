@@ -27,7 +27,7 @@ class SimpleSurvey < Survey
 
   def current_question_or_new participant
     # Returns a question or new -- unsaved.
-    day = participant.schedule_days.advance_to_day_with_time_for_question!
+    day = participant.schedule_days.advance_to_day_with_time_for_message!
     logger.debug("Day is #{day}")
     return nil unless day
     question = day.current_question

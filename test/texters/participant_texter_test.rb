@@ -18,7 +18,7 @@ class ParticipantTexterTest < ActiveSupport::TestCase
     ppt = participants(:ppt1)
     otm = ParticipantTexter.message_with_replacements(
       "{{first_date}} {{last_date}}", ppt)
-    assert_equal otm.message, "#{Date.today.to_s(:for_sms)} #{Date.tomorrow.to_s(:for_sms)}"
+    assert_equal "#{Date.today.to_s(:for_sms)} #{Date.tomorrow.to_s(:for_sms)}", otm.message
   end
 
   test "questions do replacements" do

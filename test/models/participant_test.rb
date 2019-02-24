@@ -150,20 +150,20 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "advance to first potential day" do
     ppt = participants(:ppt1)
-    sday = ppt.schedule_days.advance_to_day_with_time_for_question!
+    sday = ppt.schedule_days.advance_to_day_with_time_for_message!
     assert_equal schedule_days(:test_day_1), sday
     assert_equal 'running', sday.aasm_state
     ppt.survey.samples_per_day.times do
       sday.scheduled_messages.create!(
         aasm_state: 'delivered', survey_question: survey_questions(:test_what), scheduled_at: Time.now)
     end
-    sday = ppt.schedule_days.advance_to_day_with_time_for_question!
+    sday = ppt.schedule_days.advance_to_day_with_time_for_message!
     assert_equal schedule_days(:test_day_2), sday
     ppt.survey.samples_per_day.times do
       sday.scheduled_messages.create!(
         aasm_state: 'delivered', survey_question: survey_questions(:test_what), scheduled_at: Time.now)
     end
-    assert_nil ppt.schedule_days.advance_to_day_with_time_for_question!
+    assert_nil ppt.schedule_days.advance_to_day_with_time_for_message!
     assert_equal ppt.schedule_days.count, ppt.schedule_days.finished.count
   end
 
