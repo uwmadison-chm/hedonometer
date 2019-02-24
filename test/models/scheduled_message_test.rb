@@ -14,7 +14,7 @@ class ScheduledMessageTest < ActiveSupport::TestCase
   test "is valid with message and no question" do
     day = schedule_days(:test_day_1)
     sm = ScheduledMessage.new schedule_day: day, scheduled_at: Time.now, message_text: "Hello there"
-    assert sm.valid?, 'scheduled message is valid with no message or question'
+    assert sm.valid?, sm.errors.first.to_s
   end
 
   test "requires message or linked question" do

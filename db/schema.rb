@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_22_232355) do
+ActiveRecord::Schema.define(version: 2019_02_24_024027) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 2019_02_22_232355) do
 
   create_table "scheduled_messages", force: :cascade do |t|
     t.integer "schedule_day_id", null: false
-    t.integer "survey_question_id", null: false
+    t.integer "survey_question_id"
     t.datetime "scheduled_at", null: false
     t.datetime "delivered_at"
     t.datetime "created_at"

@@ -2,7 +2,7 @@ class ScheduledMessage < ApplicationRecord
   belongs_to :schedule_day
   validates :schedule_day, presence: true
 
-  belongs_to :survey_question
+  belongs_to :survey_question, optional: true
   validate :message_or_question
 
   validates :scheduled_at, presence: true
