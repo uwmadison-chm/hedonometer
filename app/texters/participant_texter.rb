@@ -17,6 +17,8 @@ class ParticipantTexter < ActionTexter::Base
         '{{login_code}}' => participant.login_code,
         '{{first_date}}' => participant.schedule_days.first.participant_local_date.to_s(:for_sms),
         '{{last_date}}' => participant.schedule_days.last.participant_local_date.to_s(:for_sms),
+        '{{sent_time}}' => Time.now.strftime("%H:%M"),
+        '{{survey_link}}' => "TODO",
       }
     end
 
