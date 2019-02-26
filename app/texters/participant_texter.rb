@@ -10,19 +10,24 @@ class ParticipantTexter < ActionTexter::Base
             })
     end
 
-    def build_replacements(participant)
+    def build_replacements(participant, scheduled_message)
       {
         '{{external_key}}' => participant.external_key,
         '{{samples_per_day}}' => participant.survey.samples_per_day,
         '{{login_code}}' => participant.login_code,
-        '{{first_date}}' => participant.schedule_days.first.date.to_s(:for_sms),
-        '{{last_date}}' => participant.schedule_days.last.date.to_s(:for_sms),
+        '{{first_date}}' => participant.schedule_days.first.participant_local_date.to_s(:for_sms),
+        '{{last_date}}' => participant.schedule_days.last.participant_local_date.to_s(:for_sms),
+        '{{sent_time}}' => Time.now.strftime("%H:%M"),
+        '{{redirect_link}}' => 
+          if scheduled_message and participant.survey.respond_to? :redirect_link
+            participant.survey.redirect_link scheduled_message
+          end
       }
     end
 
-    def message_with_replacements(message, participant)
+    def message_with_replacements(message, participant, scheduled_message=nil)
       message_for_participant(
-        do_replacements(message, build_replacements(participant)),
+        do_replacements(message, build_replacements(participant, scheduled_message)),
         participant
       )
     end
@@ -57,17 +62,23 @@ class ParticipantTexter < ActionTexter::Base
         participant)
     end
 
-    def deliver_scheduled_question!(scheduled_question_id)
-      scheduled_question = ScheduledQuestion.find scheduled_question_id
-      participant = scheduled_question.schedule_day.participant
-      message = message_with_replacements(
-        scheduled_question.survey_question.question_text,
-        participant)
-      scheduled_question.deliver_and_save_if_possible!(message)
-      if scheduled_question.completed?
-        new_question = participant.schedule_survey_question_and_save!
-        if new_question
-          self.delay(run_at: new_question.scheduled_at).deliver_scheduled_question!(new_question.id)
+    def deliver_scheduled_message!(scheduled_message_id)
+      scheduled_message = ScheduledMessage.find scheduled_message_id
+      participant = scheduled_message.schedule_day.participant
+      survey = participant.survey
+      question = scheduled_message.survey_question
+      text =
+        if question then
+          scheduled_message.survey_question.question_text
+        else
+          scheduled_message.message_text
+        end
+      message = message_with_replacements(text, participant)
+      scheduled_message.deliver_and_save_if_possible!(message)
+      if scheduled_message.completed?
+        new_message = survey.schedule_participant! participant
+        if new_message
+          self.delay(run_at: new_message.scheduled_at).deliver_scheduled_message!(new_message.id)
         end
       end
     end

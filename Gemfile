@@ -40,8 +40,8 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # OR call 'binding.pry' which gets you an even better pry console with stepping and stack navigation
   gem 'pry-byebug'
-  # Use sqlite3 as the database for Active Record
-  gem 'sqlite3'
+  # Use sqlite3 as the database for Active Record - problems using 1.4 with rails 5.2.2, should be fixed in 5.2.3
+  gem 'sqlite3', '~> 1.3', '< 1.4'
 end
 
 group :development do

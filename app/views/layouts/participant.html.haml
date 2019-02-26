@@ -10,4 +10,5 @@
     .page{class: grid_if_development}
       = yield
       .help
-        = raw current_survey.help_message
+        - if current_survey
+          = raw current_survey.help_message

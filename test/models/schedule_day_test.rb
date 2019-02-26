@@ -71,7 +71,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
     @sd.time_ranges = [TimeRange.new(t1, t2)]
     @sd.survey.samples_per_day.times do |num|
       assert @sd.has_time_for_another_question?
-      @sd.scheduled_questions.create(
+      @sd.scheduled_messages.create(
         survey_question: survey_questions(:test_what),
         aasm_state: 'delivered',
         scheduled_at: t1)
@@ -86,7 +86,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
     @sd.time_ranges = [TimeRange.new(t1, t2)]
     @sd.survey.samples_per_day.times do |num|
       assert @sd.has_time_for_another_question?
-      @sd.scheduled_questions.create(
+      @sd.scheduled_messages.create(
         survey_question: survey_questions(:test_what),
         aasm_state: 'aged_out',
         scheduled_at: t1)
@@ -98,7 +98,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
     survey = @sd.participant.survey
     min_time = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
     assert_equal min_time, @sd.minimum_time_to_next_question
-    q = @sd.scheduled_questions.create(
+    @sd.scheduled_messages.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
       aasm_state: 'delivered')
@@ -111,7 +111,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
     survey = @sd.participant.survey
     max_time = (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
     assert_equal max_time, @sd.maximum_time_to_next_question
-    q = @sd.scheduled_questions.create(
+    @sd.scheduled_messages.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
       aasm_state: 'delivered')

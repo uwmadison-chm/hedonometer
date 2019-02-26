@@ -3,12 +3,12 @@ require 'time_range'
 class ScheduleDay < ApplicationRecord
   belongs_to :participant
   validates :participant, presence: true
-  validates :date, presence: true, uniqueness: {scope: :participant_id}
+  validates :participant_local_date, presence: true, uniqueness: {scope: :participant_id}
   before_validation :adjust_day_length_to_match_survey
 
   serialize :time_ranges
 
-  has_many :scheduled_questions
+  has_many :scheduled_messages
 
   validates :aasm_state, presence: true
 
@@ -41,7 +41,7 @@ class ScheduleDay < ApplicationRecord
     if str == ""
       self.time_ranges = []
     end
-    self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.date, range_str)}
+    self.time_ranges = str.split(", ").map {|range_str| TimeRange.from_date_and_string(self.participant_local_date, range_str)}
     logger.debug { "time_ranges_string: parsed #{str} as #{self.time_ranges.map {|tr| tr.to_s}}" }
   end
 
@@ -76,11 +76,11 @@ class ScheduleDay < ApplicationRecord
   end
 
   def completed_question_count
-    scheduled_questions.completed.count
+    scheduled_messages.completed.count
   end
 
   def current_question
-    scheduled_questions.scheduled.first
+    scheduled_messages.scheduled.first
   end
 
   def minimum_time_to_question(question_number)
@@ -122,7 +122,7 @@ class ScheduleDay < ApplicationRecord
   end
 
   def all_questions_delivered?
-    scheduled_questions.delivered.count >= participant.survey.samples_per_day
+    scheduled_messages.delivered.count >= participant.survey.samples_per_day
   end
 
   def can_deliver_more_questions?

@@ -21,18 +21,18 @@ class Participant < ApplicationRecord
 
   after_save :build_schedule_and_schedule_first_question_if_possible!, if: :requests_new_schedule?
 
-  has_many :schedule_days, -> { order('date') }, {dependent: :destroy} do
+  has_many :schedule_days, -> { order('participant_local_date') }, {dependent: :destroy} do
     def potential_run_targets
-      where(aasm_state: ['waiting', 'running']).order('date')
+      where(aasm_state: ['waiting', 'running']).order('participant_local_date')
     end
 
     def first_potential
       potential_run_targets.first
     end
 
-    def advance_to_day_with_time_for_question!
+    def advance_to_day_with_time_for_message!
       potential_run_targets.each do |day|
-        logger.debug("Checking day #{day.date}")
+        logger.debug("Checking day #{day.participant_local_date}")
         logger.debug("Starting status: #{day.aasm_state}")
         day.run! if day.waiting?
         day.finish! if not day.has_time_for_another_question?
@@ -84,10 +84,10 @@ class Participant < ApplicationRecord
       logger.debug("Setting schedule, generating first question")
       self.rebuild_schedule_days!
       logger.debug("After rebuilding schedule, we have #{self.schedule_days.count} days")
-      question = self.schedule_survey_question_and_save!
-      if question
-        logger.debug("Scheduled #{question.inspect}")
-        ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_question!(question.id)
+      message = self.survey.schedule_participant! self
+      if message
+        logger.debug("Scheduled #{message.inspect}")
+        ParticipantTexter.delay(run_at: message.scheduled_at).deliver_scheduled_message!(message.id)
       else
         logger.warn("Could not schedule a question for participant #{self.id}")
       end
@@ -124,56 +124,15 @@ class Participant < ApplicationRecord
       first = sample_date + time_after_midnight
       last = first + survey.day_length
       self.schedule_days.build(
-        date: sample_date,
+        participant_local_date: sample_date,
         time_ranges: [TimeRange.new(first, last)]
       )
     end
   end
 
-  def choose_question
-    chooser = survey.question_chooser.from_serializer(survey.survey_questions, question_chooser_state)
-    chooser.choose.tap {
-      self.question_chooser_state = chooser.serialize_state
-      logger.debug("New question chooser state: #{self.question_chooser_state}")
-    }
-  end
-
-  def current_question_or_new
-    # Returns a question or new -- unsaved.
-    day = schedule_days.advance_to_day_with_time_for_question!
-    logger.debug("Day is #{day}")
-    return nil unless day
-    question = day.current_question
-    if question.nil?
-      survey_question = choose_question
-      question = day.scheduled_questions.build(
-        survey_question: survey_question)
-    end
-    question
-  end
-
-  def schedule_survey_question
-    # Returns a scheduled_question or nil. Question is not saved. Participant is not saved -- though
-    # question_chooser_state may be updated.
-    question = current_question_or_new
-    return nil unless question
-    # We know question is not delivered; we can set its scheduled_at
-    question.scheduled_at = question.schedule_day.random_time_for_next_question
-    logger.debug("Scheduled #{question}")
-    question
-  end
-
-  def schedule_survey_question_and_save!
-    self.requests_new_schedule = false
-    q = schedule_survey_question
-    q.save! if q
-    self.save! # Because we've updated our chooser state
-    q
-  end
-
   def has_delivered_a_question?
     sd = self.schedule_days.first
-    sd and sd.scheduled_questions.delivered.first
+    sd and sd.scheduled_messages.delivered.first
   end
 
   def schedule_start_date=(d)

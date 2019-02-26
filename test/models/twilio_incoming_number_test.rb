@@ -18,7 +18,7 @@ class TwilioIncomingNumberTest < ActiveSupport::TestCase
     twilio_mock(TwilioResponses.incoming_phone_numbers(numbers_with_extra))
     number_groups = TwilioIncomingNumber.available_unavailable_numbers(
       "test", "test")
-    assert_equal 3, number_groups[:unavailable].length
+    assert_equal 5, number_groups[:unavailable].length
     assert_equal 1, number_groups[:available].length
   end
 

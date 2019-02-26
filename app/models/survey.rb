@@ -8,20 +8,11 @@ class Survey < ApplicationRecord
   has_many :admins, through: :survey_permissions
   has_one :twilio_number
 
-  has_many :survey_questions
-  accepts_nested_attributes_for :survey_questions,
-    allow_destroy: true,
-    reject_if: ->(attributes) { attributes[:question_text].blank? }
-
-
   has_many :participants
 
   validates :name, presence: true
-  validates :samples_per_day, numericality: {only_integer: true, greater_than: 0}
-  validates :mean_minutes_between_samples, numericality: {only_integer: true, greater_than: 0}
-  validates :sample_minutes_plusminus, numericality: {only_integer: true, greater_than: 0}
   validates :welcome_message, presence: true
-
+  
   validates :creator, on: :create, presence: true
   after_create :assign_creator_as_admin
 
@@ -33,6 +24,50 @@ class Survey < ApplicationRecord
 
   attr_reader :twilio_errors
   after_initialize :clear_twilio_errors
+
+
+  def schedule_participant! p
+    raise "Abstract surveys can't schedule participants"
+  end
+  
+
+  # These properties used to be directly on survey,
+  # and it was too much work to refactor everything that referenced them.
+  # So for now these are shortcuts
+
+  def sampled_days
+    configuration['sampled_days'] || 1
+  end
+
+  def sampled_days=
+    configuration['sampled_days'] = x.to_i
+  end
+  
+  def samples_per_day
+    configuration['samples_per_day'] || 4
+  end
+
+  def samples_per_day= x
+    configuration['samples_per_day'] = x.to_i
+  end
+  
+  def mean_minutes_between_samples
+    configuration['mean_minutes_between_samples'] || 60
+  end
+
+  def mean_minutes_between_samples= x
+    configuration['mean_minutes_between_samples'] = x.to_i
+  end
+  
+  def sample_minutes_plusminus
+    configuration['sample_minutes_plusminus'] || 15
+  end
+
+  def sample_minutes_plusminus= x
+    configuration['sample_minutes_plusminus'] = x.to_i
+  end
+
+
 
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
@@ -52,10 +87,6 @@ class Survey < ApplicationRecord
 
   def maximum_intersample_period
     (mean_minutes_between_samples + sample_minutes_plusminus).minutes
-  end
-
-  def question_chooser
-    RandomNoReplacementRecordChooser
   end
 
   def has_twilio_credentials?
@@ -93,7 +124,6 @@ class Survey < ApplicationRecord
       @twilio_errors.append("Error activating SMS handler for #{new_number}: #{exc.message}. Should be #{sms_handler_url}.")
     end
   end
-
 
   private def assign_creator_as_admin
     self.survey_permissions.create admin: creator, can_modify_survey: true

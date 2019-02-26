@@ -2,10 +2,7 @@
 
 test:
   name: Test survey!
-  samples_per_day: 4
-  mean_minutes_between_samples: 60
-  sample_minutes_plusminus: 15
-  sampled_days: 2
+  type: SimpleSurvey
   active: true
   phone_number: "+16085559990"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
@@ -15,10 +12,7 @@ test:
 
 someone_elses:
   name: Survey that Nate can't change!
-  samples_per_day: 4
-  mean_minutes_between_samples: 60
-  sample_minutes_plusminus: 15
-  sampled_days: 5
+  type: SimpleSurvey
   active: false
   phone_number: "+16085559991"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
@@ -29,13 +23,31 @@ someone_elses:
 
 orphaned:
   name: Survey that Nate isn't an admin of at all!
-  samples_per_day: 4
-  mean_minutes_between_samples: 60
-  sample_minutes_plusminus: 15
-  sampled_days: 3
+  type: SimpleSurvey
   active: false
   phone_number: "+16085559992"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: Welcome! Your login code is {{login_code}}.
+
+game:
+  name: Fun Game Time
+  type: GameSurvey
+  active: true
+  phone_number: "+16085559993"
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
+  time_zone: Central Time (US & Canada)
+  welcome_message: HOORAY!! Your login code is {{login_code}}.
+
+link:
+  name: Link That Is Totally Not a Scam Survey
+  type: LinkSurvey
+  active: true
+  phone_number: "+16085559994"
+  twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2
+  twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
+  time_zone: Central Time (US & Canada)
+  welcome_message: Greetings. Your login code is {{login_code}}.
+  configuration: { url: 'http://qualtrics.com/test?PID={{PID}}' }

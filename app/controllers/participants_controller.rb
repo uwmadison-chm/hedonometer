@@ -18,10 +18,10 @@ class ParticipantsController < SurveyedController
     @participant = current_participant
     logger.debug { "  update_participant_params: #{update_participant_params}" }
     if @participant.update_attributes(update_participant_params)
-      q = @participant.schedule_survey_question_and_save!
+      q = current_survey.schedule_participant! @participant
       logger.debug("Scheduled #{q.inspect}")
       if q
-        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_question!(q.id)
+        ParticipantTexter.delay(run_at: q.scheduled_at).deliver_scheduled_message!(q.id)
       end
       flash[:save_message] = "Saved!"
       redirect_to survey_path(current_survey)
@@ -54,6 +54,6 @@ class ParticipantsController < SurveyedController
   def update_participant_params
     params.
     require(:participant).
-    permit(:time_zone, :schedule_days_attributes => [:id, :date, :time_ranges_string, :skip])
+    permit(:time_zone, :schedule_days_attributes => [:id, :participant_local_date, :time_ranges_string, :skip])
   end
 end

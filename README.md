@@ -38,6 +38,6 @@ Play around a bit.
 
 ### Ubuntu dev packages required
 
-    sudo apt-get install libpq-dev libmysqlclient-dev
+    sudo apt-get install libpq-dev libmysqlclient-dev nodejs
 
 

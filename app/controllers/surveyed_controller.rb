@@ -7,12 +7,16 @@ class SurveyedController < ApplicationController
 
   protected
   def current_survey
-    @current_survey ||= Survey.find params[:survey_id]
+    if params[:survey_id]
+      @current_survey ||= Survey.find params[:survey_id]
+    end
   end
   helper_method :current_survey
 
   def current_participant
-    @current_participant ||= current_survey.participants.where(id: session[:participant_id]).first
+    if session[:participant_id]
+      @current_participant ||= current_survey.participants.where(id: session[:participant_id]).first
+    end
   end
   helper_method :current_participant
 

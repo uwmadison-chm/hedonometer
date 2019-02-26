@@ -10,8 +10,8 @@
   = f.fields_for :schedule_days, builder: ActionView::Helpers::FormBuilder do |day_form|
     .line
       .col1
-        %label= day_form.object.date.strftime("%A, %B %-d")
-        = day_form.hidden_field :date
+        %label= day_form.object.participant_local_date.strftime("%A, %B %-d")
+        = day_form.hidden_field :participant_local_date
       .col2
         = day_form.text_field :time_ranges_string, size: 72
   = f.submit "Save my settings"

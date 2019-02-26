@@ -20,6 +20,10 @@ Rails.application.routes.draw do
     resources :participants, only: [:create]
   end
 
+  # No auth, so links in text messages can be clicked easily
+  resources :scheduled_messages
+  get 'r(/:id)', to: 'scheduled_messages#show'
+
   namespace :admin do
     root :to => 'welcome#index'
 
