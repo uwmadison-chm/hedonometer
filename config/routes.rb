@@ -28,7 +28,9 @@ Rails.application.routes.draw do
     root :to => 'welcome#index'
 
     resources :surveys do
-      resources :participants
+      resources :participants do
+        get 'simulate' => 'simulator#index'
+      end
     end
 
     resources :admins

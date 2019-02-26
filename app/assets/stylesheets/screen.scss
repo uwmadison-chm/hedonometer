@@ -16,8 +16,15 @@ $warn-background: #fee98b;
 $error-foreground: #8f1919;
 $error-background: #f1b8c2;
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-body { font: 100%/1.5 Verdana, sans-serif; }
+body {
+  font: 100%/1.5 Verdana, sans-serif;
+}
 
 code { font-family: Consolas, Monaco, monospace; }
 

@@ -1,0 +1,22 @@
+
+%div.container
+  %header.header
+    %h3 Simulator Mode
+
+    %h4 Viewing interaction with participant #{current_participant.external_key} who is in time zone #{current_participant.time_zone}
+
+  %section.content
+    %div.content-body
+      %div.messages.scroller
+        - @messages.each do |m|
+          %div.message{ :class=>if m[:to] then "to" else "from" end, :title=>m[:at] }
+            %span= m[:message]
+            %div.small= distance_of_time_in_words(m[:at], Time.now) + " ago"
+  
+  %footer.footer
+    %p This is where a "send next message" button would go
+
+:javascript
+    $(document).ready( function() {
+      $('.messages').scrollTop(1E10);
+    } );
