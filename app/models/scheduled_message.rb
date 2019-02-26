@@ -40,13 +40,16 @@ class ScheduledMessage < ApplicationRecord
     url =
       destination_url || survey.configuration['url']
     if url then
-      # TODO: Do replacement
-      url
+      url.sub("{{PID}}", participant.external_key)
     end
   end
 
+  def participant
+    schedule_day.participant
+  end
+
   def survey
-    schedule_day.participant.survey
+    participant.survey
   end
 
   def set_delivered_at

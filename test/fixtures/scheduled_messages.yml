@@ -1,9 +1,9 @@
 message_1:
     schedule_day: ppt4_test_day_1
     scheduled_at: <%= (Time.now - 50.minutes).to_yaml.inspect %>
-    message_text: "Yo, click this fake link dawg! http://localhost:3000/r/id"
+    message_text: "Yo, click this fake link dawg! {{redirect_link}}"
 
 message_2:
     schedule_day: ppt4_test_day_1
     scheduled_at: <%= (Time.now - 10.minutes).to_yaml.inspect %>
-    message_text: "Hello, please to click this totally not fake link: http://localhost:3000/r/id"
+    message_text: "Hello, please to click this totally not fake link: {{redirect_link}}"

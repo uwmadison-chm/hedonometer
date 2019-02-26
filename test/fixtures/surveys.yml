@@ -50,4 +50,4 @@ link:
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: Greetings. Your login code is {{login_code}}.
-  configuration: { url: 'http://qualtrics.com/' }
+  configuration: { url: 'http://qualtrics.com/test?PID={{PID}}' }
