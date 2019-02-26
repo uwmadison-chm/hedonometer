@@ -24,6 +24,8 @@ class Survey < ApplicationRecord
 
   attr_reader :twilio_errors
   after_initialize :clear_twilio_errors
+  after_initialize :fix_configuration_errors
+
 
 
   def schedule_participant! p
@@ -65,6 +67,14 @@ class Survey < ApplicationRecord
 
   def sample_minutes_plusminus= x
     configuration['sample_minutes_plusminus'] = x.to_i
+  end
+
+  def url
+    configuration['url']
+  end
+
+  def url= x
+    configuration['url'] = x
   end
 
 
@@ -131,5 +141,13 @@ class Survey < ApplicationRecord
 
   private def clear_twilio_errors
     @twilio_errors = []
+  end
+
+  private def fix_configuration_errors
+    # There's a weird bug where sometimes it gets set to this weird escaped JSON nightmare thing
+    if @configuration.is_a? String
+      @configuration = {}
+    end
+    @configuration ||= {}
   end
 end

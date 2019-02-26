@@ -4,9 +4,14 @@ class Admin::SurveysController < AdminController
   after_action :set_twilio_errors_flash, only: [:update, :create]
 
   def new
+    params[:kind] ||= "SimpleSurvey"
     # TODO: allow choosing type
     @survey = SimpleSurvey.new
     @survey.survey_questions.build
+    if params[:kind] == "LinkSurvey" then
+      # TODO: better example
+      @survey.url = "http://qualtrics.com/example?PID={{PID}}"
+    end
   end
 
   def show
@@ -16,7 +21,7 @@ class Admin::SurveysController < AdminController
   end
 
   def edit
-    @survey.survey_questions.build if @survey
+    @survey.survey_questions.build if @survey and @survey.respond_to? :survey_questions
   end
 
   def update
@@ -65,6 +70,7 @@ class Admin::SurveysController < AdminController
         :help_message,
         :time_zone,
         :welcome_message,
+        :url,
         :survey_questions_attributes => [:id, :question_text])
   end
 end

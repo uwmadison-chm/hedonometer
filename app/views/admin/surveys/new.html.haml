@@ -1,5 +1,11 @@
 = link_to "◀ Survey list", admin_root_path
 
-%h2 Create a survey
+%p Choose a kind of survey to create:
+%ul
+  %li= link_to "SimpleSurvey", new_admin_survey_path(kind: "SimpleSurvey")
+  %li= link_to "LinkSurvey", new_admin_survey_path(kind: "LinkSurvey")
+  %li= link_to "GameSurvey", new_admin_survey_path(kind: "GameSurvey")
+
+%h2 Create a #{params[:kind]}
 
 = render 'form', survey: @survey

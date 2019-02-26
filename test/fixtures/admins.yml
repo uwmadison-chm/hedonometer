@@ -19,3 +19,9 @@ limited:
 deleted:
   email: deleted@example.edu
   deleted_at: <%= Time.now %>
+
+dan:
+  email: dfitch@wisc.edu
+  can_change_admins: true
+  password_salt: $2a$10$COApfcke3vtQqjdBJkzTNu
+  password_hash: <%= BCrypt::Engine.hash_secret('123', '$2a$10$COApfcke3vtQqjdBJkzTNu') %>

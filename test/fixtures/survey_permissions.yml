@@ -13,3 +13,18 @@ nate_someone_elses:
   admin: nate
   survey: someone_elses
   can_modify_survey: false
+
+dan_test:
+  admin: dan
+  survey: test
+  can_modify_survey: true
+
+dan_game:
+  admin: dan
+  survey: game
+  can_modify_survey: true
+
+dan_link:
+  admin: dan
+  survey: link
+  can_modify_survey: true
