@@ -16,7 +16,7 @@ class ScheduledMessagesController < SurveyedController
         render "expired"
       else
         @expired_string = nil
-        redirect_to "http://current/something" #@current_survey.something
+        redirect_to message.url
       end
     else
       render "expired", status: :not_found

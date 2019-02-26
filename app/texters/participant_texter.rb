@@ -10,7 +10,7 @@ class ParticipantTexter < ActionTexter::Base
             })
     end
 
-    def build_replacements(participant)
+    def build_replacements(participant, scheduled_message)
       {
         '{{external_key}}' => participant.external_key,
         '{{samples_per_day}}' => participant.survey.samples_per_day,
@@ -18,13 +18,16 @@ class ParticipantTexter < ActionTexter::Base
         '{{first_date}}' => participant.schedule_days.first.participant_local_date.to_s(:for_sms),
         '{{last_date}}' => participant.schedule_days.last.participant_local_date.to_s(:for_sms),
         '{{sent_time}}' => Time.now.strftime("%H:%M"),
-        '{{survey_link}}' => "TODO",
+        '{{redirect_link}}' => 
+          if scheduled_message and participant.survey.respond_to? :redirect_link
+            participant.survey.redirect_link scheduled_message
+          end
       }
     end
 
-    def message_with_replacements(message, participant)
+    def message_with_replacements(message, participant, scheduled_message=nil)
       message_for_participant(
-        do_replacements(message, build_replacements(participant)),
+        do_replacements(message, build_replacements(participant, scheduled_message)),
         participant
       )
     end

@@ -36,6 +36,19 @@ class ScheduledMessage < ApplicationRecord
     end
   end
 
+  def url
+    url =
+      destination_url || survey.configuration['url']
+    if url then
+      # TODO: Do replacement
+      url
+    end
+  end
+
+  def survey
+    schedule_day.participant.survey
+  end
+
   def set_delivered_at
     self.delivered_at = Time.now
   end

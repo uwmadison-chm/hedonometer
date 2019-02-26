@@ -6,8 +6,17 @@ class ScheduledMessagesControllerTest < ActionController::TestCase
     m.scheduled_at = Time.now - 10.minutes
     m.save!
     post :show, params: {id: m.id}
-    assert_redirected_to %r(\Ahttp://something)
+    assert_redirected_to %r(qualtrics.com)
     refute assigns(:expired_string)
+  end
+
+  test "current message with overridden destination url should redirect to that" do
+    m = scheduled_messages(:message_2)
+    m.scheduled_at = Time.now - 10.minutes
+    m.destination_url = "http://horse.horse/"
+    m.save!
+    post :show, params: {id: m.id}
+    assert_redirected_to %r(http://horse.horse/)
   end
 
   test "older than 30 minutes message should show expired message" do
