@@ -28,16 +28,15 @@ body {
 
 code { font-family: Consolas, Monaco, monospace; }
 
+.page {
+  margin: 1em;
+}
+
 .top-nav {
   position: absolute;
   right: 0;
   top: 0;
-}
-
-.grid {
-  .col1, .col2 {
-    border: dashed 1px #ccc;
-  }
+  margin: 1em;
 }
 
 table {
