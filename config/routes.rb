@@ -30,6 +30,8 @@ Rails.application.routes.draw do
     resources :surveys do
       resources :participants do
         get 'simulate' => 'simulator#index'
+        post 'simulate_send' => 'simulator#simulate_send'
+        post 'simulate_reply' => 'simulator#simulate_reply'
       end
     end
 

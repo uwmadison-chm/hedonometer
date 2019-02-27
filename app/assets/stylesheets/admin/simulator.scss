@@ -2,6 +2,11 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+html, body, div.page {
+  margin: 0;
+  padding: 0;
+}
+
 .container {
   display: table;
   width: 100%;
@@ -15,11 +20,14 @@
 
 .content-body {
   display: table-cell;
+  align: center;
 }
 
 .scroller {
   max-height: 100%;
   overflow-y: auto;
+  padding: 1em;
+  background: #e7e7e7;
 }
 
 .header,
@@ -28,9 +36,10 @@
   background: #f7f7f7;
 }
 
-.scroller {
-  padding: 1em;
-  background: #e7e7e7;
+.footer {
+  display: grid;
+  grid-gap: 6px;
+  grid-template-columns: 30% auto;
 }
 
 .messages {
@@ -46,6 +55,12 @@
   border-radius: 12px;
   font-size: 150%;
 }
+
+  .pending {
+    background-color: #eee !important;
+    border: 2px dashed #999 !important;
+    color: #999;
+  }
 
   .to {
     background-color: #ddd;
@@ -74,3 +89,4 @@
   .to+.from, .from+.to {
     margin-top: -1em;
   }
+
