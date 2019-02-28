@@ -7,6 +7,6 @@
     = javascript_include_tag "application"
     = csrf_meta_tags
   %body
-    .page
+    .page{class: @page_class}
       .top-nav= link_to "Log out", admin_logout_path if logged_in?
       = yield

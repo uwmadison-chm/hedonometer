@@ -1,6 +1,7 @@
-
 %div.container
   %header.header
+    = link_to "◀ Participant list", admin_survey_participants_path(current_survey)
+
     %h3 Simulator Mode
 
     %h4 Viewing interaction with participant #{current_participant.external_key} who is in time zone #{current_participant.time_zone}
@@ -25,5 +26,5 @@
 
 :javascript
     $(document).ready( function() {
-      $('.messages').scrollTop(1E10);
+      $('.scroller').scrollTop(1E10);
     } );

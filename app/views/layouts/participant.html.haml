@@ -7,7 +7,7 @@
     = javascript_include_tag "application"
     = csrf_meta_tags
   %body
-    .page
+    .page{class: @page_class}
       = yield
       .help
         - if current_survey
