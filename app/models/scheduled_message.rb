@@ -36,6 +36,10 @@ class ScheduledMessage < ApplicationRecord
     end
   end
 
+  def message_or_question_text
+    message_text || survey_question.question_text
+  end
+
   def url
     url =
       destination_url || survey.configuration['url']

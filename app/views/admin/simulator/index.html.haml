@@ -1,0 +1,30 @@
+%div.container
+  %header.header
+    = link_to "◀ Participant list", admin_survey_participants_path(current_survey)
+
+    %h3 Simulator Mode
+
+    %h4 Viewing interaction with participant #{current_participant.external_key} who is in time zone #{current_participant.time_zone}
+
+  %section.content
+    %div.content-body
+      %div.scroller
+        %div.messages
+          - @messages.each do |m|
+            %div.message{ :class=> (m[:to] ? "to" : "from") + (m[:pending] ? " pending" : ""), :title=>m[:at] }
+              %span= m[:message]
+              %div.small= distance_of_time_in_words(m[:at], Time.now) + " ago"
+  
+  %footer.footer
+    %div
+      = form_tag admin_survey_participant_simulate_send_path(current_survey, current_participant), :method => :post do |f|
+        = submit_tag "Simulate next message", :class => "button"
+    %div.align-right
+      = form_tag admin_survey_participant_simulate_reply_path(current_survey, current_participant), :method => :post do |f|
+        = text_field_tag "reply", "", { class: "rounded", placeholder: '' }
+        = submit_tag "Simulate participant texting back", :class => "button"
+
+:javascript
+    $(document).ready( function() {
+      $('.scroller').scrollTop(1E10);
+    } );

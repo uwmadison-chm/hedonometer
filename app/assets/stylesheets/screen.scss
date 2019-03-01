@@ -16,21 +16,27 @@ $warn-background: #fee98b;
 $error-foreground: #8f1919;
 $error-background: #f1b8c2;
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-body { font: 100%/1.5 Verdana, sans-serif; }
+body {
+  font: 100%/1.5 Verdana, sans-serif;
+}
 
 code { font-family: Consolas, Monaco, monospace; }
+
+.page {
+  margin: 1em;
+}
 
 .top-nav {
   position: absolute;
   right: 0;
   top: 0;
-}
-
-.grid {
-  .col1, .col2 {
-    border: dashed 1px #ccc;
-  }
+  margin: 1em;
 }
 
 table {
@@ -108,4 +114,32 @@ form {
 .help {
   clear: both;
   margin-top: 1em;
+}
+
+.button {
+  display: inline;
+  border-radius: 4px;
+  border: 1px solid black;
+  padding: 6px;
+  margin: 6px;
+  background-color: #daf;
+}
+
+input.rounded {
+  border-radius: 4px;
+  border: 1px solid black;
+  padding: 6px;
+  margin: 6px;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.align-right {
+  text-align: right;
 }

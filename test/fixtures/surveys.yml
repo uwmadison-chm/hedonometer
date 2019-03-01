@@ -9,6 +9,7 @@ test:
   twilio_auth_token: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   time_zone: Central Time (US & Canada)
   welcome_message: Welcome! Your login code is {{login_code}}.
+  configuration: { }
 
 someone_elses:
   name: Survey that Nate can't change!
@@ -19,6 +20,7 @@ someone_elses:
   twilio_auth_token: 7896f62400694bbb39cf3ab76a470aec7cb7ab99
   time_zone: Central Time (US & Canada)
   welcome_message: Welcome! Your login code is {{login_code}}.
+  configuration: { }
 
 
 orphaned:
@@ -30,6 +32,7 @@ orphaned:
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: Welcome! Your login code is {{login_code}}.
+  configuration: { }
 
 game:
   name: Fun Game Time
@@ -40,6 +43,7 @@ game:
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: HOORAY!! Your login code is {{login_code}}.
+  configuration: { }
 
 link:
   name: Link That Is Totally Not a Scam Survey

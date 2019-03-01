@@ -41,7 +41,7 @@ class Survey < ApplicationRecord
     configuration['sampled_days'] || 1
   end
 
-  def sampled_days=
+  def sampled_days= x
     configuration['sampled_days'] = x.to_i
   end
   

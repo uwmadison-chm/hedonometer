@@ -13,31 +13,29 @@ Many variants on experience sampling exist; however, extant ones tend to rely ei
 
 ## Requirements
 
-This is written and tested in Ruby 2.2.0, and then upgraded to 2.6.0.
+This was written and tested in Ruby 2.2.0, and then upgraded to 2.6.0.
+
 
 ## Getting Started
 
 Installing this is the same as installing any Rails app. Clone, `bundle install`, `rake db:migrate`.
 
-There isn't yet a rake task to add your first admin, so pull up a Rails console and:
+There isn't yet a rake task to add your first admin, so pull up `rails console` and:
 
-```
-Admin.create(email: "your_email@example.com", password: "some-password", can_change_admins: true)
-```
+    Admin.create(email: "your_email@example.com", password: "some-password", can_change_admins: true)
 
-Fire up a server and you're in. For this to accept incoming texts, you'll need a publicly accessible server.
+`rails server` and you're in. For this to accept incoming texts, you'll need a publicly accessible server.
 
-At the same time, head over to [Twilio](http://twilio.com) and get yourself an account. Either sign up for a trial number and register your moblie number with it, or buy some credits.
+At the same time, head over to [Twilio](http://twilio.com) and get yourself an account. Either sign up for a trial number and register your mobile number with it, or buy some credits.
 
 On the numbers screen, note your Twilio Account SID and your Authorization Token.
 
 Back in the hedonometer, create a survey. Paste in your Account SID and Auth Token; you should get a little "Active" status light. The "Phone number" field should autocomplete with the number you've purchased.
 
-Play around a bit.
+Further documentation about different survey types is in [doc/](doc/).
 
 
-### Ubuntu dev packages required
+### Ubuntu packages required for development
 
     sudo apt-get install libpq-dev libmysqlclient-dev nodejs
-
 
