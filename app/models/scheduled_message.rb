@@ -7,9 +7,6 @@ class ScheduledMessage < ApplicationRecord
 
   validates :scheduled_at, presence: true
 
-  scope :scheduled, -> {
-    where(aasm_state: ['scheduled'])}
-
   scope :completed, -> {
     where(aasm_state: ['delivered', 'aged_out', 'participant_inactive'])}
 

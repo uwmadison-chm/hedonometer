@@ -13,6 +13,7 @@ class LinkSurvey < Survey
     message_text = "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}"
     message = day.scheduled_messages.build(message_text: message_text)
     message.scheduled_at = day.random_time_for_next_question
+    message.save!
     message
   end
 end

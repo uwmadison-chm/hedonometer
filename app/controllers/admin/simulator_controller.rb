@@ -23,7 +23,6 @@ class Admin::SimulatorController < AdminController
         message: m.message
       }}
 
-    # TODO: Find real pending messages inside participant.schedule_days
     pending = find_scheduled_messages.map {|m|
       { to: true,
         at: m.scheduled_at,
