@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_26_150721) do
+ActiveRecord::Schema.define(version: 2019_03_01_153058) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -46,8 +46,8 @@ ActiveRecord::Schema.define(version: 2019_02_26_150721) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "time_zone"
-    t.text "question_chooser_state"
     t.string "external_key"
+    t.json "state", default: {}
   end
 
   create_table "schedule_days", force: :cascade do |t|

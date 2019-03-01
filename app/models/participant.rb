@@ -49,8 +49,6 @@ class Participant < ApplicationRecord
     .order('delivered_at DESC')},
     through: :survey
 
-  serialize :question_chooser_state
-
   # Used to create schedule_days and stuff.
   attr_accessor :schedule_start_date
   attr_accessor :schedule_time_after_midnight

@@ -9,10 +9,10 @@ class SimpleSurveyTest < ActiveSupport::TestCase
   test "getting new question" do
     p = participants(:ppt1)
     sq = p.survey.choose_question p
-    unused = p.question_chooser_state[:unused_ids]
+    unused = p.state[:question_chooser_state][:unused_ids]
     refute_nil unused
     assert_equal (p.survey.survey_questions.count - 1), unused.length
-    refute_includes p.question_chooser_state[:unused_ids], sq.id
+    refute_includes p.state[:question_chooser_state][:unused_ids], sq.id
   end
 
   test "current or new question basically works" do

@@ -9,9 +9,11 @@ class SurveyTest < ActiveSupport::TestCase
     {
       creator: admins(:nate),
       name: "test1",
-      samples_per_day: 1,
-      mean_minutes_between_samples: 15,
-      sample_minutes_plusminus: 5,
+      configuration: {
+        samples_per_day: 1,
+        mean_minutes_between_samples: 15,
+        sample_minutes_plusminus: 5,
+      },
       active: false,
     }
   end
