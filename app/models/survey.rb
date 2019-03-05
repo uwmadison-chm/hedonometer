@@ -76,6 +76,12 @@ class Survey < ApplicationRecord
   end
 
 
+  def redirect_link scheduled_message
+    # This is the redirect that goes into text messages to forward people to 
+    # say, qualtrics or whatever
+    absolute_url_for(action: 'redirect', controller: 'scheduled_message', id: scheduled_message.id)
+  end
+
 
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token

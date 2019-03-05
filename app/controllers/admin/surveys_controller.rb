@@ -5,12 +5,16 @@ class Admin::SurveysController < AdminController
 
   def new
     params[:kind] ||= "SimpleSurvey"
-    # TODO: allow choosing type
-    @survey = SimpleSurvey.new
-    @survey.survey_questions.build
-    if params[:kind] == "LinkSurvey" then
-      # TODO: better example
+    if params[:kind] == "GameSurvey" then
+      @survey = GameSurvey.new
+      @survey.configuration['regular_url'] = "http://qualtrics.com/example?PID={{PID}}"
+      @survey.configuration['rapid_url'] = "http://qualtrics.com/rapid?PID={{PID}}"
+    elsif params[:kind] == "LinkSurvey" then
+      @survey = LinkSurvey.new
       @survey.url = "http://qualtrics.com/example?PID={{PID}}"
+    else
+      @survey = SimpleSurvey.new
+      @survey.survey_questions.build
     end
   end
 
