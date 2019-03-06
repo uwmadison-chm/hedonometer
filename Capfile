@@ -8,7 +8,7 @@ require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
 
 require "capistrano/rails"
-
+require 'capistrano/delayed_job'
 require 'capistrano/puma'
 install_plugin Capistrano::Puma
 

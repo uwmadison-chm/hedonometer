@@ -80,14 +80,13 @@ class GameSurvey < Survey
     end
     # TODO: random time should be 10-15 minutes from now
     time = day.random_time_for_next_question
-    # TODO: Add a delay to timeout and re-ask
+    # TODO: Add a delayed job to timeout and re-ask
     if s['game_measure_with_link'] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
       return "How do you feel on a scale of 1 to 10?", time
     end
   end
-
 
   def schedule_participant! participant
     participant.requests_new_schedule = false
