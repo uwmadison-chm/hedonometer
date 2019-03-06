@@ -282,7 +282,7 @@ PLATFORMS
 DEPENDENCIES
   aasm (~> 3.0.20)
   bcrypt (~> 3.1.7)
-  bootsnap (>= 1.1.0)
+  bootsnap (>= 1.4.1)
   byebug
   capistrano-delayed-job (~> 1.0)
   capistrano-rails
@@ -317,7 +317,7 @@ DEPENDENCIES
   webmock (~> 3.5)
 
 RUBY VERSION
-   ruby 2.6.0p0
+   ruby 2.6.1p33
 
 BUNDLED WITH
    2.0.1
