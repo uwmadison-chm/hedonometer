@@ -7,3 +7,6 @@ namespace :delayed_job do
   end
 end
 
+namespace :deploy do
+  after :finishing, "delayed_job:restart"
+end
