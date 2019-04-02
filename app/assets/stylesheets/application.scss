@@ -1,0 +1,12 @@
+$purple:        #6e2cc6;
+
+$brand-primary: $purple; 
+$link-color:    $purple;
+//$body-bg:       #eef;
+
+$font-family-sans-serif: Roboto, "Helvetica Neue", Arial, sans-serif;
+
+@import "bootstrap";
+@import "screen";
+@import "admin/simulator";
+

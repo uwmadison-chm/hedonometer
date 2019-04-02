@@ -4,7 +4,13 @@
 
     %h3 Simulator Mode
 
-    %h4 Viewing interaction with participant #{current_participant.external_key} who is in time zone #{current_participant.time_zone}
+    %h4
+      Viewing interaction with participant #{current_participant.external_key} in time zone #{current_participant.time_zone}.
+      %button.btn.btn-primary{ :type=>"button", :data => {:toggle=>"collapse", :target=>"#state"} }
+        Show state
+      %div.collapse#state
+        %div.card.card-body 
+          %pre #{JSON.pretty_generate(current_participant.state)}
 
   %section.content
     %div.content-body
@@ -13,7 +19,10 @@
           - @messages.each do |m|
             %div.message{ :class=> (m[:to] ? "to" : "from") + (m[:pending] ? " pending" : ""), :title=>m[:at] }
               %span= m[:message]
-              %div.small= distance_of_time_in_words(m[:at], Time.now) + " ago"
+              %div.small
+                = m[:at].in_time_zone(current_participant.time_zone).to_s
+                \-
+                = distance_of_time_in_words(m[:at], Time.now) + " ago"
   
   %footer.footer
     %div

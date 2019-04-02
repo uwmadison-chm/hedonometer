@@ -68,6 +68,7 @@ end
 gem "rails-controller-testing", "~> 1.0"
 
 gem 'haml', '~> 5.0.4'
+gem 'bootstrap', '~> 4.3.1'
 
 gem 'twilio-ruby', '~> 3.9.0'
 

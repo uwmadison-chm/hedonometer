@@ -25,7 +25,7 @@ class GameSurvey < Survey
     # If not, decide when game prompt should start today
     time = participant.state['game_time'][day.id.to_s]
     if time.nil? then
-      # TODO
+      # TODO: should pick a time 
       time = Time.now + 30.minutes
       participant.state['game_time'][day.id] = time
     end
