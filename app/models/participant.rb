@@ -30,6 +30,13 @@ class Participant < ApplicationRecord
       potential_run_targets.first
     end
 
+    def running_day
+      potential_run_targets.each do |day|
+        return day if day.running?
+      end
+      nil
+    end
+
     def advance_to_day_with_time_for_message!
       potential_run_targets.each do |day|
         logger.debug("Checking day #{day.participant_local_date}")

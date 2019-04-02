@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'csv'
 
+
 class Survey < ApplicationRecord
   attr_accessor :creator
 
@@ -73,13 +74,6 @@ class Survey < ApplicationRecord
 
   def url= x
     configuration['url'] = x
-  end
-
-
-  def redirect_link scheduled_message
-    # This is the redirect that goes into text messages to forward people to 
-    # say, qualtrics or whatever
-    absolute_url_for(action: 'redirect', controller: 'scheduled_message', id: scheduled_message.id)
   end
 
 

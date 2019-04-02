@@ -20,7 +20,13 @@ class IncomingTextMessagesController < SurveyedController
       server_response: params)
     method = lookup_route(itm.message)
     if method
+      # If it's a standard message, we respond to it here
       self.send method, itm
+    elsif current_survey.respond_to? :participant_message
+      # otherwise send it to the current survey as a message
+      # from this participant
+      ppt = participant_from_phone_number(params[:from])
+      current_survey.participant_message ppt, params[:body]
     end
     head :ok
   end

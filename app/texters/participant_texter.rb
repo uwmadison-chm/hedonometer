@@ -1,5 +1,6 @@
 class ParticipantTexter < ActionTexter::Base
   class << self
+    include ApplicationHelper
     def message_for_participant(message, participant)
       Rails.logger.info("Sending #{message} to #{participant.phone_number}")
       survey = participant.survey
@@ -19,8 +20,10 @@ class ParticipantTexter < ActionTexter::Base
         '{{last_date}}' => participant.schedule_days.last.participant_local_date.to_s(:for_sms),
         '{{sent_time}}' => Time.now.strftime("%H:%M"),
         '{{redirect_link}}' => 
-          if scheduled_message and participant.survey.respond_to? :redirect_link
-            participant.survey.redirect_link scheduled_message
+          if scheduled_message
+            # This is the redirect that goes into text messages to forward people to 
+            # say, qualtrics or whatever
+            absolute_url_for(action: 'redirect', controller: 'scheduled_message', id: scheduled_message.id)
           end
       }
     end

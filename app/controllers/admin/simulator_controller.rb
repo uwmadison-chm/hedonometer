@@ -40,14 +40,20 @@ class Admin::SimulatorController < AdminController
       current_survey.schedule_participant! current_participant
       redirect_to action: "index"
     else
-      # we kind of fake delivering it in the future
       m.mark_delivered
       m.save!
+
+      # Do replacement in message
+      message = ParticipantTexter.do_replacements(
+        m.message_or_question_text,
+        ParticipantTexter.build_replacements(
+          current_participant, m))
+
       OutgoingTextMessage.create!(
         survey: current_survey,
         from_number: current_survey.phone_number,
         to_number: current_participant.phone_number,
-        message: m.message_or_question_text,
+        message: message,
         scheduled_at: m.scheduled_at,
         delivered_at: m.scheduled_at
       )
@@ -59,14 +65,20 @@ class Admin::SimulatorController < AdminController
   end
 
   def simulate_reply
-    # TODO: feed this input to state machine
+    message = params[:reply]
+    # fake a text message from the participant
     IncomingTextMessage.create!(
       survey: current_survey,
       from_number: current_participant.phone_number,
       to_number: current_survey.phone_number,
-      message: params[:reply],
+      message: message,
       delivered_at: Time.now
     )
+
+    # feed this input to survey state machine, if available
+    if current_survey.respond_to? :participant_message then
+      current_survey.participant_message current_participant, message
+    end
 
     redirect_to action: "index"
   end

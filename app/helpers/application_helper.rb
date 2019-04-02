@@ -2,7 +2,9 @@
 
 module ApplicationHelper
   def absolute_url_for(options = {})
-      url_for(options.merge({:only_path => false}))
+    # TODO
+    # url_for(options.merge({:only_path => false}))
+    "http://fake_url/TODO"
   end
 
   def humanize_phone_number(numberlike)
