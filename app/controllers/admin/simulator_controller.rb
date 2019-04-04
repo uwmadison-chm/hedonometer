@@ -64,6 +64,11 @@ class Admin::SimulatorController < AdminController
     end
   end
 
+  def simulate_timeout
+    # TODO: Not sure how to cause the state machine to timeout
+    redirect_to action: "index"
+  end
+
   def simulate_reply
     message = params[:reply]
     # fake a text message from the participant

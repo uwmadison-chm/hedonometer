@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   end
 
   # No auth path, so links in text messages can be clicked easily
-  get 'r(/:id)', to: 'scheduled_messages#show', as: 'r'
+  get 'r(/:id)', to: 'scheduled_messages#show', as: 'redirect'
 
   namespace :admin do
     root :to => 'welcome#index'
@@ -31,6 +31,7 @@ Rails.application.routes.draw do
         get 'simulate' => 'simulator#index'
         post 'simulate_send' => 'simulator#simulate_send'
         post 'simulate_reply' => 'simulator#simulate_reply'
+        post 'simulate_timeout' => 'simulator#simulate_timeout'
       end
     end
 

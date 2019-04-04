@@ -3,6 +3,24 @@ class GameSurvey < Survey
     Survey.model_name
   end
 
+  def url_game_survey
+    configuration['url_game_survey']
+  end
+
+  def url_game_survey= x
+    configuration['url_game_survey'] = x
+  end
+
+  def url_for_participant participant
+    # Different survey urls depending on participant state
+    s = participant.state
+    if s['game'] == 'gather_data' then
+      url_game_survey
+    else
+      url
+    end
+  end
+
   def game_result_pool
     # 10 results, half wins. Do not allow 3 losses in a row.
     available = [true, true, true, true, true, false, false, false, false, false]
@@ -82,10 +100,9 @@ class GameSurvey < Survey
     return message, Time.now
   end
 
-  def game_send_result! participant
+  def game_send_result! day, participant
     # Participant picked high or low... tell them what they won, Jim!
     s = participant.state
-    s['game'] = 'gather_data'
     s['game_survey_count'] = 0
 
     # store if they won or not
@@ -95,6 +112,9 @@ class GameSurvey < Survey
     s['game_completed'][s['game_current_day']] = winner
     s['game_balance'] += winner ? 10 : -5
 
+    # We go into gather data mode
+    game_gather_data! day, participant
+
     # TODO: Better message?
     message = winner ? "Correct! You won $10!" : "Incorrect! You lose $5."
     return "#{message} Your balance is $#{s['game_balance']}", Time.now
@@ -102,12 +122,14 @@ class GameSurvey < Survey
 
   def game_gather_data! day, participant
     s = participant.state
+    s['game'] = 'gather_data'
     s['game_survey_count'] += 1
     if s['game_survey_count'] >= 8 then
       s['game'] = nil
     end
     # sample time should be 10-15 minutes from now
     time = Time.now + 10.minutes + rand(5).minutes
+
     # TODO: Add a delayed job to timeout and re-ask
     if s['game_measure_with_link'] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
@@ -148,7 +170,8 @@ class GameSurvey < Survey
           game_gather_data! day, participant
         else
           # The default question
-          ["Please take this survey now (sent at {{sent_time}}): {{redirect_link}}", day.random_time_for_next_question]
+          [ "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}",
+            day.random_time_for_next_question ]
         end
       end
 
@@ -172,16 +195,21 @@ class GameSurvey < Survey
         do_message(day, *game_begin!(participant))
         participant.save!
       elsif message =~ /no/i then
-        day_id = participant.state['game_current_day']
-        participant.state['game_time'][day_id] = Time.now + 30.minutes
+        day_id = s['game_current_day']
+        s['game_time'][day_id] = Time.now + 30.minutes
         participant.save!
       end
     elsif game_state =~ /^waiting_number/ then
       if message =~ /high|low/ then
-        do_message(day, *game_send_result!(participant))
+        do_message(day, *game_send_result!(day, participant))
         participant.save!
       else
         do_message(day, "You need to pick 'high' or 'low'", Time.now)
+      end
+    elsif game_state =~ /^gather_data/ then
+      if message =~ /\d+/ then
+        s['game_response'][day_id] ||= []
+        s['game_response'][day_id].push message
       end
     else
       logger.debug("Got unexpected participant message #{message} from participant #{participant.id} in game state #{game_state}")

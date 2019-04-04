@@ -5,7 +5,7 @@
     %h3 Simulator Mode
 
     %h4
-      Viewing interaction with participant #{current_participant.external_key} in time zone #{current_participant.time_zone}.
+      Viewing interaction with participant #{current_participant.external_key || "NO EXTERNAL KEY"} in time zone #{current_participant.time_zone}.
       %button.btn.btn-primary{ :type=>"button", :data => {:toggle=>"collapse", :target=>"#state"} }
         Show state
       %div.collapse#state
@@ -22,15 +22,21 @@
               %div.small
                 = m[:at].in_time_zone(current_participant.time_zone).to_s
                 \-
-                = distance_of_time_in_words(m[:at], Time.now) + " ago"
+                - if Time.now > m[:at] then
+                  = distance_of_time_in_words(m[:at], Time.now) + " ago"
+                - else
+                  = distance_of_time_in_words(m[:at], Time.now) + " from now"
   
   %footer.footer
     %div
       = form_tag admin_survey_participant_simulate_send_path(current_survey, current_participant), :method => :post do |f|
         = submit_tag "Simulate next message", :class => "button"
+      = form_tag admin_survey_participant_simulate_timeout_path(current_survey, current_participant), :method => :post do |f|
+        = submit_tag "Simulate timeout", :class => "button"
     %div.align-right
       = form_tag admin_survey_participant_simulate_reply_path(current_survey, current_participant), :method => :post do |f|
         = text_field_tag "reply", "", { class: "rounded", placeholder: '' }
+        %br
         = submit_tag "Simulate participant texting back", :class => "button"
 
 :javascript

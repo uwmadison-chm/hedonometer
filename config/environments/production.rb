@@ -94,4 +94,9 @@ Rails.application.configure do
 
   # We host it at /h2, so set the relative_url_root
   config.relative_url_root = '/h2'
+
+  # Because texters need absolute host stuff, we have to put that per environment
+  Rails.application.routes.default_url_options[:host] = 'webtasks.keck.waisman.wisc.edu'
+  Rails.application.routes.default_url_options[:protocol] = 'https'
+  Rails.application.routes.default_url_options[:port] = '443'
 end

@@ -41,8 +41,11 @@ class ScheduledMessage < ApplicationRecord
   end
 
   def url
-    url =
-      destination_url || survey.configuration['url']
+    if survey.respond_to? :url_for_participant then
+      url = survey.url_for_participant participant
+    else
+      url = survey.configuration['url']
+    end
     if url then
       url.sub("{{PID}}", participant.external_key)
     end

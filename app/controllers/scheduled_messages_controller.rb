@@ -16,6 +16,7 @@ class ScheduledMessagesController < SurveyedController
         render "expired"
       else
         @expired_string = nil
+        # TODO: ask survey for url for this participant if not set?
         redirect_to message.url
       end
     else

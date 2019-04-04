@@ -7,8 +7,8 @@ class Admin::SurveysController < AdminController
     params[:kind] ||= "SimpleSurvey"
     if params[:kind] == "GameSurvey" then
       @survey = GameSurvey.new
-      @survey.configuration['regular_url'] = "http://qualtrics.com/example?PID={{PID}}"
-      @survey.configuration['rapid_url'] = "http://qualtrics.com/rapid?PID={{PID}}"
+      @survey.configuration['url'] = "http://qualtrics.com/example?PID={{PID}}"
+      @survey.configuration['url_game_survey'] = "http://qualtrics.com/rapid?PID={{PID}}"
     elsif params[:kind] == "LinkSurvey" then
       @survey = LinkSurvey.new
       @survey.url = "http://qualtrics.com/example?PID={{PID}}"
@@ -72,6 +72,7 @@ class Admin::SurveysController < AdminController
         :time_zone,
         :welcome_message,
         :url,
+        :url_game_survey,
         :survey_questions_attributes => [:id, :question_text])
   end
 end

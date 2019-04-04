@@ -43,7 +43,7 @@ game:
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: HOORAY!! Your login code is {{login_code}}.
-  configuration: { }
+  configuration: { url: 'http://qualtrics.com/test?PID={{PID}}', url_game_survey: 'http://qualtrics.com/short?PID={{PID}}' }
 
 link:
   name: Link That Is Totally Not a Scam Survey

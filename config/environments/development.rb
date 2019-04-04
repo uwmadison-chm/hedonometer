@@ -61,4 +61,9 @@ Rails.application.configure do
 
   # When developing on a separate VM, it's nice to get to the console
   config.web_console.whitelisted_ips = '192.168.0.0/16'
+
+  # Because texters need absolute host stuff, we have to put that per environment
+  Rails.application.routes.default_url_options[:host] = 'localhost'
+  Rails.application.routes.default_url_options[:protocol] = 'http'
+  Rails.application.routes.default_url_options[:port] = '3000'
 end

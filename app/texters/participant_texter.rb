@@ -23,7 +23,7 @@ class ParticipantTexter < ActionTexter::Base
           if scheduled_message
             # This is the redirect that goes into text messages to forward people to 
             # say, qualtrics or whatever
-            absolute_url_for(action: 'redirect', controller: 'scheduled_message', id: scheduled_message.id)
+            Rails.application.routes.url_for(action: 'show', controller: 'scheduled_messages', id: scheduled_message.id, only_path: false)
           end
       }
     end
