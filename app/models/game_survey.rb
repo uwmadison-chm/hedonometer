@@ -3,6 +3,14 @@ class GameSurvey < Survey
     Survey.model_name
   end
 
+  def url
+    configuration['url']
+  end
+
+  def url= x
+    configuration['url'] = x
+  end
+
   def url_game_survey
     configuration['url_game_survey']
   end

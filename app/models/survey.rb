@@ -68,14 +68,6 @@ class Survey < ApplicationRecord
     configuration['sample_minutes_plusminus'] = x.to_i
   end
 
-  def url
-    configuration['url']
-  end
-
-  def url= x
-    configuration['url'] = x
-  end
-
 
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token

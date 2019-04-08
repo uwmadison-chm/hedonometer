@@ -11,7 +11,7 @@ class Admin::SurveysController < AdminController
       @survey.configuration['url_game_survey'] = "http://qualtrics.com/rapid?PID={{PID}}"
     elsif params[:kind] == "LinkSurvey" then
       @survey = LinkSurvey.new
-      @survey.url = "http://qualtrics.com/example?PID={{PID}}"
+      @survey.configuration['url'] = "http://qualtrics.com/example?PID={{PID}}"
     else
       @survey = SimpleSurvey.new
       @survey.survey_questions.build
@@ -40,7 +40,16 @@ class Admin::SurveysController < AdminController
   end
 
   def create
-    @survey = Survey.create survey_params.merge(creator: current_admin)
+    case params[:kind]
+    when "GameSurvey"
+      kls = GameSurvey
+    when "LinkSurvey"
+      kls = LinkSurvey
+    else
+      kls = SimpleSurvey
+    end
+
+    @survey = kls.create survey_params.merge(creator: current_admin)
     render action: :new and return if @survey.new_record?
     message_url = survey_message_url(survey_id: @survey)
     logger.debug "Setting survey handler URL to #{message_url}"

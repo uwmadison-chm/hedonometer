@@ -3,6 +3,14 @@ class LinkSurvey < Survey
     Survey.model_name
   end
 
+  def url
+    configuration['url']
+  end
+
+  def url= x
+    configuration['url'] = x
+  end
+
   def schedule_participant! participant
     participant.requests_new_schedule = false
     day = participant.schedule_days.advance_to_day_with_time_for_message!
