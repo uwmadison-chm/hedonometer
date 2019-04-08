@@ -16,7 +16,7 @@ class ScheduledMessagesControllerTest < ActionController::TestCase
     m.destination_url = "http://horse.horse/"
     m.save!
     post :show, params: {id: m.id}
-    assert_redirected_to %r(http://horse.horse/)
+    assert_redirected_to 'http://qualtrics.com/test?PID=df-5567'
   end
 
   test "older than 30 minutes message should show expired message" do
