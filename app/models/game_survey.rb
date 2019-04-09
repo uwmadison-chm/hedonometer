@@ -93,7 +93,7 @@ class GameSurvey < Survey
   def game_could_start! participant
     # Ask the participant if they want to play
     participant.state['game'] = 'waiting_asked'
-    # TODO: Add a delayed job which will call game_timed_out if no response
+    self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
     return "Do you have time to play a game? (Reply 'yes' if so, or just ignore us if not)", Time.now
   end
 
@@ -103,7 +103,7 @@ class GameSurvey < Survey
     participant.state['game_current_day'] = day_id
     participant.state['game'] = 'waiting_number'
     participant.state['game_count'] += 1
-    # TODO: Add a delayed job which will call game_timed_out if no response
+    self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
     message = "The computer chose the number 5, please guess whether the next number will be higher or lower than 5. Reply 'high' or 'low'."
     return message, Time.now
   end
@@ -121,14 +121,13 @@ class GameSurvey < Survey
     s['game_balance'] += winner ? 10 : -5
 
     # We go into gather data mode
-    game_gather_data! day, participant
+    game_gather_data! participant
 
-    # TODO: Better message?
     message = winner ? "Correct! You won $10!" : "Incorrect! You lose $5."
     return "#{message} Your balance is $#{s['game_balance']}", Time.now
   end
 
-  def game_gather_data! day, participant
+  def game_gather_data! participant
     s = participant.state
     s['game'] = 'gather_data'
     s['game_survey_count'] += 1
@@ -138,11 +137,21 @@ class GameSurvey < Survey
     # sample time should be 10-15 minutes from now
     time = Time.now + 10.minutes + rand(5).minutes
 
-    # TODO: Add a delayed job to timeout and re-ask
+    # Timeout after another chunk of minutes if no response, prompt again
+    timeout = time + 10.minutes + rand(5)
+    self.delay(run_at: timeout.minutes).game_gather_data_again! s['game_survey_count'], participant.id
     if s['game_measure_with_link'] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
       return "How do you feel on a scale of 1 to 10?", time
+    end
+  end
+
+  def game_gather_data_again! count, participant_id
+    # re-ask if they didn't respond last time
+    ppt = Participant.find(participant_id)
+    if ppt.state['game_survey_count'] == count then
+      self.game_gather_data! ppt
     end
   end
 
@@ -175,7 +184,7 @@ class GameSurvey < Survey
         case state_game
         when 'send_result'
         when 'gather_data'
-          game_gather_data! day, participant
+          game_gather_data! participant
         else
           # The default question
           [ "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}",
