@@ -99,5 +99,5 @@ Rails.application.configure do
   Rails.application.routes.default_url_options[:host] = 'webtasks.keck.waisman.wisc.edu'
   Rails.application.routes.default_url_options[:protocol] = 'https'
   Rails.application.routes.default_url_options[:port] = '443'
-  Rails.application.routes.default_url_options[:script_name] = 'h2'
+  Rails.application.routes.default_url_options[:script_name] = '/h2'
 end
