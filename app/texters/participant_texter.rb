@@ -76,7 +76,7 @@ class ParticipantTexter < ActionTexter::Base
         else
           scheduled_message.message_text
         end
-      message = message_with_replacements(text, participant)
+      message = message_with_replacements(text, participant, scheduled_message)
       scheduled_message.deliver_and_save_if_possible!(message)
       if scheduled_message.completed?
         new_message = survey.schedule_participant! participant
