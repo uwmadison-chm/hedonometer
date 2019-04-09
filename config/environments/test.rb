@@ -43,4 +43,9 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Because texters need absolute host stuff, we have to put that per environment
+  Rails.application.routes.default_url_options[:host] = 'localhost'
+  Rails.application.routes.default_url_options[:protocol] = 'http'
+  Rails.application.routes.default_url_options[:port] = '3000'
 end

@@ -18,7 +18,9 @@ class LinkSurvey < Survey
     message = day.scheduled_messages.build(message_text: message_text)
     message.scheduled_at = day.random_time_for_next_question
     message.save!
-    message
+    logger.debug("Scheduled #{message.inspect}")
+    ParticipantTexter.delay(run_at: message.scheduled_at).deliver_scheduled_message!(message.id)
+    return message
   end
 end
 

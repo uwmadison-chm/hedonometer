@@ -32,5 +32,8 @@ module Hedonometer
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # ActiveJob should use delayed_job
+    config.active_job.queue_adapter = :delayed_job
   end
 end

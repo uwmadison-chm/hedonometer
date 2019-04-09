@@ -190,6 +190,8 @@ class GameSurvey < Survey
   def do_message day, message_text, scheduled_at
     message = day.scheduled_messages.build(message_text: message_text, scheduled_at: scheduled_at)
     message.save!
+    logger.debug("Scheduled #{message.inspect}")
+    ParticipantTexter.delay(run_at: message.scheduled_at).deliver_scheduled_message!(message.id)
     return message
   end
 

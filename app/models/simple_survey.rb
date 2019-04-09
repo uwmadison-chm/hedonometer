@@ -19,10 +19,11 @@ class SimpleSurvey < Survey
     return nil unless question
     # We know question is not delivered; we can set its scheduled_at
     question.scheduled_at = question.schedule_day.random_time_for_next_question
-    logger.debug("Scheduled #{question}")
     question.save!
     participant.save!
-    question
+    logger.debug("Scheduled #{question.inspect}")
+    ParticipantTexter.delay(run_at: question.scheduled_at).deliver_scheduled_message!(question.id)
+    return question
   end
 
   def current_question_or_new participant
