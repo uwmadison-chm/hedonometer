@@ -39,8 +39,11 @@ class Admin::ParticipantsController < AdminController
     @participant = current_survey.participants.create(create_params)
     if not @participant.new_record?
       @participant.send_welcome_message_if_requested!
+      flash[:save_message] = "Participant added!"
       redirect_to admin_survey_participants_path(current_survey)
     else
+      logger.info "Errors are: #{@participant.errors.inspect}"
+      flash.now[:save_message] = "There was an error!"
       current_survey.reload # Force us to remove the ppt from our collection
       render action: :index
     end

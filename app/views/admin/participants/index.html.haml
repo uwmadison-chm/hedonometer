@@ -10,6 +10,14 @@
   = f.submit "Create participant"
 
 
+%div.alert.alert-primary
+  =flash[:save_message]
+- if @participant.errors.any?
+  %div.alert.alert-danger
+    %ul
+      - @participant.errors.full_messages.each do |m|
+        %li= m
+
 %table
   %tr
     %th Phone number
@@ -17,7 +25,7 @@
     %th Login code
     %th Participant key
     %th
-    %th    
+    %th
     %th
     %th
   - current_survey.participants.each do |participant|
