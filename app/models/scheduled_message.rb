@@ -80,11 +80,11 @@ class ScheduledMessage < ApplicationRecord
   end
 
   def deliver_and_save_if_possible!(message)
+    return if delivered?
     if can_be_delivered_now?
       message.deliver_and_save!
       self.mark_delivered
-    end
-    if too_old_to_deliver?
+    elsif too_old_to_deliver?
       self.mark_aged_out
     elsif not self.schedule_day.participant.active?
       self.mark_participant_inactive
