@@ -69,6 +69,17 @@ class Survey < ApplicationRecord
   end
 
 
+  # If a survey is in development mode, the simulator view is allowed to 
+  # simulate messages on it
+  def development_mode
+    configuration['development_mode'] || false
+  end
+
+  def development_mode= x
+    configuration['development_mode'] = x.to_s == "true" || x.to_s == "1"
+  end
+
+
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
   end

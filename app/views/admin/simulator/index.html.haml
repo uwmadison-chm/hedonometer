@@ -27,17 +27,18 @@
                 - else
                   = distance_of_time_in_words(m[:at], Time.now) + " from now"
   
-  %footer.footer
-    %div
-      = form_tag admin_survey_participant_simulate_send_path(current_survey, current_participant), :method => :post do |f|
-        = submit_tag "Simulate next message", :class => "button"
-      = form_tag admin_survey_participant_simulate_timeout_path(current_survey, current_participant), :method => :post do |f|
-        = submit_tag "Simulate timeout", :class => "button"
-    %div.align-right
-      = form_tag admin_survey_participant_simulate_reply_path(current_survey, current_participant), :method => :post do |f|
-        = text_field_tag "reply", "", { class: "rounded", placeholder: '' }
-        %br
-        = submit_tag "Simulate participant texting back", :class => "button"
+  - if current_survey.development_mode
+    %footer.footer
+      %div
+        = form_tag admin_survey_participant_simulate_send_path(current_survey, current_participant), :method => :post do |f|
+          = submit_tag "Simulate next message", :class => "button"
+        = form_tag admin_survey_participant_simulate_timeout_path(current_survey, current_participant), :method => :post do |f|
+          = submit_tag "Simulate timeout", :class => "button"
+      %div.align-right
+        = form_tag admin_survey_participant_simulate_reply_path(current_survey, current_participant), :method => :post do |f|
+          = text_field_tag "reply", "", { class: "rounded", placeholder: '' }
+          %br
+          = submit_tag "Simulate participant texting back", :class => "button"
 
 :javascript
     $(document).ready( function() {

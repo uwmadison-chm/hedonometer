@@ -1,5 +1,8 @@
 
 class Admin::SimulatorController < AdminController
+  class NotAllowed < StandardError
+  end
+  
   def index
     if !current_participant
       not_found
@@ -34,6 +37,7 @@ class Admin::SimulatorController < AdminController
   end
 
   def simulate_send
+    raise NotAllowed unless current_survey.development_mode
     # fake-send current scheduled message
     m = find_scheduled_messages.first
     unless m then
@@ -66,11 +70,13 @@ class Admin::SimulatorController < AdminController
   end
 
   def simulate_timeout
+    raise NotAllowed unless current_survey.development_mode
     # TODO: Not sure how to cause the state machine to timeout
     redirect_to action: "index"
   end
 
   def simulate_reply
+    raise NotAllowed unless current_survey.development_mode
     message = params[:reply]
     # fake a text message from the participant
     IncomingTextMessage.create!(
