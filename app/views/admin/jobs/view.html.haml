@@ -1,0 +1,26 @@
+= link_to "◀ Job status", admin_jobs_path
+
+%h1 Job Status: #{@kind}
+
+%table
+  %tr
+    %th id
+    %th priority
+    %th run_at
+    %th locked_at
+    %th failed_at
+    %th attempts
+    %th last_error
+    %th handler
+  - @jobs.each do |j|
+    %tr
+      %td= j.id
+      %td= j.priority
+      %td= j.run_at
+      %td= j.locked_at
+      %td= j.failed_at
+      %td= j.attempts
+      %td= j.last_error
+      %td 
+        %span{:title => j.handler.inspect} Hover for YAML
+  

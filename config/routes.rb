@@ -37,6 +37,9 @@ Rails.application.routes.draw do
 
     resources :admins
 
+    get 'jobs' => 'jobs#index'
+    get 'jobs/:kind' => 'jobs#view', :as => 'jobs_view'
+
     resource :twilio_account
 
     # Authn

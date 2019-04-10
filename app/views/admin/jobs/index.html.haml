@@ -1,0 +1,7 @@
+= link_to "◀ Survey list", admin_root_path
+
+%h1 Job Status 🎺
+
+- @job_stats.each do |kind, count|
+  %h3 
+    %a{:href => admin_jobs_view_path(:kind => kind)} #{count} #{kind} jobs
