@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_153058) do
+ActiveRecord::Schema.define(version: 2019_04_10_161651) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_153058) do
     t.datetime "delivered_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean "simulated", default: false, null: false
     t.index ["survey_id", "from_number"], name: "index_text_messages_on_survey_id_and_from_number"
     t.index ["survey_id", "to_number"], name: "index_text_messages_on_survey_id_and_to_number"
     t.index ["survey_id", "type"], name: "index_text_messages_on_survey_id_and_type"

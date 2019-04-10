@@ -54,6 +54,7 @@ class Admin::SimulatorController < AdminController
         from_number: current_survey.phone_number,
         to_number: current_participant.phone_number,
         message: message,
+        simulated: true,
         scheduled_at: m.scheduled_at,
         delivered_at: m.scheduled_at
       )
@@ -77,6 +78,7 @@ class Admin::SimulatorController < AdminController
       from_number: current_participant.phone_number,
       to_number: current_survey.phone_number,
       message: message,
+      simulated: true,
       delivered_at: Time.now
     )
 

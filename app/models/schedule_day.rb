@@ -120,12 +120,4 @@ class ScheduleDay < ApplicationRecord
     end
     nil
   end
-
-  def all_questions_delivered?
-    scheduled_messages.delivered.count >= participant.survey.samples_per_day
-  end
-
-  def can_deliver_more_questions?
-    not all_questions_delivered?
-  end
 end
