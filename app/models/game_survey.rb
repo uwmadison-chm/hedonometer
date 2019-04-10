@@ -135,11 +135,11 @@ class GameSurvey < Survey
       s['game'] = nil
     end
     # sample time should be 10-15 minutes from now
-    time = Time.now + 10.minutes + rand(5).minutes
+    time = Time.now + (10 + rand(5)).minutes
 
     # Timeout after another chunk of minutes if no response, prompt again
-    timeout = time + 10.minutes + rand(5)
-    self.delay(run_at: timeout.minutes).game_gather_data_again! s['game_survey_count'], participant.id
+    timeout = time + (10 + rand(5)).minutes
+    self.delay(run_at: timeout).game_gather_data_again! s['game_survey_count'], participant.id
     if s['game_measure_with_link'] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
