@@ -94,7 +94,7 @@ class GameSurvey < Survey
     # Ask the participant if they want to play
     participant.state['game'] = 'waiting_asked'
     self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
-    return "Do you have time to play a game? (Reply 'yes' if so, or just ignore us if not)", Time.now
+    return "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)", Time.now
   end
 
   def game_begin! participant
@@ -104,11 +104,11 @@ class GameSurvey < Survey
     participant.state['game'] = 'waiting_number'
     participant.state['game_count'] += 1
     self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
-    message = "The computer chose the number 5, please guess whether the next number will be higher or lower than 5. Reply 'high' or 'low'."
+    message = "We generated a number between 1 and 9. Guess if it's lower or higher than 5. Reply 'high' or 'low'."
     return message, Time.now
   end
 
-  def game_send_result! day, participant
+  def game_send_result! day, participant, guessed_high
     # Participant picked high or low... tell them what they won, Jim!
     s = participant.state
     s['game_survey_count'] = 0
@@ -116,6 +116,23 @@ class GameSurvey < Survey
     # store if they won or not
     winner = participant.state['game_result_pool'].shift
     s['game_result'].push winner
+    # yes there's probably a fancy way to xor this together but we have to 
+    # pick a number that seems reasonable
+    number =
+      if winner then
+        if guessed_high then
+          rand(4) + 6
+        else
+          rand(4) + 1
+        end
+      else
+        if guessed_high then
+          rand(4) + 1
+        else
+          rand(4) + 6
+        end
+      end
+
     # also store this day as completed
     s['game_completed'][s['game_current_day']] = winner
     s['game_balance'] += winner ? 10 : -5
@@ -123,8 +140,10 @@ class GameSurvey < Survey
     # We go into gather data mode
     game_gather_data! participant
 
-    message = winner ? "Correct! You won $10!" : "Incorrect! You lose $5."
-    return "#{message} Your balance is $#{s['game_balance']}", Time.now
+    message =
+      "The number was #{number}" +
+      (winner ? "You guessed right! $10 has been added to your account." : "You guessed wrong! $5 has been removed from your account.")
+    return message, Time.now
   end
 
   def game_gather_data! participant
@@ -220,7 +239,8 @@ class GameSurvey < Survey
       end
     elsif game_state =~ /^waiting_number/ then
       if message =~ /high|low/ then
-        do_message(day, *game_send_result!(day, participant))
+        guessed_high = message =~ /high/
+        do_message(day, *game_send_result!(day, participant, message, guessed_high))
         participant.save!
       else
         do_message(day, "You need to pick 'high' or 'low'", Time.now)
