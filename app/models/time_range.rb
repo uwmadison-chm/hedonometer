@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class TimeRange
-  FORMAT_STRING = "%-l:%M %P"
   attr_accessor :first
   attr_accessor :end
 
@@ -17,7 +16,7 @@ class TimeRange
 
   def to_s
     # 9:00 AM - 5:15 PM
-    [@first, @end].map {|t| t.in_time_zone.strftime(FORMAT_STRING)}.join(" - ")
+    [@first, @end].map {|t| t.strftime("%-l:%M %P")}.join(" - ")
   end
 
   def include?(t)
