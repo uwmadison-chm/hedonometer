@@ -5,6 +5,10 @@ class IncomingTextMessagesController < SurveyedController
 
   before_action :underscorify_params!
 
+  # NOTE: Currently, Twilio does its own STOP/HELP messages, and you can't 
+  # override them or change them. See:
+  # https://support.twilio.com/hc/en-us/articles/223134027-Twilio-support-for-opt-out-keywords-SMS-STOP-filtering-
+
   ROUTING_TABLE = [
     [/^(STOP|END|QUIT|CANCEL|UNSUBSCRIBE)/i, :handle_stop],
     [/^(START)/i, :handle_start],
