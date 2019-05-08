@@ -1,8 +1,11 @@
 # -*- encoding : utf-8 -*-
 require 'time_range'
+require 'participant_state'
 
 class Participant < ApplicationRecord
   LOGIN_CODE_LENGTH = 5
+
+  attribute :state, ParticipantStateType.new
 
   validates :phone_number, presence: true, uniqueness: {scope: :survey_id}
   serialize :phone_number, PhoneNumber

@@ -16,7 +16,7 @@ class TimeRange
 
   def to_s
     # 9:00 AM - 5:15 PM
-    to_s_local Time.zone.UTC
+    to_s_local ActiveSupport::TimeZone['UTC']
   end
 
   def to_s_local timezone

@@ -1,28 +1,5 @@
 
 class AfchronGameSurvey < Survey
-  class ParticipantGameState < ParticipantState
-    def set_defaults
-      self.information = {:game => "hell yeah"}
-    end
-    
-    aasm do
-      state :none, initial: true
-      state :asked_to_play
-      state :playing
-      state :after_game_survey
-      state :done_for_day
-
-      event :asked_to_play do
-        transitions from: :none, to: :asked_to_play
-      end
-
-      event :play do
-        transitions from: :asked_to_play, to: :playing
-      end
-    end
-  end
-
-
   def self.model_name
     Survey.model_name
   end
@@ -53,43 +30,10 @@ class AfchronGameSurvey < Survey
     end
   end
 
-  def game_result_pool
-    # 10 results, half wins. Do not allow 3 losses in a row.
-    available = [true, true, true, true, true, false, false, false, false, false]
-    pool = nil
-    def pool_is_fair pool
-      return false unless pool
-      loss_streak = 0
-      last = true
-      pool.each do |x| 
-        if not x and x == last then
-          loss_streak += 1
-        end
-        last = x
-      end
-      loss_streak < 2
+  def prepare_game_state participant
+    unless participant.state.kind_of? AfchronGameState
+      participant.state = AfchronGameState.new
     end
-    while not (pool_is_fair pool)
-      pool = available.sample(available.length)
-    end
-    pool
-  end
-
-  def prepare_games participant
-    s = participant.state
-    return if s['game_initialized']
-    s['game_initialized'] = true
-    s['game_count'] = 0
-    s['game_time'] = {}
-    s['game_measure_with_link'] = true # TODO - should be survey-dependent
-    s['game_result_pool'] = game_result_pool
-    s['game_result'] = []
-    s['game_balance'] = 0
-    # Current schedule day id
-    s['game_current_day'] = nil
-    # Hash of schedule_day ids that contains if they won or lost
-    s['game_completed'] = {}
-    s['game_state'] = GameState.new
   end
 
   def game_time_for participant, day
@@ -207,9 +151,9 @@ class AfchronGameSurvey < Survey
       return false
     end
     
-    prepare_games participant
+    prepare_game_state participant
     today_game_time = game_time_for(participant, day)
-    state_game = participant.state['game'] 
+    state_game = participant.state.aasm_state
 
     if state_game =~ /^waiting/ then
       # Don't start any new actions if waiting for response
@@ -217,9 +161,9 @@ class AfchronGameSurvey < Survey
     end
 
     message_text, scheduled_at = 
-      if state_game.nil? and
+      if state_game == "none" and
         Time.now > today_game_time and
-        not participant.state['game_completed'].include? day then
+        not participant.state.game_completed.include? day then
         # TODO: This should trigger on a postback from Qualtrics,
         # when we know they finished a default survey
         # ... otherwise, this gets called too often after a timeout
@@ -249,6 +193,7 @@ class AfchronGameSurvey < Survey
   end
 
   def participant_message participant, message
+    # TODO: how to make this so that game state can run the change? ??
     day = participant.schedule_days.running_day
     s = participant.state
     game_state = s['game'] 
