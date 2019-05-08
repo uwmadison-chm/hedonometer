@@ -16,7 +16,11 @@ class TimeRange
 
   def to_s
     # 9:00 AM - 5:15 PM
-    [@first, @end].map {|t| t.strftime("%-l:%M %P")}.join(" - ")
+    to_s_local Time.zone.UTC
+  end
+
+  def to_s_local timezone
+    [@first, @end].map {|t| t.in_time_zone(timezone).strftime("%-l:%M %P")}.join(" - ")
   end
 
   def include?(t)

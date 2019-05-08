@@ -36,7 +36,7 @@ orphaned:
 
 game:
   name: Fun Game Time
-  type: GameSurvey
+  type: AfchronGameSurvey
   active: true
   phone_number: "+16085559993"
   twilio_account_sid: AC32a3c49700934481addd5ce1659f04d2

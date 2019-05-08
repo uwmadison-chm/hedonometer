@@ -5,8 +5,8 @@ class Admin::SurveysController < AdminController
 
   def new
     params[:kind] ||= "SimpleSurvey"
-    if params[:kind] == "GameSurvey" then
-      @survey = GameSurvey.new
+    if params[:kind] == "AfchronGameSurvey" then
+      @survey = AfchronGameSurvey.new
       @survey.configuration['url'] = "http://qualtrics.com/example?PID={{PID}}"
       @survey.configuration['url_game_survey'] = "http://qualtrics.com/rapid?PID={{PID}}"
     elsif params[:kind] == "LinkSurvey" then
@@ -41,8 +41,8 @@ class Admin::SurveysController < AdminController
 
   def create
     case params[:kind]
-    when "GameSurvey"
-      kls = GameSurvey
+    when "AfchronGameSurvey"
+      kls = AfchronGameSurvey
     when "LinkSurvey"
       kls = LinkSurvey
     else

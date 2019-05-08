@@ -1,4 +1,28 @@
-class GameSurvey < Survey
+
+class AfchronGameSurvey < Survey
+  class ParticipantGameState < ParticipantState
+    def set_defaults
+      self.information = {:game => "hell yeah"}
+    end
+    
+    aasm do
+      state :none, initial: true
+      state :asked_to_play
+      state :playing
+      state :after_game_survey
+      state :done_for_day
+
+      event :asked_to_play do
+        transitions from: :none, to: :asked_to_play
+      end
+
+      event :play do
+        transitions from: :asked_to_play, to: :playing
+      end
+    end
+  end
+
+
   def self.model_name
     Survey.model_name
   end
@@ -57,7 +81,7 @@ class GameSurvey < Survey
     s['game_initialized'] = true
     s['game_count'] = 0
     s['game_time'] = {}
-    s['game_measure_with_link'] = true
+    s['game_measure_with_link'] = true # TODO - should be survey-dependent
     s['game_result_pool'] = game_result_pool
     s['game_result'] = []
     s['game_balance'] = 0
@@ -65,6 +89,7 @@ class GameSurvey < Survey
     s['game_current_day'] = nil
     # Hash of schedule_day ids that contains if they won or lost
     s['game_completed'] = {}
+    s['game_state'] = GameState.new
   end
 
   def game_time_for participant, day
@@ -141,7 +166,7 @@ class GameSurvey < Survey
     game_gather_data! participant
 
     message =
-      "The number was #{number}" +
+      "The number was #{number}. " +
       (winner ? "You guessed right! $10 has been added to your account." : "You guessed wrong! $5 has been removed from your account.")
     return message, Time.now
   end
@@ -240,7 +265,7 @@ class GameSurvey < Survey
     elsif game_state =~ /^waiting_number/ then
       if message =~ /high|low/ then
         guessed_high = message =~ /high/
-        do_message(day, *game_send_result!(day, participant, message, guessed_high))
+        do_message(day, *game_send_result!(day, participant, guessed_high))
         participant.save!
       else
         do_message(day, "You need to pick 'high' or 'low'", Time.now)
@@ -250,8 +275,9 @@ class GameSurvey < Survey
         s['game_response'][day_id] ||= []
         s['game_response'][day_id].push message
       end
+      participant.save!
     else
-      logger.debug("Got unexpected participant message #{message} from participant #{participant.id} in game state #{game_state}")
+      logger.warning("Got unexpected participant message #{message} from participant #{participant.id} in game state #{game_state}")
     end
   end
 end
