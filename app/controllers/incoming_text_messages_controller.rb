@@ -26,11 +26,12 @@ class IncomingTextMessagesController < SurveyedController
     if method
       # If it's a standard message, we respond to it here
       self.send method, itm
-    elsif current_survey.respond_to? :participant_message
-      # otherwise send it to the current survey as a message
-      # from this participant
+    else
+      # otherwise send it through to the state for this participant
       ppt = participant_from_phone_number(params[:from])
-      current_survey.participant_message ppt, params[:body]
+      if ppt.state.respond_to? :participant_message
+        ppt.state.participant_message params[:body]
+      end
     end
     head :ok
   end
