@@ -28,3 +28,8 @@ guard :minitest, spring: "bin/rails test -d" do
   watch(%r{^test/test_helper\.rb$}) { 'test' }
 
 end
+
+guard 'ctags-bundler', :src_path => ["app", "lib", "spec/support"] do
+  watch(/^(app|lib)\/.*\.rb$/)
+  watch('Gemfile.lock')
+end
