@@ -35,6 +35,7 @@ class AfchronGameSurvey < Survey
       participant.state = AfchronGameState.new
       participant.state.set_defaults!
     end
+    participant.state
   end
 
   def game_time_for participant, day
@@ -152,17 +153,17 @@ class AfchronGameSurvey < Survey
       return false
     end
     
-    prepare_game_state participant
+    state = prepare_game_state participant
+    current = state.current_state
     today_game_time = game_time_for(participant, day)
-    state_game = participant.state.aasm_state
 
-    if state_game =~ /^waiting/ then
+    if current =~ /^waiting/ then
       # Don't start any new actions if waiting for response
       return false
     end
 
     message_text, scheduled_at = 
-      if state_game == "none" and
+      if current == "none" and
         Time.now > today_game_time and
         not participant.state.game_completed.include? day then
         # TODO: This should trigger on a postback from Qualtrics,
@@ -170,7 +171,7 @@ class AfchronGameSurvey < Survey
         # ... otherwise, this gets called too often after a timeout
         game_could_start! participant
       else
-        case state_game
+        case current
         when 'send_result'
         when 'gather_data'
           game_gather_data! participant

@@ -11,6 +11,10 @@ class ParticipantState < OpenStruct
     end
   end
 
+  def hash
+    (super.to_s + current_state.to_s).hash
+  end
+
   aasm column: 'aasm_state' do
     state :none, initial: true
   end
@@ -43,7 +47,6 @@ class ParticipantStateType < ActiveModel::Type::Value
       hash = hash['table']
     end
     if hash['klass']
-      Rails.logger.warn("Got hash class! #{hash.inspect}")
       kls = hash['klass'].constantize
     else
       kls = ParticipantState
@@ -52,8 +55,10 @@ class ParticipantStateType < ActiveModel::Type::Value
     hash.delete 'aasm_state'
     result = kls.new(hash)
     if aasm_state
-      if kls.aasm.respond_to? :current_state=
-        kls.aasm.current_state = aasm_state
+      if result.aasm.respond_to? :current_state=
+        result.aasm.current_state = aasm_state.intern
+      else
+        raise "Could not set state on #{result.inspect}"
       end
     end
     result
@@ -67,14 +72,14 @@ class ParticipantStateType < ActiveModel::Type::Value
       # Embed aasm state name so we can resurrect it
       aasm_state = value.try(:aasm).try(:current_state)
       hash['aasm_state'] = aasm_state
-      hash.to_json()
+      ActiveSupport::JSON.encode(hash)
     else
-      raise "Should not happen"
+      raise "Should only serialize ParticipantState objects"
     end
   end
 
   def changed_in_place?(raw_old_value, new_value)
-    # NOTE: probably wrong, I don't know how the lifecycle works
-    cast_value(raw_old_value) != new_value
+    old = cast_value(raw_old_value)
+    old.hash != new_value.hash
   end
 end
