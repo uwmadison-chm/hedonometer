@@ -1,7 +1,22 @@
 class AfchronGameState < ParticipantState
-  def initialize
-    super
-    self.game_initialized = true
+  aasm column: 'aasm_state' do
+    state :none, initial: true
+    state :asked_to_play
+    state :waiting_asked
+    state :waiting_number
+    state :after_game_surveying
+    state :waiting_for_survey
+
+    event :ask_to_play do
+      transitions from: :none, to: :asked_to_play
+    end
+
+    event :play do
+      transitions from: :asked_to_play, to: :playing
+    end
+  end
+
+  def set_defaults!
     self.game_count = 0
     self.game_time = {}
     self.game_measure_with_link = true # TODO - should be survey-dependent
@@ -36,20 +51,4 @@ class AfchronGameState < ParticipantState
     pool
   end
 
-  aasm do
-    state :none, initial: true
-    state :asked_to_play
-    state :waiting_asked
-    state :waiting_number
-    state :after_game_surveying
-    state :waiting_for_survey
-
-    event :asked_to_play do
-      transitions from: :none, to: :asked_to_play
-    end
-
-    event :play do
-      transitions from: :asked_to_play, to: :playing
-    end
-  end
 end

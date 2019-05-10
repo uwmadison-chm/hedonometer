@@ -1,21 +1,19 @@
 require 'ostruct'
 
 class ParticipantState < OpenStruct
-  include ActiveModel::Model
-  include ActiveModel::Attributes
   include AASM
 
-  attribute :information, :string
-  attribute :aasm_state, :string
-
-  # Table and modifiable are assumed by something inside rails - ignore for now
-  attribute :table, :string
-  attribute :modifiable, :string
-
-  aasm do
-    state :none, initial: true
+  def current_state
+    if @aasm
+      @aasm.current_state
+    else
+      :none
+    end
   end
 
+  aasm column: 'aasm_state' do
+    state :none, initial: true
+  end
 end
 
 class ParticipantStateType < ActiveModel::Type::Value
@@ -29,29 +27,54 @@ class ParticipantStateType < ActiveModel::Type::Value
   end
 
   def cast_value(value)
+    if value.kind_of? ParticipantState
+      return value
+    end
+
     case value
     when String
-      decoded = ActiveSupport::JSON.decode(value) rescue nil
-      # ???
-      kls = decoded['class']
-      ParticipantState.new(decoded) unless decoded.nil?
+      hash = ActiveSupport::JSON.decode(value) rescue nil
     when Hash
-      ParticipantState.new(value)
-    else
-      value
+      hash = value
     end
+
+    # ActiveModel::Type wraps things in a weird way sometimes?
+    if hash.key? 'table'
+      hash = hash['table']
+    end
+    if hash['klass']
+      Rails.logger.warn("Got hash class! #{hash.inspect}")
+      kls = hash['klass'].constantize
+    else
+      kls = ParticipantState
+    end
+    aasm_state = hash['aasm_state']
+    hash.delete 'aasm_state'
+    result = kls.new(hash)
+    if aasm_state
+      if kls.aasm.respond_to? :current_state=
+        kls.aasm.current_state = aasm_state
+      end
+    end
+    result
   end
 
   def serialize(value)
     if value.kind_of? ParticipantState or value.kind_of? Hash
-      # TODO: Ensure class is embedded here somehow
-      ActiveSupport::JSON.encode(value)
+      hash = value.to_h
+      # Embed class name, kinda ugly
+      hash['klass'] = value.class.to_s
+      # Embed aasm state name so we can resurrect it
+      aasm_state = value.try(:aasm).try(:current_state)
+      hash['aasm_state'] = aasm_state
+      hash.to_json()
     else
-      super
+      raise "Should not happen"
     end
   end
 
   def changed_in_place?(raw_old_value, new_value)
+    # NOTE: probably wrong, I don't know how the lifecycle works
     cast_value(raw_old_value) != new_value
   end
 end

@@ -33,6 +33,7 @@ class AfchronGameSurvey < Survey
   def prepare_game_state participant
     unless participant.state.kind_of? AfchronGameState
       participant.state = AfchronGameState.new
+      participant.state.set_defaults!
     end
   end
 
@@ -41,8 +42,8 @@ class AfchronGameSurvey < Survey
     # If not, decide when game prompt should start today
     time = participant.state['game_time'][day.id.to_s]
     if time.nil? then
-      # pick a time in first 80% of time range 
-      time = day.starts_at + (day.day_length * 0.8 * rand)
+      # pick a time in first 70% of time range 
+      time = day.starts_at + (day.day_length * 0.7 * rand)
       participant.state['game_time'][day.id] = time
     end
     time
