@@ -13,7 +13,7 @@ class LinkSurvey < Survey
 
   def schedule_participant! participant
     participant.requests_new_schedule = false
-    day = participant.schedule_days.advance_to_day_with_time_for_message!
+    day = self.advance_to_day_with_time_for_message! participant
     message_text = "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}"
     message = day.scheduled_messages.build(message_text: message_text)
     message.scheduled_at = day.random_time_for_next_question

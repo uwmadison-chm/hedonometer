@@ -30,6 +30,18 @@ class Survey < ApplicationRecord
   def schedule_participant! p
     raise "Abstract surveys can't schedule participants"
   end
+
+  def advance_to_day_with_time_for_message! p
+    p.schedule_days.potential_run_targets.each do |day|
+      logger.debug("Checking day #{day.participant_local_date}")
+      logger.debug("Starting status: #{day.aasm_state}")
+      day.run! if day.waiting?
+      day.finish! if not day.has_time_for_another_question?
+      logger.debug("Final status: #{day.aasm_state}")
+      return day if day.running?
+    end
+    nil
+  end
   
 
   # These properties used to be directly on survey,

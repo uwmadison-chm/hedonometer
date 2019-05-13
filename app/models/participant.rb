@@ -40,18 +40,6 @@ class Participant < ApplicationRecord
       end
       nil
     end
-
-    def advance_to_day_with_time_for_message!
-      potential_run_targets.each do |day|
-        logger.debug("Checking day #{day.participant_local_date}")
-        logger.debug("Starting status: #{day.aasm_state}")
-        day.run! if day.waiting?
-        day.finish! if not day.has_time_for_another_question?
-        logger.debug("Final status: #{day.aasm_state}")
-        return day if day.running?
-      end
-      nil
-    end
   end
   accepts_nested_attributes_for :schedule_days
 

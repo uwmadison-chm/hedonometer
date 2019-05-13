@@ -10,7 +10,7 @@ class AfchronGameState < ParticipantState
     end
 
     event :play do
-      transitions from: :asked_to_play, to: :waiting_number
+      transitions from: :waiting_asked, to: :waiting_number
     end
 
     event :survey do
@@ -23,14 +23,11 @@ class AfchronGameState < ParticipantState
   end
 
   def set_defaults!
-    self.game_count = 0
     self.game_time = nil
     self.measure_with_link = true # TODO - should be survey-dependent
     self.result_pool = generate_result_pool
     self.results = []
     self.game_balance = 0
-    # Current schedule day id
-    self.game_current_day = nil
     # Hash of schedule_day ids that contains if they won or lost
     self.game_completed = {}
   end
@@ -80,17 +77,14 @@ class AfchronGameState < ParticipantState
     case current_state.to_s
     when 'waiting_asked', 'waiting_number' then
       # Just retrigger later today, they didn't respond
-      self.game_times[game_current_day] = Time.now + 30.minutes
+      self.game_time = Time.now + 30.minutes
       participant.survey.schedule_participant! participant
     end
   end
 
   def game_begin!
     # Participant said yes, begin the game
-    # TODO: set game_current_day?
-    participant.state['game_current_day'] = day_id
-    participant.state['game'] = 'waiting_number'
-    participant.state['game_count'] += 1
+    self.waiting_number!
     self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
     message = "We generated a number between 1 and 9. Guess if it's lower or higher than 5. Reply 'high' or 'low'."
     return message, Time.now
@@ -121,7 +115,7 @@ class AfchronGameState < ParticipantState
       end
 
     # also store this day as completed
-    self.game_completed[self.game_current_day] = winner
+    self.game_completed[day.id] = winner
     self.game_balance += winner ? 10 : -5
 
     # We go into gather data mode
@@ -154,14 +148,15 @@ class AfchronGameState < ParticipantState
 
   def game_gather_data_again! count, participant_id
     # re-ask if they didn't respond last time
+    # TODO: How to refresh self from db?
     ppt = Participant.find(participant_id)
-    if self.game_survey_count == count then
-      self.game_gather_data!
+    if ppt.state.game_survey_count == count then
+      ppt.state.game_gather_data!
     end
   end
 
-  def participant_message message
-    day = participant.schedule_days.running_day
+  def incoming_message message
+    day = self.participant.schedule_days.running_day
     state = self.current_state.to_s
     if state =~ /^waiting_asked/ then
       # We asked if they wanted to start a game
