@@ -53,7 +53,6 @@ class ParticipantStateType < ActiveModel::Type::Value
     end
     aasm_state = hash['aasm_state']
     hash.delete 'aasm_state'
-    hash.delete 'participant'
     result = kls.new(hash)
     if aasm_state
       if result.aasm.respond_to? :current_state=
@@ -68,13 +67,16 @@ class ParticipantStateType < ActiveModel::Type::Value
   def serialize(value)
     if value.kind_of? ParticipantState or value.kind_of? Hash
       hash = value.to_h
+      ppt = hash[:participant]
       hash.delete :participant
       # Embed class name, kinda ugly
       hash['klass'] = value.class.to_s
       # Embed aasm state name so we can resurrect it
       aasm_state = value.try(:aasm).try(:current_state)
       hash['aasm_state'] = aasm_state
-      ActiveSupport::JSON.encode(hash)
+      json = ActiveSupport::JSON.encode(hash)
+      hash[:participant] = ppt
+      return json
     else
       raise "Should only serialize ParticipantState objects"
     end

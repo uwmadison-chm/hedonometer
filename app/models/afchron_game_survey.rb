@@ -45,7 +45,10 @@ class AfchronGameSurvey < Survey
     participant.requests_new_schedule = false
     state = prepare_game_state participant
     day = self.advance_to_day_with_time_for_message! participant
-    # TODO: Do we care if day is nil?
+    unless day
+      logger.info("Participant has no more available days")
+      return false
+    end
     state.action_for_day! day
   end
 
