@@ -17,6 +17,10 @@ class AfchronGameState < ParticipantState
       transitions from: :waiting_number, to: :waiting_for_survey
     end
 
+    event :timeout do
+      transitions from: [:waiting_asked, :waiting_number], to: :none
+    end
+
     event :reset do
       transitions to: :none
     end
@@ -77,8 +81,9 @@ class AfchronGameState < ParticipantState
     case current_state.to_s
     when 'waiting_asked', 'waiting_number' then
       # Just retrigger later today, they didn't respond
+      self.timeout!
       self.game_time = Time.now + 30.minutes
-      participant.survey.schedule_participant! participant
+      self.participant.survey.schedule_participant! participant
     end
   end
 
