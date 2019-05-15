@@ -5,7 +5,6 @@ ppt1:
   # That's amazing! I've got the same combination on my luggage!
   time_zone: Central Time (US & Canada)
   external_key: nv-1123
-  state: {}
 
 ppt2:
   survey: test
@@ -13,7 +12,6 @@ ppt2:
   login_code: 11111
   external_key: 3001
   time_zone: Central Time (US & Canada)
-  state: {}
 
 ppt3:
   survey: game
@@ -21,7 +19,6 @@ ppt3:
   login_code: 99999
   external_key: 7001
   time_zone: Central Time (US & Canada)
-  state: {}
 
 ppt4:
   survey: link
@@ -29,4 +26,3 @@ ppt4:
   login_code: 99999
   time_zone: Central Time (US & Canada)
   external_key: df-5567
-  state: {}

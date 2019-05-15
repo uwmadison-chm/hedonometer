@@ -61,7 +61,6 @@ class ScheduledMessageTest < ActiveSupport::TestCase
 
   test "can be delivered now" do
     sm = schedule_days(:test_day_1).scheduled_messages.build(scheduled_at: Time.now - 1.minute)
-    ##binding.pry
     assert sm.can_be_delivered_now?
     sm.delivered_at = Time.now
     refute sm.can_be_delivered_now?

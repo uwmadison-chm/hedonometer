@@ -89,8 +89,8 @@ class Admin::SimulatorController < AdminController
     )
 
     # feed this input to survey state machine, if available
-    if current_participant.state.respond_to? :incoming_message then
-      current_participant.state.incoming_message message
+    if current_participant.participant_state.respond_to? :incoming_message then
+      current_participant.participant_state.incoming_message message
     end
 
     redirect_to action: "index"

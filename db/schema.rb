@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_10_161651) do
+ActiveRecord::Schema.define(version: 2019_05_15_141402) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", null: false
@@ -38,6 +38,16 @@ ActiveRecord::Schema.define(version: 2019_04_10_161651) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
+  create_table "participant_states", force: :cascade do |t|
+    t.string "type", null: false
+    t.integer "participant_id", null: false
+    t.string "aasm_state"
+    t.json "state", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["participant_id"], name: "index_participant_states_on_participant_id"
+  end
+
   create_table "participants", force: :cascade do |t|
     t.integer "survey_id", null: false
     t.string "phone_number", null: false
@@ -47,7 +57,6 @@ ActiveRecord::Schema.define(version: 2019_04_10_161651) do
     t.datetime "updated_at"
     t.string "time_zone"
     t.string "external_key"
-    t.json "state", default: {}
   end
 
   create_table "schedule_days", force: :cascade do |t|

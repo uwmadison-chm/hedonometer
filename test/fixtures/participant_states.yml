@@ -1,0 +1,19 @@
+ppt1:
+  participant: ppt1
+  type: SimpleParticipantState
+  state: {}
+
+ppt2:
+  participant: ppt2
+  type: SimpleParticipantState
+  state: {}
+
+ppt3:
+  participant: ppt3
+  type: SimpleParticipantState
+  state: {}
+
+ppt4:
+  participant: ppt4
+  type: SimpleParticipantState
+  state: {}

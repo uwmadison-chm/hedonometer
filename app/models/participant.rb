@@ -1,11 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'time_range'
-require 'participant_state'
 
 class Participant < ApplicationRecord
   LOGIN_CODE_LENGTH = 5
 
-  attribute :state, ParticipantStateType.new
+  has_one :participant_state, :dependent => :destroy
 
   validates :phone_number, presence: true, uniqueness: {scope: :survey_id}
   serialize :phone_number, PhoneNumber
@@ -23,7 +22,7 @@ class Participant < ApplicationRecord
   validate :valid_schedule_start, if: :requests_new_schedule?
 
   after_save :build_schedule_and_schedule_first_question_if_possible!, if: :requests_new_schedule?
-  after_initialize :set_state_participant
+  after_save :save_state!
 
   has_many :schedule_days, -> { order('participant_local_date') }, {dependent: :destroy} do
     def potential_run_targets
@@ -55,10 +54,8 @@ class Participant < ApplicationRecord
   attr_accessor :requests_new_schedule
   attr_accessor :send_welcome_message
 
-  def set_state_participant
-    if @state.respond_to? :participant
-      @state.participant = self
-    end
+  def save_state!
+    self.participant_state.save!
   end
 
   def set_requests_new_schedule

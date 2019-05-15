@@ -22,7 +22,7 @@ class AfchronGameSurvey < Survey
 
   def url_for_participant participant
     # Different survey urls depending on participant state
-    s = participant.state
+    s = participant.participant_state
     if s['game'] == 'gather_data' then
       url_game_survey
     else
@@ -31,14 +31,14 @@ class AfchronGameSurvey < Survey
   end
 
   def prepare_game_state participant
-    unless participant.state.kind_of? AfchronGameState
-      participant.state = AfchronGameState.new
-      participant.state.set_defaults!
+    unless participant.participant_state.kind_of? AfchronGameState
+      participant.participant_state.save
+      participant.participant_state.destroy
+      state = AfchronGameState.new(:participant => participant)
+      participant.participant_state = state
+      state.set_defaults!
     end
-    # Save back reference so the state knows its own participant, since all 
-    # the logic is in the state
-    participant.state.participant = participant
-    participant.state
+    participant.participant_state
   end
 
   def schedule_participant! participant
@@ -51,6 +51,5 @@ class AfchronGameSurvey < Survey
     end
     state.action_for_day! day
   end
-
 
 end

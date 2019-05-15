@@ -29,8 +29,8 @@ class IncomingTextMessagesController < SurveyedController
     else
       # otherwise send it through to the state for this participant
       ppt = participant_from_phone_number(params[:from])
-      if ppt.state.respond_to? :incoming_message
-        ppt.state.incoming_message params[:body]
+      if ppt.participant_state.respond_to? :incoming_message
+        ppt.participant_state.incoming_message params[:body]
       else
         logger.info "Ignored text message: #{params.inspect}"
       end
