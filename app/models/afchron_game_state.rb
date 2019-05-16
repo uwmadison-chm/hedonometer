@@ -28,14 +28,14 @@ class AfchronGameState < ParticipantState
   end
 
   def set_defaults!
-    self[:game_time] = nil
-    self[:measure_with_link] = true # TODO - should be survey-dependent
-    self[:result_pool] = generate_result_pool
-    self[:results] = []
-    self[:game_balance] = 0
-    self[:game_completed_results] = [] # List of results
-    self[:game_completed_dayid] = [] # List of day ids
-    self[:game_completed_time] = [] # List of completed times
+    self.state["game_time"] = nil
+    self.state["measure_with_link"] = true # TODO - should be survey-dependent
+    self.state["result_pool"] = generate_result_pool
+    self.state["results"] = []
+    self.state["game_balance"] = 0
+    self.state["game_completed_results"] = [] # List of results
+    self.state["game_completed_dayid"] = [] # List of day ids
+    self.state["game_completed_time"] = [] # List of completed times
   end
 
   def generate_result_pool
@@ -63,11 +63,11 @@ class AfchronGameState < ParticipantState
   def time_for_game participant, day
     # Does participant have a game start time for this day?
     # If not, decide when game prompt should start today
-    time = self[:game_time]
+    time = self.state["game_time"]
     if time.nil? then
       # pick a time in first 70% of time range 
       time = day.starts_at + (day.day_length * 0.7 * rand)
-      self[:game_time] = time
+      self.state["game_time"] = time
     end
     time
   end
@@ -84,7 +84,7 @@ class AfchronGameState < ParticipantState
     when 'waiting_asked', 'waiting_number' then
       # Just retrigger later today, they didn't respond
       self.timeout!
-      self[:game_time] = Time.now + 30.minutes
+      self.state["game_time"] = Time.now + 30.minutes
       self.participant.survey.schedule_participant! participant
     end
   end
@@ -99,10 +99,10 @@ class AfchronGameState < ParticipantState
 
   def game_send_result! day, guessed_high
     # Participant picked high or low... tell them what they won, Jim!
-    self[:game_survey_count] = 0
+    self.state["game_survey_count"] = 0
 
     # Did they win or not?
-    winner = self[:result_pool].shift
+    winner = self.state["result_pool"].shift
 
     # yes there's probably a fancy way to xor this together but we have to 
     # pick a number that seems reasonable
@@ -122,10 +122,10 @@ class AfchronGameState < ParticipantState
       end
 
     # store this completion as a boolean, by day id, and by time
-    self[:game_completed_results].push = winner
-    self[:game_completed_dayid].push = day_id
-    self[:game_completed_time].push = Time.now
-    self[:game_balance] += winner ? 10 : -5
+    self.state["game_completed_results"].push = winner
+    self.state["game_completed_dayid"].push = day_id
+    self.state["game_completed_time"].push = Time.now
+    self.state["game_balance"] += winner ? 10 : -5
 
     # We go into gather data mode
     self.game_gather_data!
@@ -138,8 +138,8 @@ class AfchronGameState < ParticipantState
 
   def game_gather_data!
     survey!
-    self[:game_survey_count] += 1
-    if self[:game_survey_count] >= 8 then
+    self.state["game_survey_count"] += 1
+    if self.state["game_survey_count"] >= 8 then
       reset!
     end
     # sample time should be 10-15 minutes from now
@@ -148,7 +148,7 @@ class AfchronGameState < ParticipantState
     # Timeout after another chunk of minutes if no response, prompt again
     timeout = time + (10 + rand(5)).minutes
     self.delay(run_at: timeout).game_gather_data_again! game_survey_count, participant.id
-    if self[:measure_with_link] then
+    if self.state["measure_with_link"] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
       return "How do you feel on a scale of 1 to 10?", time
@@ -159,8 +159,8 @@ class AfchronGameState < ParticipantState
     # re-ask if they didn't respond last time
     # TODO: How to refresh self from db?
     ppt = Participant.find(participant_id)
-    if ppt.participant_state[:game_survey_count] == count then
-      ppt.participant_state[:game_gather_data!]
+    if ppt.participant_state["game_survey_count"] == count then
+      ppt.participant_state.game_gather_data!
     end
   end
 
@@ -173,7 +173,7 @@ class AfchronGameState < ParticipantState
         do_message!(day, *game_begin!)
         self.save!
       elsif message =~ /no/i then
-        day_id = self[:game_current_day]
+        day_id = self.state["game_current_day"]
         self.game_times[day_id] = Time.now + 30.minutes
         self.save!
       end
@@ -187,8 +187,8 @@ class AfchronGameState < ParticipantState
       end
     elsif state =~ /^gather_data/ then
       if message =~ /\d+/ then
-        self[:game_survey_response][day_id] ||= []
-        self[:game_survey_response][day_id].push message
+        self.state["game_survey_response"][day_id] ||= []
+        self.state["game_survey_response"][day_id].push message
       end
       self.save!
     else
@@ -209,7 +209,7 @@ class AfchronGameState < ParticipantState
     message_text, scheduled_at = 
       if current == "none" and
         Time.now > today_game_time and
-        not self[:game_completed_dayid].include? day.id then
+        not self.state["game_completed_dayid"].include? day.id then
         # TODO: This should trigger on a postback from Qualtrics,
         # when we know they finished a default survey
         # ... otherwise, this gets called too often after a timeout

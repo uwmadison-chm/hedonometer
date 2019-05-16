@@ -22,6 +22,7 @@ class Participant < ApplicationRecord
   validate :valid_schedule_start, if: :requests_new_schedule?
 
   after_save :build_schedule_and_schedule_first_question_if_possible!, if: :requests_new_schedule?
+  after_save :save_state!
 
   has_many :schedule_days, -> { order('participant_local_date') }, {dependent: :destroy} do
     def potential_run_targets
@@ -52,6 +53,14 @@ class Participant < ApplicationRecord
   attr_accessor :schedule_human_time_after_midnight
   attr_accessor :requests_new_schedule
   attr_accessor :send_welcome_message
+
+  def state
+    participant_state.state
+  end
+
+  def save_state!
+    participant_state.save!
+  end
 
   def set_requests_new_schedule
     @requests_new_schedule = true

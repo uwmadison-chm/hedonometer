@@ -14,7 +14,7 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
   test "schedule initializes game state" do
     @survey.schedule_participant! @ppt
     assert_kind_of(AfchronGameState, @ppt.participant_state)
-    assert_equal(0, @ppt.participant_state[:game_balance])
+    assert_equal(0, @ppt.state['game_balance'])
   end
 
   test "prepare game state returns an AfchronGameState" do
@@ -24,26 +24,17 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
 
   test "participant state values persists balance" do
     @survey.schedule_participant! @ppt
-    @ppt.participant_state[:game_balance] = 10
-    assert_equal(10, @ppt.participant_state[:game_balance])
+    @ppt.state["game_balance"] = 10
+    assert_equal(10, @ppt.state["game_balance"])
     @ppt.save!
-    assert_equal(10, @ppt.participant_state[:game_balance])
+    assert_equal(10, @ppt.state["game_balance"])
 
     db_state = ParticipantState.find(@ppt.participant_state.id)
     assert_kind_of(AfchronGameState, db_state)
-    assert_equal(10, db_state[:game_balance])
+    assert_equal(10, db_state.state["game_balance"])
 
     db_ppt = Participant.find(@ppt.id)
-    assert_equal(10, db_ppt.participant_state[:game_balance])
-  end
-
-  test "participant state values persists times" do
-    @survey.schedule_participant! @ppt
-    secret = Time.now - 77.hours
-    @ppt.participant_state[:game_time] = secret
-    @ppt.save!
-    db_ppt = Participant.find(@ppt.id)
-    assert_equal(secret, db_ppt.participant_state[:game_time])
+    assert_equal(10, db_ppt.state["game_balance"])
   end
 
   test "participant state aasm persists" do
@@ -56,7 +47,7 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
 
   test "when it is not yet time TO GAME, just sends survey" do
     @survey.prepare_game_state @ppt
-    @ppt.participant_state[:game_time] = Time.now + 1.hours
+    @ppt.state["game_time"] = Time.now + 1.hours
     @ppt.save!
     assert_equal("none", @ppt.participant_state.aasm_state)
     q = @survey.schedule_participant! @ppt
@@ -68,15 +59,15 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
   test "participant link in state is preserved" do
     @survey.prepare_game_state @ppt
     assert_equal(@ppt.participant_state.participant, @ppt)
-    @ppt.participant_state[:hooray] = "YES"
+    @ppt.state["hooray"] = "YES"
     @ppt.save!
-    assert_equal("YES", @ppt.participant_state[:hooray])
+    assert_equal("YES", @ppt.state["hooray"])
     assert_equal(@ppt, @ppt.participant_state.participant)
   end
 
   test "when game time is ready prompts participant to play" do
     @survey.prepare_game_state @ppt
-    @ppt.participant_state[:game_time] = Time.now - 1.hours
+    @ppt.state["game_time"] = Time.now - 1.hours
     @ppt.save!
     assert_equal("none", @ppt.participant_state.aasm_state)
     scheduled = @survey.schedule_participant! @ppt
@@ -89,7 +80,7 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
 
   test "participant responds in time to play" do
     @survey.prepare_game_state @ppt
-    @ppt.participant_state[:game_time] = Time.now - 1.hours
+    @ppt.state["game_time"] = Time.now - 1.hours
     @ppt.save!
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
@@ -100,14 +91,14 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
 
   test "participant times out play request" do
     @survey.prepare_game_state @ppt
-    @ppt.participant_state[:game_time] = Time.now - 1.hours
+    @ppt.state["game_time"] = Time.now - 1.hours
     @ppt.save!
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
     assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
     @ppt.participant_state.game_timed_out!
     assert_equal("none", @ppt.participant_state.aasm_state)
-    assert(@ppt.participant_state[:game_time] > Time.now)
+    assert(@ppt.state["game_time"] > Time.now)
   end
 
 end

@@ -41,10 +41,10 @@ class SimpleSurvey < Survey
   end
 
   def choose_question participant
-    chooser = question_chooser.from_serializer(survey_questions, participant.participant_state[:question_chooser_state])
+    chooser = question_chooser.from_serializer(survey_questions, participant.state["question_chooser_state"])
     chooser.choose.tap {
-      participant.participant_state[:question_chooser_state] = chooser.serialize_state
-      logger.debug("New question chooser state: #{participant.participant_state[:question_chooser_state]}")
+      participant.state["question_chooser_state"] = chooser.serialize_state
+      logger.debug("New question chooser state: #{participant.state['question_chooser_state']}")
     }
   end
 

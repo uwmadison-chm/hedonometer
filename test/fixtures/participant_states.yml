@@ -1,19 +1,19 @@
-ppt1:
+ppt1state:
   participant: ppt1
   type: SimpleParticipantState
   state: {}
 
-ppt2:
+ppt2state:
   participant: ppt2
   type: SimpleParticipantState
   state: {}
 
-ppt3:
+ppt3state:
   participant: ppt3
   type: SimpleParticipantState
   state: {}
 
-ppt4:
+ppt4state:
   participant: ppt4
   type: SimpleParticipantState
   state: {}

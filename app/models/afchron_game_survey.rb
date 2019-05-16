@@ -32,11 +32,12 @@ class AfchronGameSurvey < Survey
 
   def prepare_game_state participant
     unless participant.participant_state.kind_of? AfchronGameState
-      participant.participant_state.save
-      participant.participant_state.destroy
-      state = AfchronGameState.new(:participant => participant)
-      participant.participant_state = state
-      state.set_defaults!
+      if participant.participant_state.id > 0 then
+        participant.participant_state.destroy
+      end
+      s = AfchronGameState.new(:participant => participant)
+      participant.participant_state = s
+      participant.participant_state.set_defaults!
     end
     participant.participant_state
   end
