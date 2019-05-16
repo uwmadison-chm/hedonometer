@@ -25,19 +25,25 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
   test "participant state values persists balance" do
     @survey.schedule_participant! @ppt
     @ppt.participant_state[:game_balance] = 10
+    assert_equal(10, @ppt.participant_state[:game_balance])
     @ppt.save!
+    assert_equal(10, @ppt.participant_state[:game_balance])
+
+    db_state = ParticipantState.find(@ppt.participant_state.id)
+    assert_kind_of(AfchronGameState, db_state)
+    assert_equal(10, db_state[:game_balance])
+
     db_ppt = Participant.find(@ppt.id)
     assert_equal(10, db_ppt.participant_state[:game_balance])
   end
 
   test "participant state values persists times" do
-    skip("Time comes back as a string")
     @survey.schedule_participant! @ppt
     secret = Time.now - 77.hours
     @ppt.participant_state[:game_time] = secret
     @ppt.save!
     db_ppt = Participant.find(@ppt.id)
-    assert_equal(secret, db_ppt.participant_state.game_time)
+    assert_equal(secret, db_ppt.participant_state[:game_time])
   end
 
   test "participant state aasm persists" do
@@ -98,9 +104,9 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.save!
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
-    assert_equal(:waiting_asked, @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
     @ppt.participant_state.game_timed_out!
-    assert_equal(:none, @ppt.participant_state.aasm_state)
+    assert_equal("none", @ppt.participant_state.aasm_state)
     assert(@ppt.participant_state[:game_time] > Time.now)
   end
 

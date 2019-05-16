@@ -91,7 +91,7 @@ class AfchronGameState < ParticipantState
 
   def game_begin!
     # Participant said yes, begin the game
-    self.waiting_number!
+    self.play!
     self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
     message = "We generated a number between 1 and 9. Guess if it's lower or higher than 5. Reply 'high' or 'low'."
     return message, Time.now
