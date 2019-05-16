@@ -101,5 +101,33 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert(@ppt.state["game_time"] > Time.now)
   end
 
+  test "participant plays game and wins" do
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now - 1.hours
+    @ppt.state["result_pool"] = [true]
+    @ppt.save!
+    @survey.schedule_participant! @ppt
+    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    @ppt.participant_state.incoming_message "yes"
+    assert_equal("waiting_number", @ppt.participant_state.aasm_state)
+    q = @ppt.participant_state.incoming_message "high"
+    assert_match(/You guessed right!/, q.message_text)
+    assert_equal(10, @ppt.state["game_balance"])
+  end
+
+  test "participant plays game and loses" do
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now - 1.hours
+    @ppt.state["result_pool"] = [false]
+    @ppt.save!
+    @survey.schedule_participant! @ppt
+    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    @ppt.participant_state.incoming_message "yes"
+    assert_equal("waiting_number", @ppt.participant_state.aasm_state)
+    q = @ppt.participant_state.incoming_message "high"
+    assert_match(/You guessed wrong!/, q.message_text)
+    assert_equal(-5, @ppt.state["game_balance"])
+  end
+
 end
 

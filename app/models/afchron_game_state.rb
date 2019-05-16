@@ -122,9 +122,9 @@ class AfchronGameState < ParticipantState
       end
 
     # store this completion as a boolean, by day id, and by time
-    self.state["game_completed_results"].push = winner
-    self.state["game_completed_dayid"].push = day_id
-    self.state["game_completed_time"].push = Time.now
+    self.state["game_completed_results"].push winner
+    self.state["game_completed_dayid"].push day.id
+    self.state["game_completed_time"].push Time.now
     self.state["game_balance"] += winner ? 10 : -5
 
     # We go into gather data mode
@@ -147,7 +147,7 @@ class AfchronGameState < ParticipantState
 
     # Timeout after another chunk of minutes if no response, prompt again
     timeout = time + (10 + rand(5)).minutes
-    self.delay(run_at: timeout).game_gather_data_again! game_survey_count, participant.id
+    self.delay(run_at: timeout).game_gather_data_again! self.state["game_survey_count"], participant.id
     if self.state["measure_with_link"] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
@@ -170,20 +170,21 @@ class AfchronGameState < ParticipantState
     if state =~ /^waiting_asked/ then
       # We asked if they wanted to start a game
       if message =~ /yes/i then
-        do_message!(day, *game_begin!)
+        reply = do_message!(day, *game_begin!)
         self.save!
       elsif message =~ /no/i then
         day_id = self.state["game_current_day"]
         self.game_times[day_id] = Time.now + 30.minutes
+        # TODO: Add delayed_job to stack
         self.save!
       end
     elsif state =~ /^waiting_number/ then
       if message =~ /high|low/i then
         guessed_high = message =~ /high/i
-        self.do_message!(day, *game_send_result!(day, guessed_high))
+        reply = self.do_message!(day, *game_send_result!(day, guessed_high))
         self.save!
       else
-        self.do_message!(day, "You need to pick 'high' or 'low'", Time.now)
+        reply = self.do_message!(day, "You need to pick 'high' or 'low'", Time.now)
       end
     elsif state =~ /^gather_data/ then
       if message =~ /\d+/ then
@@ -191,9 +192,11 @@ class AfchronGameState < ParticipantState
         self.state["game_survey_response"][day_id].push message
       end
       self.save!
+      # TODO: Add delayed_job to stack
     else
       logger.warning("Got unexpected participant message #{message} from participant #{participant.id} in game state #{self.inspect}")
     end
+    reply
   end
 
   def action_for_day! day
