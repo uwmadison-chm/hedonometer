@@ -22,6 +22,10 @@ class AfchronGameState < ParticipantState
       transitions from: [:waiting_asked, :waiting_number], to: :none
     end
 
+    event :refuse_to_play do
+      transitions from: [:waiting_asked], to: :none
+    end
+
     event :reset do
       transitions to: :none
     end
@@ -60,10 +64,21 @@ class AfchronGameState < ParticipantState
     pool
   end
 
+  def get_game_time
+    time = self.state["game_time"]
+    if time.kind_of? Time
+      time
+    elsif time.nil? or time == ""
+      nil
+    else
+      Time.parse time.to_s
+    end
+  end
+
   def time_for_game participant, day
     # Does participant have a game start time for this day?
     # If not, decide when game prompt should start today
-    time = self.state["game_time"]
+    time = get_game_time
     if time.nil? then
       # pick a time in first 70% of time range 
       time = day.starts_at + (day.day_length * 0.7 * rand)
@@ -147,17 +162,17 @@ class AfchronGameState < ParticipantState
 
     # Timeout after another chunk of minutes if no response, prompt again
     timeout = time + (10 + rand(5)).minutes
-    self.delay(run_at: timeout).game_gather_data_again! self.state["game_survey_count"], participant.id
+    self.delay(run_at: timeout).game_gather_data_try_again! self.state["game_survey_count"], participant.id
     if self.state["measure_with_link"] then
+      self.delay(run_at: time).game_gather_data! self.state["game_survey_count"], participant.id
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
       return "How do you feel on a scale of 1 to 10?", time
     end
   end
 
-  def game_gather_data_again! count, participant_id
+  def game_gather_data_try_again! count, participant_id
     # re-ask if they didn't respond last time
-    # TODO: How to refresh self from db?
     ppt = Participant.find(participant_id)
     if ppt.participant_state["game_survey_count"] == count then
       ppt.participant_state.game_gather_data!
@@ -173,10 +188,11 @@ class AfchronGameState < ParticipantState
         reply = do_message!(day, *game_begin!)
         self.save!
       elsif message =~ /no/i then
-        day_id = self.state["game_current_day"]
-        self.game_times[day_id] = Time.now + 30.minutes
-        # TODO: Add delayed_job to stack
+        next_game = Time.now + (25 + rand(10)).minutes
+        self.refuse_to_play
+        self.state[:game_time] = next_game
         self.save!
+        self.delay(run_at: next_game).action_for_day! day
       end
     elsif state =~ /^waiting_number/ then
       if message =~ /high|low/i then
@@ -192,7 +208,6 @@ class AfchronGameState < ParticipantState
         self.state["game_survey_response"][day_id].push message
       end
       self.save!
-      # TODO: Add delayed_job to stack
     else
       logger.warning("Got unexpected participant message #{message} from participant #{participant.id} in game state #{self.inspect}")
     end
@@ -218,14 +233,9 @@ class AfchronGameState < ParticipantState
         # ... otherwise, this gets called too often after a timeout
         self.game_could_start!
       else
-        case current
-        when 'waiting_for_survey'
-          self.game_gather_data!
-        else
-          # The default question
-          [ "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}",
-            day.random_time_for_next_question ]
-        end
+        # The default question
+        [ "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}",
+          day.random_time_for_next_question ]
       end
 
     self.save!

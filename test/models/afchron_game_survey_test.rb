@@ -22,7 +22,7 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert_kind_of(AfchronGameState, state)
   end
 
-  test "participant state values persists balance" do
+  test "participant state persists balance" do
     @survey.schedule_participant! @ppt
     @ppt.state["game_balance"] = 10
     assert_equal(10, @ppt.state["game_balance"])
@@ -36,6 +36,17 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     db_ppt = Participant.find(@ppt.id)
     assert_equal(10, db_ppt.state["game_balance"])
   end
+
+  test "participant state can retrieve time correctly" do
+    @survey.schedule_participant! @ppt
+    @ppt.state["game_time"] = Time.now + 30.minutes
+    @ppt.save!
+
+    db_state = ParticipantState.find(@ppt.participant_state.id)
+    assert_kind_of(AfchronGameState, db_state)
+    assert(db_state.get_game_time > Time.now)
+  end
+
 
   test "participant state aasm persists" do
     @survey.prepare_game_state @ppt
@@ -87,6 +98,18 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
     @ppt.participant_state.incoming_message "yes"
     assert_equal("waiting_number", @ppt.participant_state.aasm_state)
+  end
+
+  test "participant does not want to play" do
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now - 1.hours
+    @ppt.save!
+    scheduled = @survey.schedule_participant! @ppt
+    assert_not_equal(false, scheduled)
+    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    @ppt.participant_state.incoming_message "NO"
+    assert_equal("none", @ppt.participant_state.aasm_state)
+    assert(@ppt.state["game_time"] > Time.now)
   end
 
   test "participant times out play request" do
