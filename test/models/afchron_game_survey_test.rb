@@ -53,17 +53,17 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.participant_state.ask_to_play!
     @ppt.save!
     db_ppt = Participant.find(@ppt.id)
-    assert_equal("waiting_asked", db_ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", db_ppt.aasm_state)
   end
 
   test "when it is not yet time TO GAME, just sends survey" do
     @survey.prepare_game_state @ppt
     @ppt.state["game_time"] = Time.now + 1.hours
     @ppt.save!
-    assert_equal("none", @ppt.participant_state.aasm_state)
+    assert_equal("none", @ppt.aasm_state)
     q = @survey.schedule_participant! @ppt
 
-    assert_equal("none", @ppt.participant_state.aasm_state)
+    assert_equal("none", @ppt.aasm_state)
     assert_match(/Please take this survey now/, q.message_text)
   end
 
@@ -80,11 +80,11 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @survey.prepare_game_state @ppt
     @ppt.state["game_time"] = Time.now - 1.hours
     @ppt.save!
-    assert_equal("none", @ppt.participant_state.aasm_state)
+    assert_equal("none", @ppt.aasm_state)
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
 
-    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.aasm_state)
     assert_equal(@ppt.participant_state.participant, @ppt)
     assert_match(/Do you have time to play/, scheduled.message_text)
   end
@@ -95,9 +95,9 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.save!
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
-    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.aasm_state)
     @ppt.participant_state.incoming_message "yes"
-    assert_equal("waiting_number", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_number", @ppt.aasm_state)
   end
 
   test "participant does not want to play" do
@@ -106,9 +106,9 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.save!
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
-    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.aasm_state)
     @ppt.participant_state.incoming_message "NO"
-    assert_equal("none", @ppt.participant_state.aasm_state)
+    assert_equal("none", @ppt.aasm_state)
     assert(@ppt.state["game_time"] > Time.now)
   end
 
@@ -118,9 +118,9 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.save!
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
-    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.aasm_state)
     @ppt.participant_state.game_timed_out!
-    assert_equal("none", @ppt.participant_state.aasm_state)
+    assert_equal("none", @ppt.aasm_state)
     assert(@ppt.state["game_time"] > Time.now)
   end
 
@@ -130,12 +130,13 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.state["result_pool"] = [true]
     @ppt.save!
     @survey.schedule_participant! @ppt
-    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.aasm_state)
     @ppt.participant_state.incoming_message "yes"
-    assert_equal("waiting_number", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_number", @ppt.aasm_state)
     q = @ppt.participant_state.incoming_message "high"
     assert_match(/You guessed right!/, q.message_text)
     assert_equal(10, @ppt.state["game_balance"])
+    assert_equal("waiting_for_survey", @ppt.aasm_state)
   end
 
   test "participant plays game and loses" do
@@ -144,9 +145,9 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.state["result_pool"] = [false]
     @ppt.save!
     @survey.schedule_participant! @ppt
-    assert_equal("waiting_asked", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_asked", @ppt.aasm_state)
     @ppt.participant_state.incoming_message "yes"
-    assert_equal("waiting_number", @ppt.participant_state.aasm_state)
+    assert_equal("waiting_number", @ppt.aasm_state)
     q = @ppt.participant_state.incoming_message "high"
     assert_match(/You guessed wrong!/, q.message_text)
     assert_equal(-5, @ppt.state["game_balance"])

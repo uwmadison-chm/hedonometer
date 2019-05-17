@@ -58,6 +58,10 @@ class Participant < ApplicationRecord
     participant_state.state
   end
 
+  def aasm_state
+    participant_state.aasm_state
+  end
+
   def save_state!
     participant_state.save!
   end

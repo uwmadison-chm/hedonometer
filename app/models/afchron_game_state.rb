@@ -152,19 +152,23 @@ class AfchronGameState < ParticipantState
   end
 
   def game_gather_data!
-    survey!
+    survey
     self.state["game_survey_count"] += 1
     if self.state["game_survey_count"] >= 8 then
-      reset!
+      reset
     end
+    save!
+
     # sample time should be 10-15 minutes from now
     time = Time.now + (10 + rand(5)).minutes
 
     # Timeout after another chunk of minutes if no response, prompt again
     timeout = time + (10 + rand(5)).minutes
+
     self.delay(run_at: timeout).game_gather_data_try_again! self.state["game_survey_count"], participant.id
+    self.delay(run_at: time).game_gather_data! self.state["game_survey_count"], participant.id
+
     if self.state["measure_with_link"] then
-      self.delay(run_at: time).game_gather_data! self.state["game_survey_count"], participant.id
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
       return "How do you feel on a scale of 1 to 10?", time
