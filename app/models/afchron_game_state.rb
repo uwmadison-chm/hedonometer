@@ -90,24 +90,28 @@ class AfchronGameState < ParticipantState
   def game_could_start!
     # Ask the participant if they want to play
     ask_to_play!
-    self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
+    self.delay(run_at: Time.now + 10.minutes).do_timeout!
     return "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)", Time.now
   end
 
-  def game_timed_out!
+  def do_timeout!
     case aasm_state.to_s
     when 'waiting_asked', 'waiting_number' then
       # Just retrigger later today, they didn't respond
-      self.timeout!
+      self.timeout
       self.state["game_time"] = Time.now + 30.minutes
-      self.participant.survey.schedule_participant! participant
+      self.save!
+      self.participant.survey.schedule_participant! self.participant
+    when 'waiting_survey' then
+      # This is not actually called by production code, but is useful for the simulator
+      ppt.participant_state.game_gather_data!
     end
   end
 
   def game_begin!
     # Participant said yes, begin the game
     self.play!
-    self.delay(run_at: Time.now + 10.minutes).game_timed_out! participant
+    self.delay(run_at: Time.now + 10.minutes).do_timeout!
     message = "We generated a number between 1 and 9. Guess if it's lower or higher than 5. Reply 'high' or 'low'."
     return message, Time.now
   end
@@ -162,24 +166,12 @@ class AfchronGameState < ParticipantState
     # sample time should be 10-15 minutes from now
     time = Time.now + (10 + rand(5)).minutes
 
-    # Timeout after another chunk of minutes if no response, prompt again
-    timeout = time + (10 + rand(5)).minutes
-
-    self.delay(run_at: timeout).game_gather_data_try_again! self.state["game_survey_count"], participant.id
-    self.delay(run_at: time).game_gather_data! self.state["game_survey_count"], participant.id
+    self.delay(run_at: time).game_gather_data!
 
     if self.state["measure_with_link"] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time
     else
       return "How do you feel on a scale of 1 to 10?", time
-    end
-  end
-
-  def game_gather_data_try_again! count, participant_id
-    # re-ask if they didn't respond last time
-    ppt = Participant.find(participant_id)
-    if ppt.participant_state["game_survey_count"] == count then
-      ppt.participant_state.game_gather_data!
     end
   end
 
@@ -213,7 +205,7 @@ class AfchronGameState < ParticipantState
       end
       self.save!
     else
-      logger.warning("Got unexpected participant message #{message} from participant #{participant.id} in game state #{self.inspect}")
+      logger.warn("Got unexpected participant message #{message} from participant #{participant.id} in game state #{self.inspect}")
     end
     reply
   end

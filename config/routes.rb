@@ -32,6 +32,7 @@ Rails.application.routes.draw do
         post 'simulate_send' => 'simulator#simulate_send'
         post 'simulate_reply' => 'simulator#simulate_reply'
         post 'simulate_timeout' => 'simulator#simulate_timeout'
+        post 'simulate_reset' => 'simulator#simulate_reset'
       end
     end
 

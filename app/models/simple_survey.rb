@@ -14,7 +14,7 @@ class SimpleSurvey < Survey
   end
 
   def schedule_participant! participant
-    participant.participant_state ||= SimpleParticipantState.new(:participant => participant)
+    create_participant_state participant
     participant.requests_new_schedule = false
     question = current_question_or_new participant
     return nil unless question

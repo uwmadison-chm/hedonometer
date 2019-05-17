@@ -8,6 +8,9 @@ class Admin::SimulatorController < AdminController
       not_found
     end
 
+    # Necessary to create the right kind of state if they don't have it yet
+    current_survey.create_participant_state current_participant
+
     @page_title = "Simulator for participant #{current_participant.external_key}"
     @page_class = "simulator"
 
@@ -69,9 +72,29 @@ class Admin::SimulatorController < AdminController
     end
   end
 
+  def simulate_reset
+    raise NotAllowed unless current_survey.development_mode
+    current_participant.schedule_days.each do |d|
+      d.scheduled_messages.each do |m|
+        m.delete
+      end
+    end
+
+    IncomingTextMessage.where(:from_number => current_participant.phone_number).delete_all
+    OutgoingTextMessage.where(:to_number => current_participant.phone_number).delete_all
+
+    current_participant.participant_state.delete
+    current_survey.create_participant_state current_participant
+
+    redirect_to action: "index"
+  end
+
   def simulate_timeout
     raise NotAllowed unless current_survey.development_mode
-    # TODO: Not sure how to cause the state machine to timeout
+    if current_participant.state.respond_to? :do_timeout!
+      current_participant.state.do_timeout!
+    end
+
     redirect_to action: "index"
   end
 

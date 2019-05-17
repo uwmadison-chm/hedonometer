@@ -10,7 +10,10 @@
         Show state
       %div.collapse#state
         %div.card.card-body 
-          %pre #{JSON.pretty_generate(current_participant.participant_state.state)}
+          %pre 
+            aasm_state: #{current_participant.aasm_state}
+          %pre 
+            #{JSON.pretty_generate(current_participant.state)}
 
   %section.content
     %div.content-body
@@ -27,13 +30,20 @@
                 - else
                   = distance_of_time_in_words(m[:at], Time.now) + " from now"
   
-  - if current_survey.development_mode
+  - unless current_survey.development_mode
+    %footer.footer
+      %span
+        = link_to "Current survey", edit_admin_survey_path(current_survey)
+        is not in development mode. Be careful with this simulator as it can change participant state! Do not use on surveys in production.
+  - else
     %footer.footer
       %div
         = form_tag admin_survey_participant_simulate_send_path(current_survey, current_participant), :method => :post do |f|
           = submit_tag "Simulate next message", :class => "button"
         = form_tag admin_survey_participant_simulate_timeout_path(current_survey, current_participant), :method => :post do |f|
           = submit_tag "Simulate timeout", :class => "button"
+        = form_tag admin_survey_participant_simulate_reset_path(current_survey, current_participant), :method => :post do |f|
+          = submit_tag "Reset", :class => "button", :style => "background-color: red;"
       %div.align-right
         = form_tag admin_survey_participant_simulate_reply_path(current_survey, current_participant), :method => :post do |f|
           = text_field_tag "reply", "", { class: "rounded", placeholder: '' }

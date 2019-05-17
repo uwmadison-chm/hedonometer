@@ -30,14 +30,20 @@ class AfchronGameSurvey < Survey
     end
   end
 
+  def create_participant_state participant
+    # Override the base SimpleParticipantState with a game state
+    prepare_game_state participant
+  end
+
   def prepare_game_state participant
     unless participant.participant_state.kind_of? AfchronGameState
-      if participant.participant_state.id > 0 then
+      if participant.participant_state and participant.participant_state.id > 0 then
         participant.participant_state.destroy
       end
       s = AfchronGameState.new(:participant => participant)
       participant.participant_state = s
       participant.participant_state.set_defaults!
+      s.save!
     end
     participant.participant_state
   end
