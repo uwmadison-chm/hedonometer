@@ -24,6 +24,7 @@ class Admin::SurveysController < AdminController
   def show
     respond_to do |format|
       format.csv {render layout: false}
+      format.html {render}
     end
   end
 

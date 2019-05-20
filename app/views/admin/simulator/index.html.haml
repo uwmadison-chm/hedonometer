@@ -1,11 +1,12 @@
-%div.container
+%div.simulator
   %header.header
-    = link_to "◀ Participant list", admin_survey_participants_path(current_survey)
-
-    %h3 Simulator Mode
+    %h2 Simulator Mode
 
     %h4
-      Viewing interaction with participant #{current_participant.external_key || "NO EXTERNAL KEY"} in time zone #{current_participant.time_zone}.
+      Viewing interaction with participant 
+      %a{href: admin_survey_participants_path(current_survey)}
+        #{current_participant.external_key || "NO EXTERNAL KEY"}
+      in time zone #{current_participant.time_zone}.
       %button.btn.btn-primary{ :type=>"button", :data => {:toggle=>"collapse", :target=>"#state"} }
         Show state
       %div.collapse#state

@@ -1,10 +1,9 @@
-%h2 Your surveys
 
-%ul
-  - current_admin.surveys.modifiable.each do |survey|
-    %li= link_to "#{survey.name}", admin_survey_path(survey)
+- if current_admin.surveys.modifiable.count > 0
+  %a.btn.btn-dark{href: admin_surveys_path}
+    View surveys
 
-%hr
+  %hr
 
 %a.btn.btn-primary{href: new_admin_survey_path}
   Create a survey
