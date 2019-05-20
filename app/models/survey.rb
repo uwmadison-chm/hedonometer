@@ -26,7 +26,6 @@ class Survey < ApplicationRecord
   attr_reader :twilio_errors
   after_initialize :clear_twilio_errors
 
-
   def schedule_participant! p
     raise "Abstract surveys can't schedule participants"
   end
@@ -46,6 +45,7 @@ class Survey < ApplicationRecord
   def create_participant_state participant
     participant.participant_state ||= SimpleParticipantState.new(:participant => participant)
   end
+
   
 
   # These properties used to be directly on survey,
@@ -53,35 +53,53 @@ class Survey < ApplicationRecord
   # So for now these are shortcuts
 
   def sampled_days
+    fix_configuration
     configuration['sampled_days'] || 1
   end
 
   def sampled_days= x
+    fix_configuration
     configuration['sampled_days'] = x.to_i
   end
   
   def samples_per_day
+    fix_configuration
     configuration['samples_per_day'] || 4
   end
 
   def samples_per_day= x
+    fix_configuration
     configuration['samples_per_day'] = x.to_i
   end
   
   def mean_minutes_between_samples
+    fix_configuration
     configuration['mean_minutes_between_samples'] || 60
   end
 
   def mean_minutes_between_samples= x
+    fix_configuration
     configuration['mean_minutes_between_samples'] = x.to_i
   end
   
   def sample_minutes_plusminus
+    fix_configuration
     configuration['sample_minutes_plusminus'] || 15
   end
 
   def sample_minutes_plusminus= x
+    fix_configuration
     configuration['sample_minutes_plusminus'] = x.to_i
+  end
+
+  def fix_configuration
+    # There's some weird rails bug, that usually only happens when calling 
+    # .create in unit tests, which sets configuration to this giant nightmare 
+    # mega-escaped string  "\"\\\"\\\\\\\"\\\\\\\\\\\ and so on.
+    # This is a workaround.
+    if configuration.is_a? String
+      self.configuration = {}
+    end
   end
 
 

@@ -119,7 +119,7 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     scheduled = @survey.schedule_participant! @ppt
     assert_not_equal(false, scheduled)
     assert_equal("waiting_asked", @ppt.aasm_state)
-    @ppt.participant_state.game_timed_out!
+    @ppt.participant_state.do_timeout!
     assert_equal("none", @ppt.aasm_state)
     assert(@ppt.state["game_time"] > Time.now)
   end

@@ -56,7 +56,7 @@ class AfchronGameSurvey < Survey
       logger.info("Participant has no more available days")
       return false
     end
-    state.action_for_day! day
+    state.take_action!
   end
 
 end
