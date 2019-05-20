@@ -1,6 +1,7 @@
-= link_to "◀ Job status", admin_jobs_path
-
-%h1 Job Status: #{@kind}
+%h2 
+  %a{href: admin_jobs_path}
+    Job status
+  of: #{@kind} jobs
 
 %table
   %tr

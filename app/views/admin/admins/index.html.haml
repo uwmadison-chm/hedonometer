@@ -1,5 +1,3 @@
-= link_to "◀ Survey list", admin_root_path
-
 = form_for [:admin, @new_admin], builder: TwoColumnFormBuilder do |f|
   = f.email_field :email
   = f.password_field :password

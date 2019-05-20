@@ -1,16 +1,8 @@
-= link_to "◀ Survey list", admin_root_path
-%h3 Add a participant to #{current_survey.name}
-= form_for current_participant, url: admin_survey_participants_path(current_survey), builder: TwoColumnFormBuilder  do |f|
-  = f.text_field :phone_number, autofocus: true, :placeholder => "608-555-1212"
-  = f.date_field :schedule_start_date, label: "Start date", placeholder: "yyyy-mm-dd"
-  = f.text_field :schedule_human_time_after_midnight, label: "Start time", placeholder: "9am"
-  = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: current_survey.time_zone
-  = f.text_field :external_key, label: "Participant key (optional)", placeholder: "2000-b"
-  = f.check_box :send_welcome_message, label: "Send welcome text"
-  = f.submit "Create participant"
+%a.btn.btn-primary{href: new_admin_survey_participant_path(current_survey)}
+  Add a participant to #{current_survey.name}
 
 
-%div.alert.alert-primary
+%div.alert
   =flash[:save_message]
 - if @participant.errors.any?
   %div.alert.alert-danger
@@ -18,7 +10,7 @@
       - @participant.errors.full_messages.each do |m|
         %li= m
 
-%table
+%table.listing
   %tr
     %th Phone number
     %th Active
@@ -34,7 +26,15 @@
       %td= participant.active?
       %td= participant.login_code
       %td= participant.external_key
-      %td= link_to "View messages", admin_survey_participant_path(current_survey, participant)
-      %td= link_to "Messages simulator", admin_survey_participant_simulate_path(current_survey, participant)
-      %td= link_to "Download data", admin_survey_participant_path(current_survey, participant, format: :csv)
-      %td= link_to "Edit", edit_admin_survey_participant_path(current_survey, participant)
+      %td
+        %a.btn.btn-warning{href: edit_admin_survey_participant_path(current_survey, participant)}
+          Edit
+      %td
+        %a.btn.btn-primary{href: admin_survey_participant_path(current_survey, participant)}
+          View messages
+      %td
+        %a.btn.btn-dark{href: admin_survey_participant_simulate_path(current_survey, participant)}
+          Simulator
+      %td
+        %a.btn.btn-secondary{href: admin_survey_participant_path(current_survey, participant, format: :csv)}
+          Download data

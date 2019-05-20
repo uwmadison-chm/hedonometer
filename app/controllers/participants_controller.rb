@@ -30,6 +30,9 @@ class ParticipantsController < SurveyedController
     end
   end
 
+  def new
+  end
+
   def create
     # Will primarily be called by other apps via API
     @participant = current_survey.participants.build create_participant_params

@@ -1,0 +1,11 @@
+%h2 Adding a participant to #{current_survey.name}
+
+= form_for Participant.new, url: admin_survey_participants_path(current_survey), builder: TwoColumnFormBuilder  do |f|
+  = f.text_field :phone_number, autofocus: true, :placeholder => "608-555-1212"
+  = f.date_field :schedule_start_date, label: "Start date", placeholder: "yyyy-mm-dd"
+  = f.text_field :schedule_human_time_after_midnight, label: "Start time", placeholder: "9am"
+  = f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, default: current_survey.time_zone
+  = f.text_field :external_key, label: "Participant key (optional)", placeholder: "2000-b"
+  = f.check_box :send_welcome_message, label: "Send welcome text"
+  = f.submit "Create participant"
+

@@ -1,4 +1,6 @@
-= link_to "◀ Participant list", admin_survey_participants_path(current_survey)
+%a.btn.btn-primary{href: admin_survey_participants_path(current_survey)}
+  Back to participant list
+
 %h2 Participant #{number_with_external_key(current_participant)}
 %h3 Schedule
 %ol.schedule

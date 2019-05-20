@@ -1,25 +1,11 @@
-%nav
-  =link_to "Create a survey", new_admin_survey_path
-  - if current_admin.can_change_admins?
-    |
-    =link_to "Manage admins", admin_admins_path, id: "manage-admins"
-  |
-  =link_to "Job status", admin_jobs_path
+%h2 Your surveys
 
-%table#active_surveys
-  %thead
-    %tr
-      %th Name
-      %th
-      %th Phone number
-      %th Participants
-      %th Messages (sent : received)
-      %th Download
-    - current_admin.surveys.modifiable.each do |survey|
-      %tr
-        %td= survey.name
-        %td= link_to "Edit", edit_admin_survey_path(survey)
-        %td= survey.phone_number.humanize
-        %td= link_to survey.participants.count, admin_survey_participants_path(survey)
-        %td #{survey.outgoing_text_messages.count} : #{survey.incoming_text_messages.count}
-        %td= link_to "Download data", admin_survey_path(survey, format: :csv)
+%ul
+  - current_admin.surveys.modifiable.each do |survey|
+    %li= link_to "#{survey.name}", admin_survey_path(survey)
+
+%hr
+
+%a.btn.btn-primary{href: new_admin_survey_path}
+  Create a survey
+

@@ -1,0 +1,35 @@
+%h2 Your surveys
+
+%table.listing
+  %thead
+    %tr
+      %th Name
+      %th
+      %th
+      %th Participants
+      %th Phone number
+      %th Sent
+      %th Received
+      %th Download
+    - current_admin.surveys.modifiable.each do |survey|
+      %tr
+        %td= survey.name
+        %td
+          %a.btn.btn-primary{href: admin_survey_participants_path(survey)}
+            View participants
+        %td
+          %a.btn.btn-warning{href: edit_admin_survey_path(survey)}
+            Edit details
+        %td= survey.participants.count
+        %td= survey.phone_number.humanize
+        %td= survey.outgoing_text_messages.count 
+        %td= survey.incoming_text_messages.count
+        %td
+          %a.btn.btn-secondary{href: admin_survey_path(survey, format: :csv)}
+            Download data
+
+%hr
+
+%a.btn.btn-primary{href: new_admin_survey_path}
+  Create a survey
+

@@ -3,6 +3,9 @@ class Admin::SurveysController < AdminController
   before_action :find_survey, only: [:edit, :update, :show]
   after_action :set_twilio_errors_flash, only: [:update, :create]
 
+  def index
+  end
+
   def new
     params[:kind] ||= "SimpleSurvey"
     if params[:kind] == "AfchronGameSurvey" then
