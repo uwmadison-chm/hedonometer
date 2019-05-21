@@ -1,5 +1,5 @@
-%h2 Edit survey: #{@survey.name}
 - if @survey
+  %h2 Edit survey: #{@survey.name}
   = render 'form', survey: @survey
 - else
   %p Survey not found

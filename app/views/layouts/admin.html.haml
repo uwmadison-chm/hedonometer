@@ -8,26 +8,28 @@
     %link{href: "https://fonts.googleapis.com/css?family=Roboto", rel: "stylesheet"}
     = csrf_meta_tags
   %body
-    %nav.navbar.navbar-expand-md.navbar-dark.sticky-top.bg-dark
+    %nav.navbar.navbar-expand-md.navbar-dark.sticky-top.bg-primary
       .container
         %a.navbar-brand{href: admin_root_path}
-          hedonometer
+          %em
+            hedonometer
         %button.navbar-toggler{type: 'button', data: {toggle: 'collapse', target: '#navbarCollapse'}, aria: {controls: 'navbarCollapse', expanded: 'false', label: 'Toggle navigation'}}
         .collapse.navbar-collapse#navbarCollapse
-          %ul.navbar-nav.mr-auto
-            %li.nav-item
-              %a.nav-link{href: admin_surveys_path}
-                Surveys
-            %li.nav-item
-              %a.nav-link{href: admin_jobs_path}
-                Job status
-            - if current_admin.can_change_admins?
+          - if current_admin
+            %ul.navbar-nav.mr-auto
+              %li.nav-item
+                %a.nav-link{href: admin_surveys_path}
+                  Surveys
+              %li.nav-item
+                %a.nav-link{href: admin_jobs_path}
+                  Job status
+              - if current_admin.can_change_admins?
+                %li.nav-item.text-nowrap
+                  %a#manage-admins.nav-link{href: admin_admins_path}
+                    Manage admins
               %li.nav-item.text-nowrap
-                %a.nav-link{href: admin_admins_path}
-                  Manage admins
-            %li.nav-item.text-nowrap
-              %a.nav-link{href: admin_logout_path}
-                Log out
+                %a.nav-link{href: admin_logout_path}
+                  Log out
     .container
       %main.page{class: @page_class}
         = yield

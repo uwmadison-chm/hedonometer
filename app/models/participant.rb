@@ -161,7 +161,7 @@ class Participant < ApplicationRecord
     logger.debug("has_delivered_a_question?: #{has_delivered_a_question?}")
 
     # We can do this if we have a start date and time and we haven't yet
-    # delvered any scheduled_questions
+    # delivered any scheduled_questions
     self.schedule_start_date and
       self.schedule_time_after_midnight and not has_delivered_a_question?
   end
