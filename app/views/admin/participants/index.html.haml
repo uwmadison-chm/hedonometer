@@ -1,5 +1,9 @@
+%h2 
+  Participants for 
+  %a{href: admin_survey_path(current_survey)}
+    #{current_survey.name}
 %a.btn.btn-primary{href: new_admin_survey_participant_path(current_survey)}
-  Add a participant to #{current_survey.name}
+  Add a participant
 
 
 %div.alert

@@ -169,7 +169,7 @@ class AfchronGameState < ParticipantState
   end
 
   def game_gather_data!
-    survey
+    survey if may_survey?
     self.state["game_survey_count"] += 1
     if self.state["game_survey_count"] >= 8 then
       reset!

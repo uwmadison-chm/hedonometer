@@ -1,5 +1,8 @@
 - if @survey
-  %h2 Edit survey: #{@survey.name}
+  %h2 
+    Edit survey: 
+    %a{href: admin_survey_path(@survey)}
+      #{@survey.name}
   = render 'form', survey: @survey
 - else
   %p Survey not found

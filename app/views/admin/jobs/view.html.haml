@@ -17,11 +17,14 @@
     %tr
       %td= j.id
       %td= j.priority
-      %td= j.run_at
+      %td
+        %span{title: j.run_at}
+          - Time.use_zone("Central Time (US & Canada)") do
+            #{j.run_at.localtime}
       %td= j.locked_at
       %td= j.failed_at
       %td= j.attempts
       %td= j.last_error
       %td 
-        %span{:title => j.handler.inspect} Hover for YAML
+        %span{title: (YAML.load j.handler).to_yaml} Hover for YAML
   

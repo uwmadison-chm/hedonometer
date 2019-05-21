@@ -1,16 +1,19 @@
 %div.simulator
   %header.header
-    %h2 Simulator Mode
+    %h2 
+      Simulator Mode for
+      %a{href: admin_survey_participants_path(current_survey)}
+        #{current_survey.name}
 
     %h4
-      Viewing interaction with participant 
-      %a{href: admin_survey_participants_path(current_survey)}
-        #{current_participant.external_key || "NO EXTERNAL KEY"}
+      Participant #{current_participant.external_key || "NO EXTERNAL KEY"}
       in time zone #{current_participant.time_zone}.
       %button.btn.btn-primary{ :type=>"button", :data => {:toggle=>"collapse", :target=>"#state"} }
         Show state
       %div.collapse#state
         %div.card.card-body 
+          %pre 
+            Delayed job count: #{Delayed::Job.count}
           %pre 
             aasm_state: #{current_participant.aasm_state}
           %pre 

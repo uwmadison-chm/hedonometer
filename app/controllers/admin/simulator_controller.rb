@@ -1,4 +1,3 @@
-
 class Admin::SimulatorController < AdminController
   class NotAllowed < StandardError
   end
@@ -43,10 +42,8 @@ class Admin::SimulatorController < AdminController
     raise NotAllowed unless current_survey.development_mode
     # fake-send current scheduled message
     m = find_scheduled_messages.first
-    unless m then
-      current_survey.schedule_participant! current_participant
-      redirect_to action: "index"
-    else
+    if m then
+      # There was an existing message, so pretend we sent it
       m.mark_delivered
       m.save!
 
@@ -68,12 +65,36 @@ class Admin::SimulatorController < AdminController
       
       # now we reschedule next message for participant
       current_survey.schedule_participant! current_participant
-      redirect_to action: "index"
+    else
+      # There was no existing scheduled message
+      #
+      # This is suuuuper inefficient, but we need to look
+      # for a delayed job for this exact participant
+      Delayed::Job.where('run_at > ?', Time.now).find_each do |job|
+        handler = YAML.load job.handler
+        if handler.object and
+            handler.object.respond_to? :participant_id and
+            handler.object.participant_id == current_participant.id
+          worker = Delayed::Worker.new
+          job.run_at = Time.now
+          worker.run job
+          if job.last_error
+            render :plain => "Job failure: id #{job.id}, attempts #{job.attempts}, \n\nerror: #{job.last_error}\n\nhandler: #{handler.to_yaml}"
+          else
+            redirect_to action: "index"
+          end
+          return
+        end
+      end
+      # No pending jobs found, so schedule away!
+      current_survey.schedule_participant! current_participant
     end
+    redirect_to action: "index"
   end
 
   def simulate_reset
     raise NotAllowed unless current_survey.development_mode
+    Delayed::Job.delete_all
     current_participant.schedule_days.each do |d|
       d.scheduled_messages.each do |m|
         m.delete

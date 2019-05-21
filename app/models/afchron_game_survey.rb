@@ -1,4 +1,3 @@
-
 class AfchronGameSurvey < Survey
   def self.model_name
     Survey.model_name
