@@ -63,6 +63,10 @@ class ScheduleDay < ApplicationRecord
     time_ranges.first.first
   end
 
+  def ends_at
+    time_ranges.last.last
+  end
+
   def survey
     self.participant.survey
   end

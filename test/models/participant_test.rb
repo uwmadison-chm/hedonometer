@@ -171,4 +171,13 @@ class ParticipantTest < ActiveSupport::TestCase
     all_messages = participants(:ppt1).text_messages
     assert_equal 2, all_messages.length
   end
+
+  test "schedule days have correct length even if they go over midnight" do
+    p = participants(:ppt2)
+    p.schedule_start_date = Date.today
+    p.schedule_time_after_midnight = 20.hours
+    p.rebuild_schedule_days!
+    difference = p.schedule_days.first.ends_at - p.schedule_days.first.starts_at
+    assert_equal p.survey.day_length, difference
+  end
 end

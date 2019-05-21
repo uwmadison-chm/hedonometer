@@ -74,7 +74,7 @@ class Survey < ApplicationRecord
   
   def mean_minutes_between_samples
     fix_configuration
-    configuration['mean_minutes_between_samples'] || 60
+    configuration['mean_minutes_between_samples'] || 120
   end
 
   def mean_minutes_between_samples= x

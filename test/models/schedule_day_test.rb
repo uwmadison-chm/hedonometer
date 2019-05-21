@@ -67,7 +67,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
   test "has time for another question with deliveries" do
     survey = @sd.survey
     t1 = Time.now
-    t2 = t1 + survey.day_length_minutes.minutes
+    t2 = t1 + survey.day_length
     @sd.time_ranges = [TimeRange.new(t1, t2)]
     @sd.survey.samples_per_day.times do |num|
       assert @sd.has_time_for_another_question?
@@ -82,7 +82,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
   test "has time for another question with age-outs" do
     survey = @sd.survey
     t1 = Time.now
-    t2 = t1 + survey.day_length_minutes.minutes
+    t2 = t1 + survey.day_length
     @sd.time_ranges = [TimeRange.new(t1, t2)]
     @sd.survey.samples_per_day.times do |num|
       assert @sd.has_time_for_another_question?
