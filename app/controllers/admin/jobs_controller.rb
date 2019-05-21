@@ -5,6 +5,7 @@ class Admin::JobsController < AdminController
       :in_process => in_process.count,
       :queued => queued.count,
       :retrying => retrying.count,
+      :pending => pending.count,
     }
   end
 
@@ -15,10 +16,12 @@ class Admin::JobsController < AdminController
       @jobs = failed.all
     when "in_process"
       @jobs = in_process.all
-    when "queued"
-      @jobs = queued.all
     when "retrying"
       @jobs = retrying.all
+    when "queued"
+      @jobs = queued.all
+    when "pending"
+      @jobs = pending.all
     end
   end
 
@@ -37,6 +40,11 @@ class Admin::JobsController < AdminController
   def queued
     Delayed::Job.where('failed_at IS NULL').where('attempts = 0').where('run_at <= ?', Time.now)
   end
+
+  def pending
+    Delayed::Job.where('failed_at IS NULL').where('attempts = 0').where('run_at > ?', Time.now)
+  end
+
 
 end
 
