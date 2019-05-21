@@ -76,7 +76,11 @@ class AfchronGameState < ParticipantState
   end
 
   def get_day
-    self.participant.schedule_days.running_day
+    day = participant.schedule_days.running_day
+    if not day
+      day = participant.survey.advance_to_day_with_time_for_message! participant
+    end
+    day
   end
 
   def time_for_game participant
@@ -113,15 +117,29 @@ class AfchronGameState < ParticipantState
     end
   end
 
+  def game_delay!
+    next_game = Time.now + (25 + rand(10)).minutes
+    self.refuse_to_play
+    self.state[:game_time] = next_game
+    self.save!
+    self.delay(run_at: next_game).take_action!
+  end
+
   def game_begin!
     # Participant said yes, begin the game
     self.play!
     self.delay(run_at: Time.now + 10.minutes).do_timeout!
     message = "We generated a number between 1 and 9. Guess if it's lower or higher than 5. Reply 'high' or 'low'."
-    return message, Time.now
+    return do_message!(message, Time.now)
   end
 
-  def game_send_result! guessed_high
+  def game_send_result! message
+    if message =~ /high|low/i then
+      guessed_high = message =~ /high/i
+    else
+      return self.do_message!("You need to pick 'high' or 'low'", Time.now)
+    end
+
     # Participant picked high or low... tell them what they won, Jim!
     self.state["game_survey_count"] = 0
 
@@ -157,10 +175,10 @@ class AfchronGameState < ParticipantState
     message =
       "The number was #{number}. " +
       (winner ? "You guessed right! $10 has been added to your account." : "You guessed wrong! $5 has been removed from your account.")
-    return message, Time.now
+    return do_message!(message, Time.now)
   end
 
-  def data_message time
+  def build_survey_message
     if self.state["measure_with_link"] then
       return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}"
     else
@@ -183,8 +201,7 @@ class AfchronGameState < ParticipantState
 
     self.delay(run_at: time).game_gather_data!
 
-    message = data_message time
-    return message, time
+    return do_message!(build_survey_message, time)
   end
 
   def incoming_message message
@@ -192,23 +209,12 @@ class AfchronGameState < ParticipantState
     if state =~ /^waiting_asked/ then
       # We asked if they wanted to start a game
       if message =~ /yes/i then
-        reply = do_message!(*game_begin!)
-        self.save!
+        game_begin!
       elsif message =~ /no/i then
-        next_game = Time.now + (25 + rand(10)).minutes
-        self.refuse_to_play
-        self.state[:game_time] = next_game
-        self.save!
-        self.delay(run_at: next_game).take_action!
+        game_delay!
       end
     elsif state =~ /^waiting_number/ then
-      if message =~ /high|low/i then
-        guessed_high = message =~ /high/i
-        reply = self.do_message!(*game_send_result!(guessed_high))
-        self.save!
-      else
-        reply = self.do_message!("You need to pick 'high' or 'low'", Time.now)
-      end
+      game_send_result!(message)
     elsif state =~ /^gather_data/ then
       if message =~ /\d+/ then
         day = get_day
@@ -219,7 +225,6 @@ class AfchronGameState < ParticipantState
     else
       logger.warn("Got unexpected participant message #{message} from participant #{participant.id} in game state #{self.inspect}")
     end
-    reply
   end
 
   def take_action!
@@ -230,7 +235,10 @@ class AfchronGameState < ParticipantState
     end
 
     day = get_day
-    # TODO: how to detect we're done with day? and call survey.schedule_participant!
+    unless day
+      Rails.logger.info("Participant has no more available days")
+      return false
+    end
 
     today_game_time = self.time_for_game self.participant
 

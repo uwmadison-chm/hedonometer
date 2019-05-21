@@ -50,11 +50,6 @@ class AfchronGameSurvey < Survey
   def schedule_participant! participant
     participant.requests_new_schedule = false
     state = prepare_game_state participant
-    day = self.advance_to_day_with_time_for_message! participant
-    unless day
-      logger.info("Participant has no more available days")
-      return false
-    end
     state.take_action!
   end
 

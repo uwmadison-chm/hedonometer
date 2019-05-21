@@ -148,6 +148,6 @@ class Admin::SimulatorController < AdminController
   def find_scheduled_messages
     current_participant.schedule_days.collect do |d|
       d.scheduled_messages.scheduled
-    end.flatten
+    end.flatten.sort_by &:scheduled_at
   end
 end
