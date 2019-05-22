@@ -33,7 +33,6 @@ class AfchronGameState < ParticipantState
 
   def set_defaults!
     self.state["game_time"] = nil
-    self.state["measure_with_link"] = true # TODO - should be survey-dependent
     self.state["result_pool"] = generate_result_pool
     self.state["results"] = []
     self.state["game_balance"] = 0
@@ -179,11 +178,7 @@ class AfchronGameState < ParticipantState
   end
 
   def build_survey_message
-    if self.state["measure_with_link"] then
-      return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}"
-    else
-      return "How do you feel on a scale of 1 to 10?"
-    end
+    return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}"
   end
 
   def game_gather_data!
@@ -215,13 +210,6 @@ class AfchronGameState < ParticipantState
       end
     elsif state =~ /^waiting_number/ then
       game_send_result!(message)
-    elsif state =~ /^gather_data/ then
-      if message =~ /\d+/ then
-        day = get_day
-        self.state["game_survey_response"][day.id] ||= []
-        self.state["game_survey_response"][day.id].push message
-      end
-      self.save!
     else
       logger.warn("Got unexpected participant message #{message} from participant #{participant.id} in game state #{self.inspect}")
     end
