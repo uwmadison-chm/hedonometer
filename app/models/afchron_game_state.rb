@@ -98,8 +98,8 @@ class AfchronGameState < ParticipantState
   def game_could_start!
     # Ask the participant if they want to play
     ask_to_play!
-    self.delay(run_at: Time.now + 10.minutes).do_timeout!
-    return "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)", Time.now
+    self.delay(run_at: Time.now + 30.minutes).do_timeout!
+    return "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)", Time.now + 15.minutes
   end
 
   def do_timeout!
