@@ -21,8 +21,8 @@ class AfchronGameSurvey < Survey
 
   def url_for_participant participant
     # Different survey urls depending on participant state
-    s = participant.participant_state
-    if s['game'] == 'gather_data' then
+    s = participant.participant_state.aasm_state.to_s
+    if s == 'waiting_for_survey' then
       url_game_survey
     else
       url
