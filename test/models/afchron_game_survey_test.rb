@@ -153,5 +153,16 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert_equal(-5, @ppt.state["game_balance"])
   end
 
+  test "survey url changes to short during game survey" do
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now - 1.hours
+    @ppt.state["result_pool"] = [true]
+    @ppt.save!
+    q = @survey.schedule_participant! @ppt
+    assert_match(/long/, q.url)
+    @ppt.participant_state.incoming_message "yes"
+    q = @ppt.participant_state.incoming_message "high"
+    assert_match(/short/, q.url)
+  end
 end
 
