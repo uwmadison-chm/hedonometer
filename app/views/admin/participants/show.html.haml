@@ -1,5 +1,5 @@
 %h2 Participant #{number_with_external_key(current_participant)}
-%h3 Schedule
+%h3 Schedule days
 %ol.schedule
   - current_participant.schedule_days.each do |schedule_day|
     %li #{schedule_day.participant_local_date}: #{schedule_day.time_ranges_string}
@@ -16,6 +16,20 @@
       %td.nowrap= message.direction
       %td= message.message
 
+%hr
+
+%h3 Scheduled messages
+%table.messages
+  %tr
+    %th Scheduled at
+    %th Url
+    %th Message
+  - current_participant.schedule_days.each do |day|
+    - day.scheduled_messages.sort_by(&:scheduled_at).each do |message|
+      %tr
+        %td.nowrap= message.scheduled_at.in_time_zone(current_survey.time_zone).to_s(:us_time)
+        %td.nowrap= message.url
+        %td= message.message_text
 %hr
 
 %a.btn.btn-primary{href: admin_survey_participants_path(current_survey)}
