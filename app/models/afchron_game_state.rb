@@ -88,8 +88,8 @@ class AfchronGameState < ParticipantState
     # If not, decide when game prompt should start today
     time = get_game_time
     if time.nil? then
-      # pick a time in first 70% of time range 
-      time = day.starts_at + (day.day_length * 0.7 * rand)
+      # pick a time in first 60% of time range 
+      time = day.starts_at + (day.day_length * 0.6 * rand)
       self.state["game_time"] = time
     end
     time
@@ -184,7 +184,7 @@ class AfchronGameState < ParticipantState
   def game_gather_data!
     survey if may_survey?
     self.state["game_survey_count"] += 1
-    if self.state["game_survey_count"] >= 8 then
+    if self.state["game_survey_count"] > 6 then
       reset!
       take_action!
       return
