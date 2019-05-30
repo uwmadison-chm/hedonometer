@@ -47,7 +47,6 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert(db_state.get_game_time > Time.now)
   end
 
-
   test "participant state aasm persists" do
     @survey.prepare_game_state @ppt
     @ppt.participant_state.ask_to_play!
@@ -163,6 +162,25 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     @ppt.participant_state.incoming_message "yes"
     q = @ppt.participant_state.incoming_message "high"
     assert_match(/short/, q.url)
+  end
+
+  test "creates one delayed job when scheduling questions" do
+    assert_equal(0, Delayed::Job.count)
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now + 3.hours
+    @ppt.save!
+    @survey.schedule_participant! @ppt
+    assert_equal(1, Delayed::Job.count)
+  end
+
+  test "creates two delayed jobs when heading into game (one for timeout)" do
+    assert_equal(0, Delayed::Job.count)
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now - 1.hours
+    @ppt.state["result_pool"] = [true]
+    @ppt.save!
+    @survey.schedule_participant! @ppt
+    assert_equal(2, Delayed::Job.count)
   end
 end
 
