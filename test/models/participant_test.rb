@@ -148,7 +148,7 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_nil ppt.schedule_days.first_potential
   end
 
-  test "advance to first potential day" do
+  test "advancing schedule days after messages are done" do
     ppt = participants(:ppt1)
     sday = ppt.survey.advance_to_day_with_time_for_message! ppt
     assert_equal schedule_days(:test_day_1), sday

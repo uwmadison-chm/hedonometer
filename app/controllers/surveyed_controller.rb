@@ -21,9 +21,7 @@ class SurveyedController < ApplicationController
   helper_method :current_participant
 
   def require_participant_login!
-    if current_participant
-      Time.zone = current_participant.time_zone
-    else
+    if not current_participant
       redirect_to survey_login_path(current_survey) and return false
     end
   end

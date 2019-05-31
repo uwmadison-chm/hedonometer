@@ -92,11 +92,7 @@ class ScheduleDay < ApplicationRecord
   end
 
   def minimum_time_to_next_question
-    if completed_question_count == 0 then
-      0
-    else
-      minimum_time_to_question(completed_question_count)
-    end
+    minimum_time_to_question(completed_question_count + 1)
   end
 
   def maximum_time_to_question(question_number)
