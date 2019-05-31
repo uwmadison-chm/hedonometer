@@ -8,7 +8,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
   end
 
   def setup_sample_time_ranges
-    t1 = Time.zone.parse("2013-05-04 10:00 AM")
+    t1 = Time.now.utc
     @sample_time_ranges ||= [
       TimeRange.new(t1, t1+1.hour),
       TimeRange.new(t1+2.hours, t1+3.hours),
@@ -97,13 +97,13 @@ class ScheduleDayTest < ActiveSupport::TestCase
   test "minimum time to next question" do
     survey = @sd.participant.survey
     min_time = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
-    assert_equal min_time, @sd.minimum_time_to_next_question
+    assert_equal 0, @sd.minimum_time_to_next_question
     @sd.scheduled_messages.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
       aasm_state: 'delivered')
 
-    min_time = (2*survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
+    min_time = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
     assert_equal min_time, @sd.minimum_time_to_next_question
   end
 
@@ -118,5 +118,11 @@ class ScheduleDayTest < ActiveSupport::TestCase
 
     max_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
     assert_equal max_time, @sd.maximum_time_to_next_question
+  end
+
+  test "random time for next question is soon" do
+    @sd = schedule_days(:test_day_1)
+    puts @sd.random_time_for_next_question
+    assert(@sd.random_time_for_next_question >= Time.now)
   end
 end

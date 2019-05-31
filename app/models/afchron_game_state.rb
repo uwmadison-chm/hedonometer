@@ -186,8 +186,7 @@ class AfchronGameState < ParticipantState
     self.state["game_survey_count"] += 1
     if self.state["game_survey_count"] > 6 then
       reset!
-      take_action!
-      return
+      return take_action!
     end
     save!
 
@@ -244,7 +243,9 @@ class AfchronGameState < ParticipantState
           day.random_time_for_next_question ]
       end
 
-    self.save!
-    return self.do_message! message_text, scheduled_at
+    if message_text and scheduled_at
+      self.save!
+      return self.do_message! message_text, scheduled_at
+    end
   end
 end

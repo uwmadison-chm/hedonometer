@@ -42,7 +42,9 @@ class TimeRange
   end
 
   def self.from_date_and_string(date, range_string)
-    sd, ed = range_string.split("-").map {|time_str| Time.zone.parse("#{date} #{time_str}")}
+    sd, ed = range_string.split(/\s*-\s*/).map do |time_str|
+      Time.find_zone("UTC").parse(time_str, date)
+    end
     # Handle ranges like 5:00 PM - 2:00 AM
     ed += 1.day if ed < sd
     self.new(sd, ed)
