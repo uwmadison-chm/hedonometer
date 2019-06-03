@@ -39,6 +39,7 @@ class AfchronGameState < ParticipantState
     self.state["game_completed_results"] = [] # List of results
     self.state["game_completed_dayid"] = [] # List of day ids
     self.state["game_completed_time"] = [] # List of completed times
+    self.state["surveys_sent_by_day"] = {} # Hash of surveys by day, a list of times
   end
 
   def generate_result_pool
@@ -77,12 +78,18 @@ class AfchronGameState < ParticipantState
   def get_day
     day = participant.schedule_days.running_day
     if not day
-      day = participant.survey.advance_to_day_with_time_for_message! participant
+      participant.schedule_days.potential_run_targets.each do |d|
+        if d.waiting?
+          d.run!
+          day = d
+          break
+        end
+      end
     end
     day
   end
 
-  def time_for_game participant
+  def time_for_game
     day = get_day
     # Does participant have a game start time for this day?
     # If not, decide when game prompt should start today
@@ -95,11 +102,63 @@ class AfchronGameState < ParticipantState
     time
   end
 
+  def range_from_timepoint point
+    plusminus = participant.survey.configuration['sample_minutes_plusminus']
+    return (point - plusminus.minutes)..(point + plusminus.minutes)
+  end
+
+  def time_for_survey day
+    day_start = day.starts_at
+    day_end = day.ends_at
+    samples_per_day = participant.survey.configuration['samples_per_day']
+    sent_surveys = self.state["surveys_sent_by_day"][day.id.to_s] ||= []
+    if sent_surveys.count == 0 then
+      # Start of day! Pick a time within the first mean.
+      # Note that this is not exactly what we want
+      mean_length = (day_end - day_start) / samples_per_day
+      point = day_start + mean_length
+      time = rand(day_start..point)
+    else
+      if sent_surveys.count >= 8 || Time.now > day_end then
+        # We're done for today
+        return false
+      end
+      # Otherwise, subdivide remaining time
+      last_time = sent_surveys.last
+      remaining_surveys = samples_per_day - sent_surveys.count
+      mean_length = (day_end - last_time) / remaining_surveys
+      point = last_time + mean_length 
+      range = range_from_timepoint point
+      time = rand range
+    end
+
+    # Store that we are surveying at this time
+    sent_surveys.push time
+    return time
+  end
+
+  def link_survey!
+    day = get_day
+    if not day then
+      Rails.logger.info "No days remaining for participant #{participant.id}"
+      return false
+    end
+    time = time_for_survey day
+    self.save!
+    unless time
+      # No time on this day or we're done, start over on next day
+      day.finish!
+      return link_survey!
+    end
+    return self.do_message! "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}", time
+  end
+
   def game_could_start!
     # Ask the participant if they want to play
     ask_to_play!
     self.delay(run_at: Time.now + 30.minutes).do_timeout!
-    return "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)", Time.now + 15.minutes
+    return self.do_message! "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)",
+      Time.now + 15.minutes
   end
 
   def do_timeout!
@@ -109,7 +168,7 @@ class AfchronGameState < ParticipantState
       self.timeout
       self.state["game_time"] = Time.now + 30.minutes
       self.save!
-      self.participant.survey.schedule_participant! self.participant
+      self.take_action!
     when 'waiting_survey' then
       # This is not actually called by production code, but is useful for the simulator
       ppt.participant_state.game_gather_data!
@@ -136,7 +195,7 @@ class AfchronGameState < ParticipantState
     if message =~ /high|low/i then
       guessed_high = message =~ /high/i
     else
-      return self.do_message!("You need to pick 'high' or 'low'", Time.now)
+      return do_message!("You need to pick 'high' or 'low'", Time.now)
     end
 
     # Participant picked high or low... tell them what they won, Jim!
@@ -186,7 +245,7 @@ class AfchronGameState < ParticipantState
     self.state["game_survey_count"] += 1
     if self.state["game_survey_count"] > 6 then
       reset!
-      return take_action!
+      return link_survey!
     end
     save!
 
@@ -227,25 +286,19 @@ class AfchronGameState < ParticipantState
       return false
     end
 
-    today_game_time = self.time_for_game self.participant
+    today_game_time = self.time_for_game
 
-    message_text, scheduled_at = 
-      if current == "none" and
-        Time.now > today_game_time and
-        not self.state["game_completed_dayid"].include? day.id then
-        # TODO: This should trigger on a postback from Qualtrics,
-        # when we know they finished a default survey
-        # ... otherwise, this gets called too often after a timeout
-        self.game_could_start!
-      else
-        # The default question
-        [ "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}",
-          day.random_time_for_next_question ]
-      end
-
-    if message_text and scheduled_at
-      self.save!
-      return self.do_message! message_text, scheduled_at
+    if current == "none" and
+      Time.now > today_game_time and
+      not self.state["game_completed_dayid"].include? day.id then
+      # TODO: This should trigger on a postback from Qualtrics,
+      # when we know they finished a default survey
+      # ... otherwise, this gets called too often after a timeout
+      # However, if we trigger from Qualtrics, then we need another
+      # timeout to catch the ppt opening the link but not finishing
+      self.game_could_start!
+    else
+      self.link_survey!
     end
   end
 end

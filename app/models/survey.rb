@@ -45,7 +45,6 @@ class Survey < ApplicationRecord
   def create_participant_state participant
     participant.participant_state ||= SimpleParticipantState.new(:participant => participant)
   end
-
   
 
   # These properties used to be directly on survey,

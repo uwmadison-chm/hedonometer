@@ -13,17 +13,17 @@ test_day_2:
 ppt3_test_day_1:
   participant: ppt3
   participant_local_date: <%= Time.now.change(:hour => 0).to_s %>
-  time_ranges: <%= [TimeRange.from_date_and_string(Time.now.change(:hour => 0), '8:00 AM - 8:00 PM')].to_yaml.inspect %>
+  time_ranges: <%= [TimeRange.new(Time.now, Time.now + 12.hours)].to_yaml.inspect %>
   aasm_state: waiting
 
 ppt3_test_day_2:
   participant: ppt3
   participant_local_date: <%= (Time.now.change(:hour => 0) + 1.days).to_s %>
-  time_ranges: <%= [TimeRange.from_date_and_string(Time.now.change(:hour => 0) + 1.days, '8:00 AM - 8:00 PM')].to_yaml.inspect %>
+  time_ranges: <%= [TimeRange.new(Time.now, Time.now + 12.hours)].to_yaml.inspect %>
   aasm_state: waiting
 
 ppt4_test_day_1:
   participant: ppt4
   participant_local_date: <%= Time.now.change(:hour => 0).to_s %>
-  time_ranges: <%= [TimeRange.from_date_and_string(Time.now.change(:hour => 0), '8:00 AM - 12:15 PM')].to_yaml.inspect %>
+  time_ranges: <%= [TimeRange.new(Time.now, Time.now + 4.hours + 15.minutes)].to_yaml.inspect %>
   aasm_state: waiting

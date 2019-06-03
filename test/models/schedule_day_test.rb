@@ -119,10 +119,4 @@ class ScheduleDayTest < ActiveSupport::TestCase
     max_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
     assert_equal max_time, @sd.maximum_time_to_next_question
   end
-
-  test "random time for next question is soon" do
-    @sd = schedule_days(:test_day_1)
-    puts @sd.random_time_for_next_question
-    assert(@sd.random_time_for_next_question >= Time.now)
-  end
 end

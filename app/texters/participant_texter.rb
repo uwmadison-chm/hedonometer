@@ -80,8 +80,8 @@ class ParticipantTexter < ActionTexter::Base
       scheduled_message.deliver_and_save_if_possible!(message)
       if scheduled_message.completed?
         new_message = survey.schedule_participant! participant
-        if new_message
-          self.delay(run_at: new_message.scheduled_at).deliver_scheduled_message!(new_message.id)
+        unless new_message
+          Rails.logger.warn("No subsequent message scheduled after scheduled message #{scheduled_message_id}")
         end
       end
     end

@@ -60,7 +60,7 @@ class Admin::SimulatorController < AdminController
         message: message,
         simulated: true,
         scheduled_at: m.scheduled_at,
-        delivered_at: m.scheduled_at
+        delivered_at: Time.now
       )
       
       # now we reschedule next message for participant
