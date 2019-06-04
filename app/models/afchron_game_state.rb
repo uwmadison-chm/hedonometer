@@ -119,7 +119,7 @@ class AfchronGameState < ParticipantState
       point = day_start + mean_length
       time = rand(day_start..point)
     else
-      if sent_surveys.count >= 8 || Time.now > day_end then
+      if sent_surveys.count >= samples_per_day || Time.now > day_end then
         # We're done for today
         return false
       end
@@ -150,7 +150,7 @@ class AfchronGameState < ParticipantState
       day.finish!
       return link_survey!
     end
-    return self.do_message! "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}", time
+    return do_message! "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}", time
   end
 
   def game_could_start!
@@ -165,13 +165,13 @@ class AfchronGameState < ParticipantState
     case aasm_state.to_s
     when 'waiting_asked', 'waiting_number' then
       # Just retrigger later today, they didn't respond
-      self.timeout
+      timeout
       self.state["game_time"] = Time.now + 30.minutes
-      self.save!
-      self.take_action!
+      save!
+      take_action!
     when 'waiting_survey' then
       # This is not actually called by production code, but is useful for the simulator
-      ppt.participant_state.game_gather_data!
+      game_gather_data!
     end
   end
 
@@ -223,21 +223,17 @@ class AfchronGameState < ParticipantState
 
     # store this completion as a boolean, by day id, and by time
     self.state["game_completed_results"].push winner
-    self.state["game_completed_dayid"].push get_day.id
+    self.state["game_completed_dayid"].push get_day.id.to_s
     self.state["game_completed_time"].push Time.now
     self.state["game_balance"] += winner ? 10 : -5
 
     # We go into gather data mode
-    self.game_gather_data!
+    game_gather_data!
 
     message =
       "The number was #{number}. " +
       (winner ? "You guessed right! $10 has been added to your account." : "You guessed wrong! $5 has been removed from your account.")
     return do_message!(message, Time.now)
-  end
-
-  def build_survey_message
-    return "Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}"
   end
 
   def game_gather_data!
@@ -252,9 +248,7 @@ class AfchronGameState < ParticipantState
     # sample time should be 10-15 minutes from now
     time = Time.now + (10 + rand(5)).minutes
 
-    self.delay(run_at: time).game_gather_data!
-
-    return do_message!(build_survey_message, time)
+    return do_message!("Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time)
   end
 
   def incoming_message message
@@ -288,17 +282,20 @@ class AfchronGameState < ParticipantState
 
     today_game_time = self.time_for_game
 
-    if current == "none" and
+    # TODO: what's the right way to check AASM state?
+    if self.waiting_for_survey? then
+      game_gather_data!
+    elsif current == "none" and
       Time.now > today_game_time and
-      not self.state["game_completed_dayid"].include? day.id then
+      not self.state["game_completed_dayid"].include? day.id.to_s then
       # TODO: This should trigger on a postback from Qualtrics,
       # when we know they finished a default survey
       # ... otherwise, this gets called too often after a timeout
       # However, if we trigger from Qualtrics, then we need another
       # timeout to catch the ppt opening the link but not finishing
-      self.game_could_start!
+      game_could_start!
     else
-      self.link_survey!
+      link_survey!
     end
   end
 end
