@@ -238,11 +238,11 @@ class AfchronGameState < ParticipantState
 
   def game_gather_data!
     survey if may_survey?
-    self.state["game_survey_count"] += 1
-    if self.state["game_survey_count"] > 6 then
+    if self.state["game_survey_count"] >= 6 then
       reset!
       return link_survey!
     end
+    self.state["game_survey_count"] += 1
     save!
 
     # sample time should be 10-15 minutes from now
@@ -268,12 +268,6 @@ class AfchronGameState < ParticipantState
   end
 
   def take_action!
-    current = self.aasm_state.to_s
-    if current =~ /^waiting/ then
-      # Don't start any new actions if waiting for response
-      return false
-    end
-
     day = get_day
     unless day
       Rails.logger.info("Participant has no more available days")
@@ -285,7 +279,7 @@ class AfchronGameState < ParticipantState
     # TODO: what's the right way to check AASM state?
     if self.waiting_for_survey? then
       game_gather_data!
-    elsif current == "none" and
+    elsif self.none? and
       Time.now > today_game_time and
       not self.state["game_completed_dayid"].include? day.id.to_s then
       # TODO: This should trigger on a postback from Qualtrics,
