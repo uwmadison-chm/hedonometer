@@ -276,7 +276,6 @@ class AfchronGameState < ParticipantState
 
     today_game_time = self.time_for_game
 
-    # TODO: what's the right way to check AASM state?
     if self.waiting_for_survey? then
       game_gather_data!
     elsif self.none? and

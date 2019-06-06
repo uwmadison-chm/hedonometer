@@ -117,10 +117,22 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.ask_to_play
     @state.play
     @state.game_send_result! "high"
+    @state.state['game_survey_count'] = 5
+    @state.take_action!
+    assert_equal(6, @state.state['game_survey_count'])
+    assert(@state.waiting_for_survey?)
+    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
+    assert_nil(surveys_sent)
+  end
+
+  test "after game sampling" do
+    @state.ask_to_play
+    @state.play
+    @state.game_send_result! "high"
     @state.state['game_survey_count'] = 6
     q = @state.take_action!
     assert_equal(6, @state.state['game_survey_count'])
-    assert_equal("none", @state.aasm_state)
+    assert(@state.none?)
     surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
     assert_equal(1, surveys_sent.count)
     assert_match(/Please take this survey now/, q.message_text)
