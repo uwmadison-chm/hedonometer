@@ -14,18 +14,18 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.state['game_time'] = Time.now + 24.hours
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
-    assert_equal(1, @state.state["surveys_sent_by_day"][@day.id.to_s].count)
+    assert_equal(1, @state.surveys_for_day(@day).count)
   end
 
   test "with existing surveys splits time" do
     @state.state['game_time'] = Time.now + 24.hours
-    @state.state['surveys_sent_by_day'][@day.id.to_s] = [
+    @state.set_surveys_for_day @day, [
       @day.starts_at + 1.hour,
       @day.starts_at + 2.hour,
     ]
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
-    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
+    surveys_sent = @state.surveys_for_day @day
     assert_equal(3, surveys_sent.count)
     assert(surveys_sent.last > @day.starts_at + 2.hour + 30.minutes)
   end
@@ -35,13 +35,13 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.state["game_completed_results"].push true
     @state.state["game_completed_dayid"].push @day.id
     @state.state["game_completed_time"].push (@day.starts_at + 2.hours)
-    @state.state['surveys_sent_by_day'][@day.id.to_s] = [
+    @state.set_surveys_for_day @day, [
       @day.starts_at + 1.hour,
       @day.starts_at + 3.hours,
     ]
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
-    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
+    surveys_sent = @state.surveys_for_day @day
     assert_equal(3, surveys_sent.count)
     assert(surveys_sent.last > @day.starts_at + 3.hour + 30.minutes)
   end
@@ -51,7 +51,7 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.state["game_completed_results"].push true
     @state.state["game_completed_dayid"].push @day.id
     @state.state["game_completed_time"].push (@day.starts_at + 2.hours)
-    @state.state['surveys_sent_by_day'][@day.id.to_s] = [
+    @state.set_surveys_for_day @day, [
       @day.starts_at + 1.hour,
       @day.starts_at + 2.hours,
       @day.starts_at + 3.hours,
@@ -63,16 +63,16 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     ]
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
-    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
+    surveys_sent = @state.surveys_for_day @day
     assert_equal(8, surveys_sent.count)
-    surveys_sent_tomorrow = @state.state["surveys_sent_by_day"][@day2.id.to_s]
+    surveys_sent_tomorrow = @state.surveys_for_day @day2
     assert_equal(1, surveys_sent_tomorrow.count)
     assert(surveys_sent_tomorrow.last > @day2.starts_at)
   end
 
   test "full day with skipped game" do
     @state.state['game_time'] = @day.starts_at + 1.hour
-    @state.state['surveys_sent_by_day'][@day.id.to_s] = [
+    @state.set_surveys_for_day @day, [
       @day.starts_at + 1.hour,
       @day.starts_at + 2.hours,
       @day.starts_at + 3.hours,
@@ -84,9 +84,10 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     ]
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
-    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
+    surveys_sent = @state.surveys_for_day @day
     assert_equal(8, surveys_sent.count)
-    surveys_sent_tomorrow = @state.state["surveys_sent_by_day"][@day2.id.to_s]
+    assert_kind_of(Time, surveys_sent.last)
+    surveys_sent_tomorrow = @state.surveys_for_day @day2
     assert_equal(1, surveys_sent_tomorrow.count)
     assert(surveys_sent_tomorrow.last > @day2.starts_at)
   end
@@ -101,7 +102,9 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.ask_to_play
     @state.play
     @state.game_send_result! "high"
-    assert_equal(1, @state.state['game_survey_count'])
+    short_surveys = @state.short_surveys_for_day(@day)
+    assert_equal(1, short_surveys.count)
+    assert_kind_of(Time, short_surveys.last)
   end
 
   test "in middle of game sampling" do
@@ -109,7 +112,7 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.play
     @state.game_send_result! "high"
     q = @state.take_action!
-    assert_equal(2, @state.state['game_survey_count'])
+    assert_equal(2, @state.short_surveys_for_day(@day).count)
     assert_match(/Please take this short survey now/, q.message_text)
   end
 
@@ -117,25 +120,40 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     @state.ask_to_play
     @state.play
     @state.game_send_result! "high"
-    @state.state['game_survey_count'] = 5
-    @state.take_action!
-    assert_equal(6, @state.state['game_survey_count'])
+    @state.set_short_surveys_for_day @day, [
+      Time.now + 2.minutes,
+      Time.now + 4.minutes,
+      Time.now + 6.minutes,
+      Time.now + 8.minutes,
+      Time.now + 10.minutes,
+    ]
+    q = @state.take_action!
+    assert_equal(6, @state.short_surveys_for_day(@day).count)
+    assert(q.scheduled_at >= Time.now + 10.minutes)
     assert(@state.waiting_for_survey?)
-    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
-    assert_nil(surveys_sent)
+    surveys_sent = @state.surveys_for_day @day
+    assert_empty(surveys_sent)
   end
 
   test "after game sampling" do
     @state.ask_to_play
     @state.play
     @state.game_send_result! "high"
-    @state.state['game_survey_count'] = 6
+    @state.set_short_surveys_for_day @day, [
+      Time.now + 2.minutes,
+      Time.now + 4.minutes,
+      Time.now + 6.minutes,
+      Time.now + 8.minutes,
+      Time.now + 10.minutes,
+      Time.now + 12.minutes,
+    ]
     q = @state.take_action!
-    assert_equal(6, @state.state['game_survey_count'])
+    assert_equal(6, @state.short_surveys_for_day(@day).count)
     assert(@state.none?)
-    surveys_sent = @state.state["surveys_sent_by_day"][@day.id.to_s]
+    surveys_sent = @state.surveys_for_day @day
     assert_equal(1, surveys_sent.count)
     assert_match(/Please take this survey now/, q.message_text)
+    assert(q.scheduled_at >= Time.now + 30.minutes)
   end
 
 end

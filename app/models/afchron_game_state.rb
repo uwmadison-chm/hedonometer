@@ -39,7 +39,8 @@ class AfchronGameState < ParticipantState
     self.state["game_completed_results"] = [] # List of results
     self.state["game_completed_dayid"] = [] # List of day ids
     self.state["game_completed_time"] = [] # List of completed times
-    self.state["surveys_sent_by_day"] = {} # Hash of surveys by day, a list of times
+    self.state["surveys_for_day"] = {} # Hash of surveys by day, a list of times
+    self.state["short_surveys_for_day"] = {} # Hash of short surveys by day, a list of times
   end
 
   def generate_result_pool
@@ -107,11 +108,42 @@ class AfchronGameState < ParticipantState
     return (point - plusminus.minutes)..(point + plusminus.minutes)
   end
 
+  def parse_times array
+    array.map! do |x|
+      if x.kind_of? Time then
+        x
+      else
+        Time.parse x.to_s
+      end
+    end
+  end
+
+  def surveys_for_day day
+    self.state["surveys_for_day"] ||= {}
+    parse_times(self.state["surveys_for_day"][day.id.to_s] ||= [])
+  end
+
+  def set_surveys_for_day day, value
+    self.state["surveys_for_day"] ||= {}
+    self.state["surveys_for_day"][day.id.to_s] = value
+  end
+
+  def short_surveys_for_day day
+    self.state["short_surveys_for_day"] ||= {}
+    parse_times(self.state["short_surveys_for_day"][day.id.to_s] ||= [])
+  end
+
+  def set_short_surveys_for_day day, value
+    self.state["short_surveys_for_day"] ||= {}
+    self.state["short_surveys_for_day"][day.id.to_s] = value
+  end
+
+
   def time_for_survey day
     day_start = day.starts_at
     day_end = day.ends_at
     samples_per_day = participant.survey.configuration['samples_per_day']
-    sent_surveys = self.state["surveys_sent_by_day"][day.id.to_s] ||= []
+    sent_surveys = surveys_for_day day
     if sent_surveys.count == 0 then
       # Start of day! Pick a time within the first mean.
       # Note that this is not exactly what we want
@@ -129,6 +161,12 @@ class AfchronGameState < ParticipantState
       end
       # Otherwise, subdivide remaining time
       last_time = sent_surveys.last
+      sent_short_surveys = short_surveys_for_day day
+      if sent_short_surveys.count > 0 then
+        if sent_short_surveys.last > last_time then
+          last_time = sent_short_surveys.last
+        end
+      end
       remaining_surveys = samples_per_day - sent_surveys.count
       mean_length = (day_end - last_time) / remaining_surveys
       point = last_time + mean_length 
@@ -203,7 +241,6 @@ class AfchronGameState < ParticipantState
     end
 
     # Participant picked high or low... tell them what they won, Jim!
-    self.state["game_survey_count"] = 0
 
     # Did they win or not?
     winner = self.state["result_pool"].shift
@@ -242,15 +279,20 @@ class AfchronGameState < ParticipantState
 
   def game_gather_data!
     survey if may_survey?
-    if self.state["game_survey_count"] >= 6 then
+    sent_surveys = short_surveys_for_day get_day
+    if sent_surveys.count >= 6 then
       reset!
       return link_survey!
     end
-    self.state["game_survey_count"] += 1
-    save!
 
-    # sample time should be 10-15 minutes from now
-    time = Time.now + (10 + rand(5)).minutes
+    if sent_surveys.count == 0 then
+      time = Time.now + (5 + rand(5)).minutes
+    else
+      time = sent_surveys.last + (10 + rand(5)).minutes
+    end
+    
+    sent_surveys.push time
+    save!
 
     return do_message!("Please take this short survey now (sent at {{sent_time}}): {{redirect_link}}", time)
   end
