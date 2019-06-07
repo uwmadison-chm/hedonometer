@@ -119,8 +119,12 @@ class AfchronGameState < ParticipantState
       point = day_start + mean_length
       time = rand(day_start..point)
     else
-      if sent_surveys.count >= samples_per_day || Time.now > day_end then
-        # We're done for today
+      # Are we done for today?
+      if sent_surveys.count >= samples_per_day
+        Rails.logger.info "Done sampling #{sent_surveys} times for day #{day.id}"
+        return false
+      elsif Time.now > day_end then
+        Rails.logger.info "Past day_end #{day_end} on day #{day.id}"
         return false
       end
       # Otherwise, subdivide remaining time
