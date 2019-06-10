@@ -31,6 +31,10 @@ class AfchronGameState < ParticipantState
     end
   end
 
+  def waiting?
+    waiting_for_survey? or self.waiting_asked? or self.waiting_number?
+  end
+
   def set_defaults!
     self.state["game_time"] = nil
     self.state["result_pool"] = generate_result_pool
@@ -324,9 +328,9 @@ class AfchronGameState < ParticipantState
 
     today_game_time = self.time_for_game
 
-    if self.waiting_for_survey? then
-      game_gather_data!
-    elsif self.none? and
+    if waiting? then
+      nil
+    elsif none? and
       Time.now > today_game_time and
       not self.state["game_completed_dayid"].include? day.id.to_s then
       # TODO: This should trigger on a postback from Qualtrics,
