@@ -4,7 +4,7 @@ class AfchronGameState < ParticipantState
     state :none, initial: true
     state :waiting_asked
     state :waiting_number
-    state :waiting_for_survey
+    state :game_surveying
 
     event :ask_to_play do
       transitions from: :none, to: :waiting_asked
@@ -14,8 +14,8 @@ class AfchronGameState < ParticipantState
       transitions from: :waiting_asked, to: :waiting_number
     end
 
-    event :survey do
-      transitions from: :waiting_number, to: :waiting_for_survey
+    event :game_survey do
+      transitions from: :waiting_number, to: :game_surveying
     end
 
     event :timeout do
@@ -32,7 +32,7 @@ class AfchronGameState < ParticipantState
   end
 
   def waiting?
-    waiting_for_survey? or self.waiting_asked? or self.waiting_number?
+    game_surveying? or waiting_asked? or waiting_number?
   end
 
   def set_defaults!
@@ -132,14 +132,14 @@ class AfchronGameState < ParticipantState
     self.state["surveys_for_day"][day.id.to_s] = value
   end
 
-  def short_surveys_for_day day
-    self.state["short_surveys_for_day"] ||= {}
-    parse_times(self.state["short_surveys_for_day"][day.id.to_s] ||= [])
+  def game_surveys_for_day day
+    self.state["game_surveys_for_day"] ||= {}
+    parse_times(self.state["game_surveys_for_day"][day.id.to_s] ||= [])
   end
 
-  def set_short_surveys_for_day day, value
-    self.state["short_surveys_for_day"] ||= {}
-    self.state["short_surveys_for_day"][day.id.to_s] = value
+  def set_game_surveys_for_day day, value
+    self.state["game_surveys_for_day"] ||= {}
+    self.state["game_surveys_for_day"][day.id.to_s] = value
   end
 
 
@@ -165,10 +165,10 @@ class AfchronGameState < ParticipantState
       end
       # Otherwise, subdivide remaining time
       last_time = sent_surveys.last
-      sent_short_surveys = short_surveys_for_day day
-      if sent_short_surveys.count > 0 then
-        if sent_short_surveys.last > last_time then
-          last_time = sent_short_surveys.last
+      sent_game_surveys = game_surveys_for_day day
+      if sent_game_surveys.count > 0 then
+        if sent_game_surveys.last > last_time then
+          last_time = sent_game_surveys.last
         end
       end
       remaining_surveys = samples_per_day - sent_surveys.count
@@ -208,14 +208,13 @@ class AfchronGameState < ParticipantState
   end
 
   def do_timeout!
-    case aasm_state.to_s
-    when 'waiting_asked', 'waiting_number' then
+    if waiting_asked? or waiting_number? then
       # Just retrigger later today, they didn't respond
       timeout
       self.state["game_time"] = Time.now + 30.minutes
       save!
       take_action!
-    when 'waiting_for_survey' then
+    elsif game_surveying? then
       # This is not actually called by production code, but is useful for the simulator
       game_gather_data!
     end
@@ -284,8 +283,8 @@ class AfchronGameState < ParticipantState
   end
 
   def game_gather_data!
-    survey if may_survey?
-    sent_surveys = short_surveys_for_day get_day
+    game_survey if may_game_survey?
+    sent_surveys = game_surveys_for_day get_day
     if sent_surveys.count >= 6 then
       reset!
       return link_survey!
@@ -328,7 +327,11 @@ class AfchronGameState < ParticipantState
 
     today_game_time = self.time_for_game
 
-    if waiting? then
+    if game_surveying? then
+      # Game gathering should trigger after text messages get sent
+      game_gather_data!
+    elsif waiting? then
+      # Other waiting things trigger via incoming text message
       nil
     elsif none? and
       Time.now > today_game_time and
