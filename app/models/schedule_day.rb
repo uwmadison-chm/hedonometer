@@ -29,6 +29,11 @@ class ScheduleDay < ApplicationRecord
     event :skip do
       transitions from: :waiting, to: :finished
     end
+
+    # Used by the simulator, should not be called by normal code
+    event :reset do
+      transitions to: :waiting
+    end
   end
 
   # TODO: Add validation for time_ranges_string

@@ -68,6 +68,10 @@ class ParticipantTexter < ActionTexter::Base
     def deliver_scheduled_message!(scheduled_message_id)
       scheduled_message = ScheduledMessage.find scheduled_message_id
       participant = scheduled_message.schedule_day.participant
+      if participant.nil? then
+        Rails.logger.warn("No participant linkage for #{scheduled_message_id}, something bad has happened (like a participant record getting deleted)")
+        return
+      end
       survey = participant.survey
       question = scheduled_message.survey_question
       text =

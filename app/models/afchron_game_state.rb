@@ -199,7 +199,7 @@ class AfchronGameState < ParticipantState
     # Ask the participant if they want to play
     ask_to_play!
     self.delay(run_at: Time.now + 30.minutes).do_timeout!
-    return self.do_message! "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)",
+    return do_message! "Do you have time to play a game? (Reply 'yes' if so, no reply is needed if not)",
       Time.now + 15.minutes
   end
 
@@ -211,7 +211,7 @@ class AfchronGameState < ParticipantState
       self.state["game_time"] = Time.now + 30.minutes
       save!
       take_action!
-    when 'waiting_survey' then
+    when 'waiting_for_survey' then
       # This is not actually called by production code, but is useful for the simulator
       game_gather_data!
     end
@@ -267,6 +267,8 @@ class AfchronGameState < ParticipantState
     self.state["game_completed_dayid"].push get_day.id.to_s
     self.state["game_completed_time"].push Time.now
     self.state["game_balance"] += winner ? 10 : -5
+
+    save!
 
     # We go into gather data mode
     game_gather_data!

@@ -62,9 +62,6 @@ class Admin::SimulatorController < AdminController
         scheduled_at: m.scheduled_at,
         delivered_at: Time.now
       )
-      
-      # now we reschedule next message for participant
-      current_survey.schedule_participant! current_participant
     else
       # There was no existing scheduled message
       #
@@ -96,6 +93,7 @@ class Admin::SimulatorController < AdminController
     raise NotAllowed unless current_survey.development_mode
     Delayed::Job.delete_all
     current_participant.schedule_days.each do |d|
+      d.reset!
       d.scheduled_messages.each do |m|
         m.delete
       end

@@ -98,6 +98,31 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     assert_match(/Do you have time to play a game/, q.message_text)
   end
 
+  test "no game for me" do
+    @state.state['game_time'] = @day.starts_at - 1.hour
+    @state.take_action!
+    @state.incoming_message "no"
+    assert(@state.state['game_time'] > Time.now + 20.minutes)
+    assert(@state.none?)
+  end
+
+  test "yes I will play a game" do
+    @state.state['game_time'] = @day.starts_at - 1.hour
+    @state.take_action!
+    q = @state.incoming_message "yes"
+    assert_match(/We generated a number/, q.message_text)
+    assert(@state.waiting_number?)
+  end
+
+  test "guessed high or low" do
+    @state.state['game_time'] = @day.starts_at - 1.hour
+    @state.take_action!
+    @state.incoming_message "yes"
+    q = @state.incoming_message "high"
+    assert_match(/You guessed/, q.message_text)
+    assert(@state.waiting_for_survey?)
+  end
+
   test "at beginning of game sampling" do
     @state.ask_to_play
     @state.play
