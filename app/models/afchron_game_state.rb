@@ -337,10 +337,10 @@ class AfchronGameState < ParticipantState
       Time.now > today_game_time and
       not self.state["game_completed_dayid"].include? day.id.to_s then
       # TODO: This should trigger on a postback from Qualtrics,
-      # when we know they finished a default survey
-      # ... otherwise, this gets called too often after a timeout
-      # However, if we trigger from Qualtrics, then we need another
-      # timeout to catch the ppt opening the link but not finishing
+      # when we know they finished a default survey...
+      # However, if we do trigger from Qualtrics, then we need another
+      # timeout to catch the ppt opening the link but not finishing. Neat.
+      Rails.logger.info("Starting game for day #{day.id}, participant state completed games is #{self.state["game_completed_dayid"].inspect}")
       game_could_start!
     else
       link_survey!
