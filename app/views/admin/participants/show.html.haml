@@ -1,8 +1,8 @@
 %h2 Participant #{number_with_external_key(current_participant)}
-%h3 Schedule days
+%h3 Schedule days (in #{current_participant.time_zone})
 %ol.schedule
   - current_participant.schedule_days.each do |schedule_day|
-    %li #{schedule_day.participant_local_date}: #{schedule_day.time_ranges_string}
+    %li #{schedule_day.participant_local_date}: #{schedule_day.time_ranges_string_local current_participant.time_zone}
 
 %h3 Text messages
 %table.messages

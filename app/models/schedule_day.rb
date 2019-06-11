@@ -42,6 +42,10 @@ class ScheduleDay < ApplicationRecord
     self.time_ranges.map {|tr| tr.to_s}.join(", ")
   end
 
+  def time_ranges_string_local timezone
+    self.time_ranges.map {|tr| tr.to_s_local timezone}.join(", ")
+  end
+
   def time_ranges_string=(str)
     if str == ""
       self.time_ranges = []
