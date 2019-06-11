@@ -325,6 +325,11 @@ class AfchronGameState < ParticipantState
       return false
     end
 
+    if day.scheduled_messages.pending.count > 0 then 
+      Rails.logger.debug("Not scheduling an action, already pending messages")
+      return false
+    end
+
     today_game_time = self.time_for_game
 
     if game_surveying? then

@@ -10,6 +10,9 @@ class ScheduledMessage < ApplicationRecord
   scope :completed, -> {
     where(aasm_state: ['delivered', 'aged_out', 'participant_inactive'])}
 
+  scope :pending, -> {
+    where(aasm_state: ['scheduled'])}
+
   include AASM
   aasm do
     state :scheduled, initial: true

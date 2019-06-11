@@ -30,6 +30,18 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     assert(surveys_sent.last > @day.starts_at + 2.hour + 30.minutes)
   end
 
+  test "only schedules once" do
+    assert_equal(0, Delayed::Job.count)
+    @state.state['game_time'] = Time.now + 24.hours
+    @state.set_surveys_for_day @day, [
+      @day.starts_at + 1.hour,
+      @day.starts_at + 2.hour,
+    ]
+    @state.take_action!
+    @state.take_action!
+    assert_equal(1, Delayed::Job.count)
+  end
+
   test "with game already done" do
     @state.state['game_time'] = @day.starts_at + 1.hour
     @state.state["game_completed_results"].push true
@@ -179,6 +191,7 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     assert_equal(1, surveys_sent.count)
     assert_match(/Please take this survey now/, q.message_text)
   end
+
 
 end
 
