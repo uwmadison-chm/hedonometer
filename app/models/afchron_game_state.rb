@@ -237,8 +237,8 @@ class AfchronGameState < ParticipantState
   end
 
   def game_send_result! message
-    if message =~ /(^h$)|high|(^l$)low/i then
-      guessed_high = message =~ /(^h$)high/i
+    if message =~ /(^h$)|high|(^l$)|low/i then
+      guessed_high = message =~ /(^h$)|high/i
     else
       return do_message!("You need to pick 'high' or 'low'", Time.now)
     end

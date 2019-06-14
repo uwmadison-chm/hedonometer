@@ -126,13 +126,31 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     assert(@state.waiting_number?)
   end
 
-  test "guessed high or low" do
+  test "guessed high" do
     @state.state['game_time'] = @day.starts_at - 1.hour
     @state.take_action!
     @state.incoming_message "yes"
     q = @state.incoming_message "high"
     assert_match(/You guessed/, q.message_text)
     assert(@state.game_surveying?)
+  end
+
+  test "guessed low" do
+    @state.state['game_time'] = @day.starts_at - 1.hour
+    @state.take_action!
+    @state.incoming_message "yes"
+    q = @state.incoming_message "low"
+    assert_match(/You guessed/, q.message_text)
+    assert(@state.game_surveying?)
+  end
+
+  test "guessed other" do
+    @state.state['game_time'] = @day.starts_at - 1.hour
+    @state.take_action!
+    @state.incoming_message "yes"
+    q = @state.incoming_message "other"
+    assert_match(/You need to pick 'high' or 'low'/, q.message_text)
+    assert(@state.waiting_number?)
   end
 
   test "at beginning of game sampling" do
