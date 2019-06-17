@@ -45,8 +45,8 @@ game:
   time_zone: Central Time (US & Canada)
   welcome_message: HOORAY!! Your login code is {{login_code}}.
   configuration: 
-    url: 'http://qualtrics.com/long?PID={{PID}}'
-    url_game_survey: 'http://qualtrics.com/short?PID={{PID}}'
+    url: 'http://qualtrics.com/long?PID={{PID}}&SMID={{SMID}}'
+    url_game_survey: 'http://qualtrics.com/short?PID={{PID}}&SMID={{SMID}}'
     samples_per_day: 8
     mean_minutes_between_samples: 60
     sample_minutes_plusminus: 15
@@ -60,4 +60,4 @@ link:
   twilio_auth_token: a7721cda6c3864583d1efe425a205fcc69aed115
   time_zone: Central Time (US & Canada)
   welcome_message: Greetings. Your login code is {{login_code}}.
-  configuration: { url: 'http://qualtrics.com/test?PID={{PID}}' }
+  configuration: { url: 'http://qualtrics.com/test?PID={{PID}}&SMID={{SMID}}' }

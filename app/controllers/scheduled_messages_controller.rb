@@ -24,5 +24,8 @@ class ScheduledMessagesController < SurveyedController
       return false
     end
   end
+
+  def complete
+  end
 end
 

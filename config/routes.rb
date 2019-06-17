@@ -20,7 +20,9 @@ Rails.application.routes.draw do
     resources :participants, only: [:create]
   end
 
-  # No auth path, so links in text messages can be clicked easily
+  # No auth path for scheduled message survey redirects,
+  # so links in text messages can be clicked easily
+  get 'r/complete', to: 'scheduled_messages#complete'
   get 'r(/:id)', to: 'scheduled_messages#show', as: 'redirect'
 
   namespace :admin do

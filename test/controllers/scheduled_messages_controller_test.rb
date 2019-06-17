@@ -10,13 +10,20 @@ class ScheduledMessagesControllerTest < ActionController::TestCase
     refute assigns(:expired_string)
   end
 
-  test "current message with overridden destination url should redirect to that" do
+  test "message url should replace PID" do
     m = scheduled_messages(:message_2)
     m.scheduled_at = Time.now - 10.minutes
-    m.destination_url = "http://horse.horse/"
     m.save!
     post :show, params: {id: m.id}
-    assert_redirected_to 'http://qualtrics.com/test?PID=df-5567'
+    assert_redirected_to %r(PID=df-5567)
+  end
+
+  test "message url should replace SMID" do
+    m = scheduled_messages(:message_2)
+    m.scheduled_at = Time.now - 10.minutes
+    m.save!
+    post :show, params: {id: m.id}
+    assert_redirected_to %r(SMID=#{m.id})
   end
 
   test "older than 30 minutes message should show expired message" do
@@ -32,5 +39,11 @@ class ScheduledMessagesControllerTest < ActionController::TestCase
     post :show, params: {id: 99999}
     assert_response :not_found
     assert_select 'h3', /expired/
+  end
+
+  test "generic completion page" do
+    get :complete
+    assert_response :success
+    assert_select 'h3', /complete/
   end
 end

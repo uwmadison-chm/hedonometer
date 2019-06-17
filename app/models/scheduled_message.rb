@@ -50,7 +50,9 @@ class ScheduledMessage < ApplicationRecord
       url = survey.configuration['url']
     end
     if url then
-      url.sub("{{PID}}", participant.external_key)
+      url.
+        sub("{{PID}}", participant.external_key).
+        sub("{{SMID}}", id.to_s)
     end
   end
 
