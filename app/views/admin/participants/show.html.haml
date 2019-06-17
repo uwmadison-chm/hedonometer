@@ -1,4 +1,6 @@
-%h2 Participant #{number_with_external_key(current_participant)}
+- @page_title = "Participant #{number_with_external_key(current_participant)}"
+
+%h2 #{@page_title}
 %h3 Schedule days (in #{current_participant.time_zone})
 %ol.schedule
   - current_participant.schedule_days.each do |schedule_day|

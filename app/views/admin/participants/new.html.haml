@@ -1,4 +1,5 @@
-%h2 Adding a participant to #{current_survey.name}
+- @page_title = "Adding a participant to #{current_survey.name}"
+%h2 #{@page_title}
 
 = form_for Participant.new, url: admin_survey_participants_path(current_survey), builder: TwoColumnFormBuilder  do |f|
   = f.text_field :phone_number, autofocus: true, :placeholder => "608-555-1212"
