@@ -24,9 +24,13 @@
     .line
       .col1
       .col2.instructions
-        Replaces {{PID}} with participant ID for passing into external systems
+        Replaces {{PID}} with participant ID and {{SMID}} with scheduled message id for passing into external systems
   - if survey.respond_to? :url_game_survey
     = f.text_field :url_game_survey, label: 'Game survey URL', size: 55, autofocus: true
+    .line
+      .col1
+      .col2.instructions
+        Also replaces {{PID}} with participant ID and {{SMID}} with scheduled message id for passing into external systems
   - if survey.respond_to? :survey_questions
     = f.fields_for :survey_questions, survey.survey_questions do |question_form|
       = question_form.text_field :question_text, size: 80, maxlength: 140
