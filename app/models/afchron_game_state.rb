@@ -38,13 +38,11 @@ class AfchronGameState < ParticipantState
   def set_defaults!
     self.state["game_time"] = nil
     self.state["result_pool"] = generate_result_pool
-    self.state["results"] = []
     self.state["game_balance"] = 0
     self.state["game_completed_results"] = [] # List of results
     self.state["game_completed_dayid"] = [] # List of day ids
     self.state["game_completed_time"] = [] # List of completed times
     self.state["surveys_for_day"] = {} # Hash of surveys by day, a list of times
-    self.state["short_surveys_for_day"] = {} # Hash of short surveys by day, a list of times
   end
 
   def generate_result_pool

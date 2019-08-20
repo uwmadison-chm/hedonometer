@@ -1,9 +1,10 @@
-- @page_title = "Edit survey #{@survey.name}"
 - if @survey
+  - @page_title = "Edit survey #{@survey.name}"
   %h2 
     Edit survey: 
     %a{href: admin_survey_path(@survey)}
       #{@survey.name}
   = render 'form', survey: @survey
 - else
+  - @page_title = "Edit survey not found"
   %p Survey not found
