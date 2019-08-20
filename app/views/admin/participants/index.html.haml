@@ -39,8 +39,12 @@
         %td= participant.active?
         %td= participant.login_code
       %td= participant.external_key
-      %td= participant.schedule_days.first.participant_local_date
-      %td= participant.schedule_days.last.participant_local_date
+      - if participant.schedule_days.count > 0
+        %td= participant.schedule_days.first.participant_local_date
+        %td= participant.schedule_days.last.participant_local_date
+      - else
+        %td None
+        %td None
       %td= participant.schedule_days.finished.count
       - if current_survey.type == "AfchronGameSurvey"
         %td= participant.state['game_completed_results'].count
