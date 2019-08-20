@@ -18,9 +18,16 @@
 %table.listing
   %tr
     %th Phone number
-    %th Active
-    %th Login code
+    - if current_survey.type != "AfchronGameSurvey"
+      %th Active
+      %th Login code
     %th Participant key
+    %th Start date
+    %th End date
+    %th Days complete
+    - if current_survey.type == "AfchronGameSurvey"
+      %th Games complete
+      %th Balance
     %th
     %th
     %th
@@ -28,18 +35,25 @@
   - current_survey.participants.each do |participant|
     %tr
       %td= participant.phone_number.humanize
-      %td= participant.active?
-      %td= participant.login_code
+      - if current_survey.type != "AfchronGameSurvey"
+        %td= participant.active?
+        %td= participant.login_code
       %td= participant.external_key
+      %td= participant.schedule_days.first.participant_local_date
+      %td= participant.schedule_days.last.participant_local_date
+      %td= participant.schedule_days.finished.count
+      - if current_survey.type == "AfchronGameSurvey"
+        %td= participant.state['game_completed_results'].count
+        %td= participant.state['game_balance']
       %td
         %a.btn.btn-warning{href: edit_admin_survey_participant_path(current_survey, participant)}
           Edit
       %td
         %a.btn.btn-primary{href: admin_survey_participant_path(current_survey, participant)}
-          View messages
+          View
       %td
         %a.btn.btn-dark{href: admin_survey_participant_simulate_path(current_survey, participant)}
           Simulator
       %td
         %a.btn.btn-secondary{href: admin_survey_participant_path(current_survey, participant, format: :csv)}
-          Download data
+          Download
