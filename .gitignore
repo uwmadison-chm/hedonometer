@@ -24,3 +24,5 @@ pickle-email-*.html
 .DS_Store
 .byebug_history
 /config/deploy
+node_modules
+yarn.lock
