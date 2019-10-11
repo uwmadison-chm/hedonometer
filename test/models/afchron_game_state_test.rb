@@ -15,6 +15,7 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
     assert_equal(1, @state.surveys_for_day(@day).count)
+    assert(@state.surveys_for_day(@day).first <= Time.now + 15.minutes)
   end
 
   test "with existing surveys splits time" do
