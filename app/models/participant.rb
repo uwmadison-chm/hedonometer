@@ -132,6 +132,12 @@ class Participant < ApplicationRecord
   end
 
   def build_schedule_days(start, time_after_midnight)
+    if start.blank? then
+      raise ArgumentError, "No start time for scheduling"
+    end
+    if time_after_midnight.blank? then
+      raise ArgumentError, "No time after midnight for scheduling"
+    end
     Time.use_zone(self.time_zone) do
       start_date = Time.new(start.year, start.month, start.day, 0, 0, 0, Time.zone)
 
