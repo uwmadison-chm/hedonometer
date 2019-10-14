@@ -116,22 +116,6 @@ class Participant < ApplicationRecord
     self.schedule_days.empty?
   end
 
-  def build_schedule_days(start_date, time_after_midnight)
-    offset = Time.use_zone(self.time_zone) do
-      Time.zone.utc_offset / 1.hour
-    end
-    utc_start = start_date - offset.hours
-    self.survey.sampled_days.times do |t|
-      sample_date = utc_start + t.days
-      first = sample_date + time_after_midnight
-      last = first + survey.day_length
-      self.schedule_days.build(
-        participant_local_date: sample_date,
-        time_ranges: [TimeRange.new(first, last)]
-      )
-    end
-  end
-
   def has_delivered_a_question?
     sd = self.schedule_days.first
     sd and sd.scheduled_messages.delivered.first
@@ -139,7 +123,7 @@ class Participant < ApplicationRecord
 
   def schedule_start_date=(d)
     Time.use_zone(self.time_zone) do
-      @schedule_start_date = Date.parse(d.to_s) rescue nil
+      @schedule_start_date = Time.parse(d.to_s) rescue nil
     end
   end
 
@@ -147,7 +131,25 @@ class Participant < ApplicationRecord
     @schedule_time_after_midnight = sec.to_i.seconds
   end
 
+  def build_schedule_days(start, time_after_midnight)
+    Time.use_zone(self.time_zone) do
+      start_date = Time.new(start.year, start.month, start.day, 0, 0, 0, Time.zone)
+
+      self.survey.sampled_days.times do |t|
+        sample_date = start_date + t.days
+        first = sample_date + time_after_midnight
+        last = first + survey.day_length
+        self.schedule_days.build(
+          participant_local_date: sample_date,
+          time_ranges: [TimeRange.new(first, last)]
+        )
+      end
+    end
+  end
+
   def rebuild_schedule_days!
+    # NOTE: Only call this if you are sure schedule_start_date and 
+    # schedule_time_after_midnight are set
     self.schedule_days.destroy_all
     self.build_schedule_days(self.schedule_start_date.to_datetime, self.schedule_time_after_midnight)
     self.schedule_days.each do |sd|

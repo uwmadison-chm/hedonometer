@@ -53,13 +53,13 @@ class ParticipantTest < ActiveSupport::TestCase
   test "schedule days TimeRanges depend on ppt time zones" do
     s = surveys(:test)
     p1 = s.participants.create(
-      phone_number: '608-555-9999', schedule_start_date: Date.today,
-      schedule_time_after_midnight: 9.hours.to_i, time_zone: "America/Chicago")
-    p1.rebuild_schedule_days!
+      phone_number: '608-555-9999', schedule_start_date: Time.now,
+      schedule_time_after_midnight: 4.hours.to_i, time_zone: "Eastern Time (US & Canada)")
+    p1.save!
     p2 = s.participants.create(
-      phone_number: '608-555-9998', schedule_start_date: Date.today,
-      schedule_time_after_midnight: 9.hours.to_i, time_zone: "Pacific/Midway")
-    p2.rebuild_schedule_days!
+      phone_number: '608-555-9998', schedule_start_date: Time.now,
+      schedule_time_after_midnight: 4.hours.to_i, time_zone: "Pacific Time (US & Canada)")
+    p2.save!
     p1_tr = p1.schedule_days.first.time_ranges.first
     p2_tr = p2.schedule_days.first.time_ranges.first
 
@@ -90,19 +90,36 @@ class ParticipantTest < ActiveSupport::TestCase
 
   test "building schedule works" do
     p = participants(:ppt2)
-    p.build_schedule_days(Date.today, 9.hours)
+    p.build_schedule_days(Date.today, 10.hours)
     assert_equal p.survey.sampled_days, p.schedule_days.length
   end
 
-  test "creating schedule days" do
+
+  def create_schedule_days(date, time_after_midnight)
     s = surveys(:test)
     p = s.participants.create(
-      phone_number: '608-555-9999', schedule_start_date: Date.today,
-      schedule_time_after_midnight: 9.hours.to_i)
-    p.rebuild_schedule_days!
+      phone_number: '608-555-9999',
+      schedule_start_date: date,
+      schedule_time_after_midnight: time_after_midnight,
+      time_zone: "America/Chicago"
+    )
+    p.save!
     assert_equal s.sampled_days, p.schedule_days.length
-    assert_equal Date.today, p.schedule_days.first.starts_at.to_date
+    assert_equal 0.seconds, (date + time_after_midnight - p.schedule_days.first.starts_at.to_time)
   end
+
+  test "creating schedule days not in DST" do
+    Time.use_zone "America/Chicago" do
+      create_schedule_days(Time.new(2019, 12, 21), 10.hours.to_i)
+    end
+  end
+
+  test "creating schedule days in DST" do
+    Time.use_zone "America/Chicago" do
+      create_schedule_days(Time.new(2019, 10, 10), 11.hours.to_i)
+    end
+  end
+
 
   test "can_schedule_days? method" do
     p = participants(:ppt1)
