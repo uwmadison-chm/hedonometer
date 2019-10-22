@@ -145,10 +145,11 @@ class AfchronGameState < ParticipantState
     day_start = day.starts_at
     day_end = day.ends_at
     samples_per_day = participant.survey.configuration['samples_per_day']
+    plusminus = participant.survey.configuration['sample_minutes_plusminus']
     sent_surveys = surveys_for_day day
     if sent_surveys.count == 0 then
-      # Start of day! Pick a time within the first fifteen minutes.
-      point = day_start + 15.minutes
+      # Start of day! Pick a time within the first +/- minutes.
+      point = day_start + plusminus
       time = rand(day_start..point)
     else
       # Are we done for today?
@@ -169,7 +170,11 @@ class AfchronGameState < ParticipantState
       end
       remaining_surveys = samples_per_day - sent_surveys.count
       mean_length = (day_end - last_time) / remaining_surveys
-      point = last_time + mean_length 
+      if sent_surveys.count + 1 == samples_per_day
+        point = day_end - plusminus
+      else
+        point = last_time + mean_length 
+      end
       range = range_from_timepoint point
       time = rand range
     end
