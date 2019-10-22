@@ -118,7 +118,7 @@ class Survey < ApplicationRecord
   end
 
   def day_length_minutes
-    samples_per_day * mean_minutes_between_samples + sample_minutes_plusminus
+    samples_per_day * mean_minutes_between_samples
   end
 
   def day_length

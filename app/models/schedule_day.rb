@@ -109,7 +109,12 @@ class ScheduleDay < ApplicationRecord
   end
 
   def maximum_time_to_next_question
-    maximum_time_to_question(completed_question_count + 1)
+    if completed_question_count + 1 == survey.samples_per_day then 
+      # The last possible time is exactly the end of their time ranges
+      time_ranges.last.end - time_ranges.first.first
+    else
+      maximum_time_to_question(completed_question_count + 1)
+    end
   end
 
   def next_question_time_range
