@@ -83,6 +83,29 @@ class AfchronGameStateTest < ActiveSupport::TestCase
     assert(surveys_sent_tomorrow.last > @day2.starts_at)
   end
 
+  test "one survey left with game already done does not schedule past 12 hours" do
+    @state.state['game_time'] = @day.starts_at + 1.hour
+    @state.state["game_completed_results"].push true
+    @state.state["game_completed_dayid"].push @day.id
+    @state.state["game_completed_time"].push (@day.starts_at + 2.hours)
+    @state.set_surveys_for_day @day, [
+      @day.starts_at + 1.hour,
+      @day.starts_at + 3.hours,
+      @day.starts_at + 5.hours,
+      @day.starts_at + 7.hours,
+      @day.starts_at + 9.hours,
+      @day.starts_at + 10.hours,
+      @day.starts_at + 11.hours,
+    ]
+    q = @state.take_action!
+    assert_match(/Please take this survey now/, q.message_text)
+    surveys_sent = @state.surveys_for_day @day
+    assert_equal(8, surveys_sent.count)
+    assert(surveys_sent.last <= @day2.ends_at)
+    surveys_sent_tomorrow = @state.surveys_for_day @day2
+    assert_equal(0, surveys_sent_tomorrow.count)
+  end
+
   test "full day with skipped game" do
     @state.state['game_time'] = @day.starts_at + 1.hour
     @state.set_surveys_for_day @day, [

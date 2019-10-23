@@ -160,22 +160,24 @@ class AfchronGameState < ParticipantState
         Rails.logger.info "Past day_end #{day_end} on day #{day.id}"
         return false
       end
-      # Otherwise, subdivide remaining time
-      last_time = sent_surveys.last
-      sent_game_surveys = game_surveys_for_day day
-      if sent_game_surveys.count > 0 then
-        if sent_game_surveys.last > last_time then
-          last_time = sent_game_surveys.last
-        end
-      end
-      remaining_surveys = samples_per_day - sent_surveys.count
-      mean_length = (day_end - last_time) / remaining_surveys
+
       if sent_surveys.count + 1 == samples_per_day
-        point = day_end - plusminus
+        # Last one goes near the end somewhere
+        range = (day_end - plusminus.minutes)..day_end
       else
+        # Otherwise, subdivide remaining time
+        last_time = sent_surveys.last
+        sent_game_surveys = game_surveys_for_day day
+        if sent_game_surveys.count > 0 then
+          if sent_game_surveys.last > last_time then
+            last_time = sent_game_surveys.last
+          end
+        end
+        remaining_surveys = samples_per_day - sent_surveys.count
+        mean_length = (day_end - last_time) / remaining_surveys
         point = last_time + mean_length 
+        range = range_from_timepoint point
       end
-      range = range_from_timepoint point
       time = rand range
     end
 
