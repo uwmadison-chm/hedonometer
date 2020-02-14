@@ -28,11 +28,24 @@ class ParticipantTexter < ActionTexter::Base
       }
     end
 
+    def url_replacements(participant, scheduled_message)
+      {
+        '{{PID}}' => participant.external_key,
+        '{{SMID}}' => scheduled_message.id,
+      }
+    end
+
     def message_with_replacements(message, participant, scheduled_message=nil)
       message_for_participant(
         do_replacements(message, build_replacements(participant, scheduled_message)),
         participant
       )
+    end
+
+    def fill_in_destination_url(scheduled_message, participant)
+      filled_url = do_replacements(scheduled_message.destination_url, url_replacements(participant, scheduled_message))
+      scheduled_message.destination_url = filled_url
+      scheduled_message.save!
     end
 
     def welcome_message(participant)
@@ -80,6 +93,9 @@ class ParticipantTexter < ActionTexter::Base
         else
           scheduled_message.message_text
         end
+      if scheduled_message.destination_url then
+        fill_in_destination_url(scheduled_message, participant)
+      end
       message = message_with_replacements(text, participant, scheduled_message)
       scheduled_message.deliver_and_save_if_possible!(message)
       if scheduled_message.completed?

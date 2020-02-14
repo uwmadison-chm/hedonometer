@@ -47,4 +47,19 @@ class ParticipantTexterTest < ActiveSupport::TestCase
     ParticipantTexter.deliver_scheduled_message!(scheduled.id)
     assert_equal ppt.external_key, ppt.text_messages.first.message
   end
+
+  test "message url should replace PID and SMID" do
+    twilio_mock(TwilioResponses.create_sms)
+    sday = schedule_days(:ppt4_test_day_1)
+    scheduled = ScheduledMessage.create!(
+      :schedule_day => sday,
+      :message_text => "{{external_key}}",
+      :destination_url => "http://qualtrics.com/test?PID={{PID}}&SMID={{SMID}}",
+      :scheduled_at => 1.minute.ago
+    )
+    ParticipantTexter.deliver_scheduled_message!(scheduled.id)
+    r = ScheduledMessage.find(scheduled.id)
+    assert_includes r.destination_url, "PID=df-5567"
+    assert_includes r.destination_url, "SMID=#{r.id}"
+  end
 end

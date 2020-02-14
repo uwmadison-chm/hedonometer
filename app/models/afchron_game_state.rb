@@ -199,7 +199,10 @@ class AfchronGameState < ParticipantState
       day.finish!
       return link_survey!
     end
-    return do_message! "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}", time
+    message = do_message! "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}", time
+    message.destination_url = participant.survey.url
+    message.save!
+    return message
   end
 
   def game_could_start!
@@ -282,7 +285,7 @@ class AfchronGameState < ParticipantState
     message =
       "The number was #{number}. " +
       (winner ? "You guessed right! $10 has been added to your account." : "You guessed wrong! $5 has been removed from your account.")
-    return do_message!(message, Time.now)
+    return do_message!(message, Time.now, self.participant.survey.url_game_survey, Time.now + 15.minutes)
   end
 
   def game_gather_data!

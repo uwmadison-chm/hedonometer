@@ -153,15 +153,22 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
   end
 
   test "survey url changes to short during game survey" do
+    twilio_mock(TwilioResponses.create_sms)
     @survey.prepare_game_state @ppt
     @ppt.state["game_time"] = Time.now - 1.hours
     @ppt.state["result_pool"] = [true]
     @ppt.save!
+
     q = @survey.schedule_participant! @ppt
-    assert_match(/long/, q.url)
+    ParticipantTexter.deliver_scheduled_message!(q.id)
+    r = ScheduledMessage.find(q.id)
+    assert_match(/long/, r.destination_url)
+
     @ppt.participant_state.incoming_message "yes"
     q = @ppt.participant_state.incoming_message "high"
-    assert_match(/short/, q.url)
+    ParticipantTexter.deliver_scheduled_message!(q.id)
+    r = ScheduledMessage.find(q.id)
+    assert_match(/short/, r.destination_url)
   end
 
   test "creates one delayed job when scheduling questions" do

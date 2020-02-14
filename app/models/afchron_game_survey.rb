@@ -19,15 +19,6 @@ class AfchronGameSurvey < Survey
     configuration['url_game_survey'] = x
   end
 
-  def url_for_participant participant
-    # Different survey urls depending on participant state
-    if participant.participant_state.game_surveying? then
-      url_game_survey
-    else
-      url
-    end
-  end
-
   def create_participant_state participant
     # Override the base SimpleParticipantState with a game state
     prepare_game_state participant

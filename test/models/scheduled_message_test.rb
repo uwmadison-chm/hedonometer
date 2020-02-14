@@ -24,12 +24,6 @@ class ScheduledMessageTest < ActiveSupport::TestCase
     assert_not_nil sm.errors[:base], 'no validation error for missing message/question'
   end
 
-  test "does url replacement" do
-    message = scheduled_messages(:message_1)
-    ppt = participants(:ppt4)
-    assert_includes message.url, ppt.external_key
-  end
-
   test "undelivered when delivered_at is nil" do
     sm = ScheduledMessage.new
     assert sm.undelivered?

@@ -11,13 +11,19 @@ class ScheduledMessagesController < SurveyedController
       @current_survey = message.schedule_day.participant.survey
 
       # How old are we? If too old, show expired message
-      if (Time.now - message.scheduled_at) > 30.minutes then
-        @expired_string = "This link expired #{helpers.time_ago_in_words(message.scheduled_at + 30.minutes)} ago."
+      # Default to scheduled time + 30 minutes if no explicit time
+      expires_at = message.expires_at || (message.scheduled_at + 30.minutes)
+      if Time.now > expires_at then
+        @expired_string = "This link expired #{helpers.time_ago_in_words(expires_at)} ago."
         render "expired"
       else
         @expired_string = nil
-        # TODO: ask survey for url for this participant if not set?
-        redirect_to message.url
+        if not message.destination_url
+          render "expired", status: :not_found
+          return false
+        else
+          redirect_to message.destination_url
+        end
       end
     else
       render "expired", status: :not_found
