@@ -4,11 +4,11 @@ class LinkSurvey < Survey
   end
 
   def url
-    configuration['url']
+    self.configuration['url']
   end
 
   def url= x
-    configuration['url'] = x
+    self.configuration['url'] = x
   end
 
   def schedule_participant! participant

@@ -51,4 +51,9 @@ Rails.application.configure do
 
   # Sometimes you just need to log everything to stdout during test runs
   # config.logger = Logger.new(STDOUT)
+  
+  # Because we want to mock twilio and test that we actually hit it
+  # we say that we are texting with Twilio even though no tests
+  # should actually hit the Twilio API
+  config.texting = :twilio
 end

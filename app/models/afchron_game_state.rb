@@ -99,7 +99,11 @@ class AfchronGameState < ParticipantState
     time = get_game_time
     if time.nil? then
       # pick a time in first 70% of time range 
-      time = day.starts_at + (day.day_length * 0.7 * rand)
+      section = day.day_length * 0.7
+      jitter = rand
+      random_point = section * jitter
+      time = day.starts_at + (section * random_point)
+      logger.debug("Game time chosen: #{time} using #{day.starts_at} + (#{section} * #{jitter})")
       self.state["game_time"] = time
     end
     time

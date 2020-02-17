@@ -35,7 +35,19 @@ Back in the hedonometer, create a survey. Paste in your Account SID and Auth Tok
 Further documentation about different survey types is in [doc/](doc/).
 
 
+## Development
+
 ### Ubuntu packages required for development
 
     sudo apt-get install libpq-dev libmysqlclient-dev nodejs
 
+### Delayed jobs in dev
+
+By default, texting is log-only and doesn't hit Twilio in dev.
+
+Start a daemon:
+
+    bin/delayed_job start
+
+Start a server. Now you can use the website, add surveys and participants, and 
+the simulator and message lists should show what "would have" happened.

@@ -10,11 +10,11 @@ class Admin::SurveysController < AdminController
     params[:kind] ||= "SimpleSurvey"
     if params[:kind] == "AfchronGameSurvey" then
       @survey = AfchronGameSurvey.new
-      @survey.configuration['url'] = "http://qualtrics.com/example?PID={{PID}}"
-      @survey.configuration['url_game_survey'] = "http://qualtrics.com/rapid?PID={{PID}}"
+      @survey.url = "http://qualtrics.com/example?PID={{PID}}"
+      @survey.url_game_survey = "http://qualtrics.com/rapid?PID={{PID}}"
     elsif params[:kind] == "LinkSurvey" then
       @survey = LinkSurvey.new
-      @survey.configuration['url'] = "http://qualtrics.com/example?PID={{PID}}"
+      @survey.url = "http://qualtrics.com/example?PID={{PID}}"
     else
       @survey = SimpleSurvey.new
       @survey.survey_questions.build
