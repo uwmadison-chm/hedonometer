@@ -20,15 +20,40 @@ This was written and tested in Ruby 2.2.0, and then upgraded to 2.6.0.
 
 Installing this is the same as installing any Rails app. Clone, `bundle install`, `rake db:migrate`.
 
+## Database
+
+Recently switched to postgres in devel to avoid a weird json blob problem in sqlite.
+
+There's likely a cleaner way, but per environment, do something like:
+
+    sudo apt install postgres
+    sudo -u postgres psql
+    create database hedonometer_development;
+    create user myuser with encrypted password '123';
+    grant all privileges on database hedonometer_development to myuser;
+
+Then copy `config/database.yml.example` to `config/database.yml` and edit it 
+to match.
+
+Now you should be able to migrate the db:
+
+    bin/rails db:migrate
+
+## Configuring admins
+
 There isn't yet a rake task to add your first admin, so pull up `rails console` and:
 
     Admin.create(email: "your_email@example.com", password: "some-password", can_change_admins: true)
 
 `rails server` and you're in. For this to accept incoming texts, you'll need a publicly accessible server.
 
+## Twilio config
+
 At the same time, head over to [Twilio](http://twilio.com) and get yourself an account. Either sign up for a trial number and register your mobile number with it, or buy some credits.
 
 On the numbers screen, note your Twilio Account SID and your Authorization Token.
+
+## Survey creation
 
 Back in the hedonometer, create a survey. Paste in your Account SID and Auth Token; you should get a little "Active" status light. The "Phone number" field should autocomplete with the number you've purchased.
 
