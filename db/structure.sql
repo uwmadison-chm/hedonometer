@@ -161,7 +161,8 @@ CREATE TABLE public.participants (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     time_zone character varying,
-    external_key character varying
+    external_key character varying,
+    original_number character varying
 );
 
 
@@ -692,6 +693,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190301153058'),
 ('20190410161651'),
 ('20190515141402'),
-('20200214194418');
+('20200214194418'),
+('20200218153737');
 
 

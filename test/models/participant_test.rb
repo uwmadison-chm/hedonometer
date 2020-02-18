@@ -189,6 +189,21 @@ class ParticipantTest < ActiveSupport::TestCase
     assert_equal 2, all_messages.length
   end
 
+  test "keeps old phone number after marked as loaner" do
+    ppt = participants(:ppt2)
+    phone_number = ppt.phone_number
+    ppt.loaner!
+    r = participants(:ppt2)
+    assert_equal phone_number.humanize, r.original_number.humanize
+    assert_equal "+15555553001", r.phone_number.to_s
+  end
+
+  test "can find text messages still after marked as loaner" do
+    participants(:ppt1).loaner!
+    all_messages = participants(:ppt1).text_messages
+    assert_equal 2, all_messages.length
+  end
+
   test "schedule days have correct length even if they go over midnight" do
     p = participants(:ppt2)
     p.schedule_start_date = Date.today

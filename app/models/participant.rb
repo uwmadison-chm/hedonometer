@@ -9,6 +9,8 @@ class Participant < ApplicationRecord
   validates :phone_number, presence: true, uniqueness: {scope: :survey_id}
   serialize :phone_number, PhoneNumber
 
+  serialize :original_number, PhoneNumber
+
   belongs_to :survey
   validates :survey, presence: true
 
@@ -64,6 +66,15 @@ class Participant < ApplicationRecord
 
   def save_state!
     participant_state.save!
+  end
+
+  def loaner!
+    logger.info("Marking #{self} as loaner phone")
+    self.original_number = self.phone_number
+    self.phone_number = "555555" + self.external_key
+    self.save!
+    TextMessage.where(to_number: self.original_number).update_all(to_number: self.phone_number)
+    TextMessage.where(from_number: self.original_number).update_all(from_number: self.phone_number)
   end
 
   def set_requests_new_schedule

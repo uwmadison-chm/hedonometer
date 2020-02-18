@@ -30,7 +30,7 @@
     - day.scheduled_messages.sort_by(&:scheduled_at).each do |message|
       %tr
         %td.nowrap= message.scheduled_at.in_time_zone(current_survey.time_zone).to_s(:us_time)
-        %td.nowrap= message.url
+        %td.nowrap= message.destination_url
         %td= message.message_text
 %hr
 

@@ -10,6 +10,7 @@ class Admin::ParticipantsController < AdminController
 
   def update
     return destroy if params[:delete]
+    return loaner if params[:loaner]
     if current_participant.update(update_params)
       flash[:save_message] = "Settings saved!"
     else
@@ -26,6 +27,16 @@ class Admin::ParticipantsController < AdminController
     end
     current_participant.delete
     redirect_to admin_survey_participants_path(current_survey)
+  end
+
+  def loaner
+    unless params[:confirm_loaner]
+      flash[:save_message] = "You need to confirm when returning loaner phone!"
+      return render :edit
+    end
+    current_participant.loaner!
+    redirect_to edit_admin_survey_participant_path(
+      current_survey, current_participant)
   end
 
   def show

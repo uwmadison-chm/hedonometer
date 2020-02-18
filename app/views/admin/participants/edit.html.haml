@@ -1,24 +1,47 @@
 - @page_title = "Editing participant #{number_with_external_key(current_participant)}"
 %h2
-  #{@page_title}
+  %a{href: admin_survey_participant_path(current_survey, current_participant)}= @page_title
   on survey
   %a{href: admin_survey_participants_path(current_survey)}
     #{current_survey.name}
 
 = form_for [:admin, current_survey, current_participant], builder: TwoColumnFormBuilder do |f|
+  - if current_participant.original_number != nil
+    .line
+      .col1 Original number
+      .col2
+        = current_participant.original_number.humanize
+        (This was likely a temporary loaner phone)
   = f.text_field :phone_number, autofocus: true, value: current_participant.phone_number.humanize
   = f.text_field :external_key, label: "Participant key"
   = allow_texting_check_box(f)
 
   = f.submit "Save settings"
+
   .line
-    %br
+    %hr
+
+  - if flash[:save_message]
+    .line
+      .col1 &nbsp;
+      .col2.alert.alert-primary= flash[:save_message]
+
+  .line
+    %hr
+
+  .line
+    .col1 &nbsp;
+    .col2
+      = submit_tag "Loaner phone returned", :name => :loaner
+      = check_box_tag :confirm_loaner
+      %label{:for => :confirm_loaner} Confirm loaner phone returned
+
+  .line
+    %hr
+
+  .line
     .col1 &nbsp;
     .col2
       = submit_tag "Delete this participant", :name => :delete
       = check_box_tag :confirm_delete
       %label{:for => :confirm_delete} Really delete this participant!
-  - if flash[:save_message]
-    .line
-      .col1 &nbsp;
-      .col2= flash[:save_message]
