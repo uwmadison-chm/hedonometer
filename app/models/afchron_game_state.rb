@@ -98,12 +98,13 @@ class AfchronGameState < ParticipantState
     # If not, decide when game prompt should start today
     time = get_game_time
     if time.nil? then
+      day_length = participant.survey.day_length
       # pick a time in first 70% of time range 
-      section = day.day_length * 0.7
+      section = day_length * 0.7
       jitter = rand
       random_point = section * jitter
-      time = day.starts_at + (section * random_point)
-      logger.debug("Game time chosen: #{time} using #{day.starts_at} + (#{section} * #{jitter})")
+      time = day.starts_at + random_point
+      logger.info("Game time chosen: #{time} using day length #{day_length} day starts at #{day.starts_at} + (#{section} * #{jitter} = #{random_point})")
       self.state["game_time"] = time
     end
     time
