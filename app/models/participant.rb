@@ -73,7 +73,6 @@ class Participant < ApplicationRecord
     self.original_number = self.phone_number
     self.phone_number = "555555" + self.external_key
     self.save!
-    # TODO: scope to experiment
     TextMessage.where(to_number: self.original_number, survey_id: self.survey.id).update_all(to_number: self.phone_number)
     TextMessage.where(from_number: self.original_number, survey_id: self.survey.id).update_all(from_number: self.phone_number)
   end
