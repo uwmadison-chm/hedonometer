@@ -95,30 +95,37 @@ class ParticipantTest < ActiveSupport::TestCase
   end
 
 
-  def create_schedule_days(date, time_after_midnight)
+  def create_schedule_days(tz, date, time_after_midnight)
     s = surveys(:test)
     p = s.participants.create(
       phone_number: '608-555-9999',
+      time_zone: tz,
       schedule_start_date: date,
       schedule_time_after_midnight: time_after_midnight,
-      time_zone: "America/Chicago"
     )
     p.save!
     assert_equal s.sampled_days, p.schedule_days.length
+    # Start time should be the same on subsequent days!
     assert_equal 0.seconds, (date + time_after_midnight - p.schedule_days.first.starts_at.to_time)
+    assert_equal p.schedule_days[0].starts_at.to_time.hour, p.schedule_days[1].starts_at.to_time.hour
   end
 
   test "creating schedule days not in DST" do
-    Time.use_zone "America/Chicago" do
-      create_schedule_days(Time.new(2019, 12, 21), 10.hours.to_i)
-    end
+    create_schedule_days("America/Chicago", Time.new(2019, 12, 21), 10.hours.to_i)
   end
 
   test "creating schedule days in DST" do
-    Time.use_zone "America/Chicago" do
-      create_schedule_days(Time.new(2019, 10, 10), 11.hours.to_i)
-    end
+    create_schedule_days("America/Chicago", Time.new(2019, 10, 10), 11.hours.to_i)
   end
+
+  test "creating schedule days in Eastern" do
+    create_schedule_days("US/Eastern", Time.new(2020, 3, 10), 8.hours.to_i)
+  end
+
+  test "creating schedule days in UTC" do
+    create_schedule_days("UTC", Time.new(2020, 3, 10), 8.hours.to_i)
+  end
+
 
 
   test "can_schedule_days? method" do
