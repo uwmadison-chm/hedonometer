@@ -19,12 +19,14 @@ class Admin::SimulatorController < AdminController
     to = TextMessage.where(to_number: current_participant.phone_number).map {|m|
       { to: true,
         at: m.delivered_at,
+        survey_id: current_survey.id,
         message: m.message
       }}
 
     from = TextMessage.where(from_number: current_participant.phone_number).map {|m|
       { to: false,
         at: m.delivered_at,
+        survey_id: current_survey.id,
         message: m.message
       }}
 
