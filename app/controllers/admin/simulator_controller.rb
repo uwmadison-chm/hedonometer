@@ -16,17 +16,15 @@ class Admin::SimulatorController < AdminController
     # Downside: TextMessage doesn't know about scheduled_message fields
     # NOTE: scheduled_at vs delivered_at of messages? Do we care?
 
-    to = TextMessage.where(to_number: current_participant.phone_number).map {|m|
+    to = TextMessage.where(to_number: current_participant.phone_number, survey_id: current_survey.id).map {|m|
       { to: true,
         at: m.delivered_at,
-        survey_id: current_survey.id,
         message: m.message
       }}
 
-    from = TextMessage.where(from_number: current_participant.phone_number).map {|m|
+    from = TextMessage.where(from_number: current_participant.phone_number, survey_id: current_survey.id).map {|m|
       { to: false,
         at: m.delivered_at,
-        survey_id: current_survey.id,
         message: m.message
       }}
 
