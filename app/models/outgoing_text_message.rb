@@ -20,6 +20,7 @@ class OutgoingTextMessage < TextMessage
     self.scheduled_at ||= t
     # We only actually send the message if config.texting is set to twilio
     if Rails.application.config.texting == :twilio then
+      logger.debug("config.texting is set to #{Rails.application.config.texting}, sending message '#{self.message}' from '#{self.from_number}' to '#{self.to_number}'")
       client = survey.twilio_client
       @twilio_message = client.account.sms.messages.create({
         to: self.to_number,
