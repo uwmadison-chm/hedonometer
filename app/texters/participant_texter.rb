@@ -2,7 +2,6 @@ class ParticipantTexter < ActionTexter::Base
   class << self
     include ApplicationHelper
     def message_for_participant(message, participant)
-      Rails.logger.info("Sending #{message} to #{participant.phone_number}")
       survey = participant.survey
       survey.outgoing_text_messages.build({
               to_number: participant.phone_number.to_e164,
