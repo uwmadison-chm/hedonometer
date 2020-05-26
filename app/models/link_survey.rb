@@ -15,6 +15,7 @@ class LinkSurvey < Survey
     participant.participant_state ||= SimpleParticipantState.new(:participant => participant)
     participant.requests_new_schedule = false
     day = self.advance_to_day_with_time_for_message! participant
+    return nil unless day
     message_text = "Please take this survey now (sent at {{sent_time}}): {{redirect_link}}"
     message = day.scheduled_messages.build(message_text: message_text)
     message.scheduled_at = day.random_time_for_next_question
