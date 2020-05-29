@@ -15,6 +15,10 @@ port        ENV.fetch("PORT") { 3000 }
 #
 environment ENV.fetch("RAILS_ENV") { "development" }
 
+if ENV.fetch("RAILS_ENV") == 'production' then
+  directory '/var/www/apps/h2/current'
+end
+
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 
