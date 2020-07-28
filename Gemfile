@@ -63,7 +63,7 @@ gem 'bootstrap', '~> 4.3.1'
 gem 'twilio-ruby', '~> 3.9.0'
 
 gem 'jquery-rails', '4.3.3'
-gem 'json', '~> 1.8.2'
+gem 'json', '~> 2.3.0'
 
 gem 'daemons', '~> 1.1.9'
 gem 'delayed_job', '~> 4.1.5'
