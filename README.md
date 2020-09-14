@@ -47,6 +47,18 @@ There isn't yet a rake task to add your first admin, so pull up `rails console` 
 
 `rails server` and you're in. For this to accept incoming texts, you'll need a publicly accessible server.
 
+### Adding multiple admins to a survey
+
+    a = Admin.find(admin_id)
+    a.surveys.append(Survey.find(survey_id))
+
+Not sure how to force the `can_modify_survey` for secondary admins:
+
+    a.survey_permissions.each do |perm|
+      perm.can_modify_survey = true
+      perm.save
+    end
+
 ## Twilio config
 
 At the same time, head over to [Twilio](http://twilio.com) and get yourself an account. Either sign up for a trial number and register your mobile number with it, or buy some credits.
