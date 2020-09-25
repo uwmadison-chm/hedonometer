@@ -55,6 +55,17 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert_equal("waiting_asked", db_ppt.aasm_state)
   end
 
+  test "first message of the day is within plus/minus * 2" do
+    @survey.prepare_game_state @ppt
+    @ppt.state["game_time"] = Time.now + 2.hours
+    @ppt.save!
+    assert_equal("none", @ppt.aasm_state)
+    q = @survey.schedule_participant! @ppt
+
+    duration = q.scheduled_at - Time.now
+    assert_operator duration, :<=, (@survey.sample_minutes_plusminus * 2).minutes
+  end
+
   test "when it is not yet time TO GAME, just sends survey" do
     @survey.prepare_game_state @ppt
     @ppt.state["game_time"] = Time.now + 1.hours

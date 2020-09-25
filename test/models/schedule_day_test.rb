@@ -96,8 +96,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
 
   test "minimum time to next question" do
     survey = @sd.participant.survey
-    min_time = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
-    assert_equal min_time, @sd.minimum_time_to_next_question
+    assert_equal 0, @sd.minimum_time_to_next_question
     @sd.scheduled_messages.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
@@ -109,7 +108,7 @@ class ScheduleDayTest < ActiveSupport::TestCase
 
   test "maximum time to next question" do
     survey = @sd.participant.survey
-    max_time = (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
+    max_time = (2 * survey.sample_minutes_plusminus).minutes
     assert_equal max_time, @sd.maximum_time_to_next_question
     @sd.scheduled_messages.create(
       survey_question: survey_questions(:test_what),

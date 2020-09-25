@@ -97,19 +97,25 @@ class ScheduleDay < ApplicationRecord
   end
 
   def minimum_time_to_question(question_number)
-    (((question_number) * survey.mean_minutes_between_samples) - survey.sample_minutes_plusminus).minutes
+    ((question_number * survey.mean_minutes_between_samples) - survey.sample_minutes_plusminus).minutes
   end
 
   def minimum_time_to_next_question
-    minimum_time_to_question(completed_question_count + 1)
+    if completed_question_count == 0 then
+      0
+    else
+      minimum_time_to_question(completed_question_count + 1)
+    end
   end
 
   def maximum_time_to_question(question_number)
-    (((question_number) * survey.mean_minutes_between_samples) + survey.sample_minutes_plusminus).minutes
+    ((question_number * survey.mean_minutes_between_samples) + survey.sample_minutes_plusminus).minutes
   end
 
   def maximum_time_to_next_question
-    if completed_question_count + 1 == survey.samples_per_day then 
+    if completed_question_count == 0 then
+      (survey.sample_minutes_plusminus * 2).minutes
+    elsif completed_question_count + 1 == survey.samples_per_day then 
       # The last possible time is exactly the end of their time ranges
       time_ranges.last.end - time_ranges.first.first
     else
@@ -122,7 +128,8 @@ class ScheduleDay < ApplicationRecord
   end
 
   def random_time_for_next_question
-    valid_time_after_day_start(rand(next_question_time_range))
+    seconds = rand(next_question_time_range)
+    valid_time_after_day_start(seconds)
   end
 
   def has_time_for_another_question?
