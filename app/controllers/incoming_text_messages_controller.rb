@@ -16,7 +16,7 @@ class IncomingTextMessagesController < SurveyedController
   ]
 
   def create
-    logger.debug "Incoming text message: #{params.inspect}"
+    logger.debug "Incoming text message for survey #{current_survey}: #{params.inspect}"
     itm = current_survey.incoming_text_messages.create!(
       to_number: params[:to],
       from_number: params[:from],
@@ -29,7 +29,11 @@ class IncomingTextMessagesController < SurveyedController
     else
       # otherwise send it through to the state for this participant
       ppt = participant_from_phone_number(params[:from])
-      if ppt.participant_state.respond_to? :incoming_message
+      if not ppt or not ppt.participant_state
+        logger.warn("Could not find participant for survey #{current_survey.id}, " +
+                    "check that the callback URL in Twilio is set correctly if you have " +
+                    "multiple surveys connected to one Twilio account.")
+      elsif ppt.participant_state.respond_to? :incoming_message
         ppt.participant_state.incoming_message params[:body]
       else
         logger.info "Ignored text message: #{params.inspect}"
@@ -47,6 +51,8 @@ class IncomingTextMessagesController < SurveyedController
   end
 
   def handle_stop(message)
+    # NOTE: we currently cannot handle these messages, they are trapped by 
+    # Twilio and not passed through
     ppt = set_participant_active(params[:from], false)
     if ppt
       ParticipantTexter.stop_message(ppt).deliver_and_save!
@@ -61,6 +67,8 @@ class IncomingTextMessagesController < SurveyedController
   end
 
   def handle_help(message)
+    # NOTE: we currently cannot handle these messages, they are trapped by 
+    # Twilio and not passed through
     ppt = participant_from_phone_number 
     if ppt
       ParticipantTexter.help_message(ppt).deliver_and_save!
@@ -68,7 +76,14 @@ class IncomingTextMessagesController < SurveyedController
   end
 
   def participant_from_phone_number(number)
-    current_survey.participants.where(phone_number: number).first
+    if not current_survey
+      logger.warn "No current survey when trying to parse incoming text message"
+    end
+    ppt = current_survey.participants.where(phone_number: number).first
+    if not ppt
+      logger.warn "Could not find {number} on survey {current_survey}"
+    end
+    ppt
   end
 
   def set_participant_active(phone_number, active_value)
