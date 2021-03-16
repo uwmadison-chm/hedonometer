@@ -351,6 +351,7 @@ class AfchronGameState < ParticipantState
       nil
     elsif none? and
       Time.now > today_game_time and
+      time_for_survey day and
       not self.state["game_completed_dayid"].include? day.id.to_s then
       # TODO: This should trigger on a postback from Qualtrics,
       # when we know they finished a default survey...
