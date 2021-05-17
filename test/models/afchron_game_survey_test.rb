@@ -22,6 +22,12 @@ class AfchronGameSurveyTest < ActiveSupport::TestCase
     assert_kind_of(AfchronGameState, state)
   end
 
+  test "prepared game state does not have a game_time" do
+    state = @survey.prepare_game_state @ppt
+    assert_nil(state['game_time'])
+  end
+
+
   test "participant state persists balance" do
     @survey.schedule_participant! @ppt
     @ppt.state["game_balance"] = 10

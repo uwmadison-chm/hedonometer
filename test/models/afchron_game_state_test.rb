@@ -74,13 +74,40 @@ class AfchronGameStateTest < ActiveSupport::TestCase
       @day.starts_at + 7.hours,
       @day.starts_at + 8.hours,
     ]
+    assert_equal(8, @state.surveys_for_day(@day).count)
     q = @state.take_action!
     assert_match(/Please take this survey now/, q.message_text)
-    surveys_sent = @state.surveys_for_day @day
-    assert_equal(8, surveys_sent.count)
+    assert_equal(8, @state.surveys_for_day(@day).count)
     surveys_sent_tomorrow = @state.surveys_for_day @day2
     assert_equal(1, surveys_sent_tomorrow.count)
     assert(surveys_sent_tomorrow.last > @day2.starts_at)
+  end
+
+  test "game starts at a random time on day 2" do
+    @state.state['game_time'] = @day.starts_at + 1.hour
+    @state.state["game_completed_results"].push true
+    @state.state["game_completed_dayid"].push @day.id
+    @state.state["game_completed_time"].push (@day.starts_at + 2.hours)
+    @state.set_surveys_for_day @day, [
+      @day.starts_at + 1.hour,
+      @day.starts_at + 2.hours,
+      @day.starts_at + 3.hours,
+      @day.starts_at + 4.hours,
+      @day.starts_at + 5.hours,
+      @day.starts_at + 6.hours,
+      @day.starts_at + 7.hours,
+      @day.starts_at + 8.hours,
+    ]
+    assert_equal(8, @state.surveys_for_day(@day).count)
+    q = @state.take_action!
+    assert_match(/Please take this survey now/, q.message_text)
+    assert_equal(8, @state.surveys_for_day(@day).count)
+    assert(@state.state['game_time'] > @day2.starts_at + 30.minutes)
+
+    # TODO: Even though this is passing, we need to check on N runs that some 
+    # percent of them land in the later half of the day, because the scheduler 
+    # is picking 15 minutes, the first available time, far too often on days 
+    # after the first
   end
 
   test "one survey left with game already done does not schedule past 12 hours" do
