@@ -24,7 +24,9 @@ If you already have embedded data in your Qualtrics survey, skip to 4.
 3. Set Embedded Data
 4. Create New Field, name it "PID"
 5. Create New Field, name it "SMID"
-6. Save Flow
+6. If the "Set Embedded Data" block is NOT at the top, click "Move" below it 
+   and drag and drop it to the top
+6. Save Flow or Apply changes
 7. Go to Distributions tab and choose Anonymous Link.
    Copy and paste the link (which will look like
    https://uwmadison.c01.qualtrics.com/...)
