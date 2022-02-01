@@ -12,7 +12,7 @@ class ScheduledMessagesController < SurveyedController
 
       # How old are we? If too old, show expired message
       # Default to scheduled time + 30 minutes if no explicit time
-      expires_at = message.expires_at || (message.scheduled_at + 30.minutes)
+      expires_at = message.expires_at || (message.scheduled_at + @current_survey.message_expiration_minutes.minutes)
       if Time.now > expires_at then
         @expired_string = "This link expired #{helpers.time_ago_in_words(expires_at)} ago."
         render "expired"

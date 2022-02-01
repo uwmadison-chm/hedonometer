@@ -19,6 +19,20 @@ class ScheduledMessagesControllerTest < ActionController::TestCase
     assert_select 'h3', /expired \d+ minutes ago/
   end
 
+  test "survey can extend default message expiration length" do
+    s = surveys(:link)
+    s.message_expiration_minutes = 60
+    s.save!
+
+    m = scheduled_messages(:message_1)
+    m.scheduled_at = Time.now - 40.minutes
+    m.save!
+
+    post :show, params: {id: m.id}
+    assert_redirected_to %r(qualtrics.com)
+    refute assigns(:expired_string)
+  end
+
   test "custom expiry should show expired message" do
     m = scheduled_messages(:message_1)
     m.scheduled_at = Time.now - 10.minutes

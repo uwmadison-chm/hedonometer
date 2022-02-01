@@ -113,6 +113,15 @@ class Survey < ApplicationRecord
   end
 
 
+  def message_expiration_minutes
+    configuration['message_expiration_minutes'] || 30
+  end
+
+  def message_expiration_minutes= x
+    configuration['message_expiration_minutes'] = x.to_i
+  end
+
+
   def twilio_client
     Twilio::REST::Client.new self.twilio_account_sid, self.twilio_auth_token
   end
