@@ -13,7 +13,7 @@ class LinkSurveyTest < ActiveSupport::TestCase
     assert_nil q.survey_question
   end
 
-  test "replaced text contains survey link, which is to this site" do
+  test "replaced text contains survey link, which has a destination url" do
     q = @survey.schedule_participant! @ppt
     refute_nil q
     assert_includes q.message_text, "{{redirect_link}}"
@@ -26,18 +26,43 @@ class LinkSurveyTest < ActiveSupport::TestCase
     assert_operator duration, :<=, (@survey.sample_minutes_plusminus * 2).minutes
   end
 
-  test "scheduling participant with 1 completed message schedules it in the correct range" do
+  test "scheduling participant with 1 completed message schedules next in the correct range" do
     q1 = @survey.schedule_participant! @ppt
 
-    q1.delivered_at = Time.now
+    q1.delivered_at = q1.scheduled_at
     q1.mark_delivered
     q1.save!
 
     q2 = @survey.schedule_participant! @ppt
 
     duration = q2.scheduled_at - q1.scheduled_at
+    multiplier = 3
 
-    assert_operator duration, :>=, (@survey.mean_minutes_between_samples + @survey.sample_minutes_plusminus).minutes
+    assert_operator duration, :>=, (@survey.mean_minutes_between_samples - @survey.sample_minutes_plusminus * multiplier).minutes
+    assert_operator duration, :<=, (@survey.mean_minutes_between_samples + @survey.sample_minutes_plusminus * multiplier).minutes
+  end
+
+  test "scheduling participant with 2 completed messages schedules next in the correct range" do
+    q1 = @survey.schedule_participant! @ppt
+    q1.delivered_at = q1.scheduled_at
+    q1.mark_delivered
+    q1.save!
+
+    q2 = @survey.schedule_participant! @ppt
+    q2.delivered_at = q2.scheduled_at
+    q2.mark_delivered
+    q2.save!
+
+    q3 = @survey.schedule_participant! @ppt
+    q3.delivered_at = q3.scheduled_at
+    q3.mark_delivered
+    q3.save!
+
+    duration = q3.scheduled_at - q2.scheduled_at
+    multiplier = 2
+
+    assert_operator duration, :>=, (@survey.mean_minutes_between_samples - @survey.sample_minutes_plusminus * multiplier).minutes
+    assert_operator duration, :<=, (@survey.mean_minutes_between_samples + @survey.sample_minutes_plusminus * multiplier).minutes
   end
 end
 

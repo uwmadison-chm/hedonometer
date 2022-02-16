@@ -102,20 +102,52 @@ class ScheduleDayTest < ActiveSupport::TestCase
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
       aasm_state: 'delivered')
 
-    min_time = (2*survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
+    start_buffer = (2 * survey.sample_minutes_plusminus).minutes
+    min_time = start_buffer + (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus).minutes
     assert_equal min_time, @sd.minimum_time_to_next_question
   end
 
   test "maximum time to next question" do
     survey = @sd.participant.survey
-    max_time = (2 * survey.sample_minutes_plusminus).minutes
+    start_buffer = (2 * survey.sample_minutes_plusminus).minutes
+    max_time = start_buffer
     assert_equal max_time, @sd.maximum_time_to_next_question
+
     @sd.scheduled_messages.create(
       survey_question: survey_questions(:test_what),
       scheduled_at: @sd.time_ranges.first.first + 10.minutes,
       aasm_state: 'delivered')
 
-    max_time = (2*survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
+    max_time += (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus).minutes
     assert_equal max_time, @sd.maximum_time_to_next_question
+  end
+
+  test "distributes messages evenly through the day" do
+    survey = @sd.participant.survey
+    (1..survey.samples_per_day).each do |x|
+      @sd.scheduled_messages.create(
+        survey_question: survey_questions(:test_what),
+        scheduled_at: @sd.random_time_for_next_question,
+        aasm_state: 'delivered')
+    end
+
+    message_times = @sd.scheduled_messages.map {|m| m.scheduled_at}
+
+    (2..survey.samples_per_day).each do |n|
+      duration = message_times[n - 1] - message_times[n - 2]
+
+      # The * multiplier here is because one could come "very early" in its window and the 
+      # next could come "very late" or vice versa.
+      # Plus, the first message's window is actually wider because of the start period
+      if n == 2 then
+        multiplier = 3
+      else
+        multiplier = 2
+      end
+      min = (survey.mean_minutes_between_samples - survey.sample_minutes_plusminus * multiplier).minutes
+      max = (survey.mean_minutes_between_samples + survey.sample_minutes_plusminus * multiplier).minutes
+      assert_operator duration, :>=, min
+      assert_operator duration, :<=, max
+    end
   end
 end

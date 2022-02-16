@@ -96,8 +96,14 @@ class ScheduleDay < ApplicationRecord
     scheduled_messages.scheduled.first
   end
 
+  def start_period
+    # Maximum time after the start of the "day" we should send the first message
+    (survey.sample_minutes_plusminus * 2).minutes
+  end
+
   def minimum_time_to_question(question_number)
-    ((question_number * survey.mean_minutes_between_samples) - survey.sample_minutes_plusminus).minutes
+    start_period +
+    (((question_number - 1) * survey.mean_minutes_between_samples) - survey.sample_minutes_plusminus).minutes
   end
 
   def minimum_time_to_next_question
@@ -109,15 +115,13 @@ class ScheduleDay < ApplicationRecord
   end
 
   def maximum_time_to_question(question_number)
-    ((question_number * survey.mean_minutes_between_samples) + survey.sample_minutes_plusminus).minutes
+    start_period +
+    (((question_number - 1) * survey.mean_minutes_between_samples) + survey.sample_minutes_plusminus).minutes
   end
 
   def maximum_time_to_next_question
     if completed_question_count == 0 then
-      (survey.sample_minutes_plusminus * 2).minutes
-    elsif completed_question_count + 1 == survey.samples_per_day then 
-      # The last possible time is exactly the end of their time ranges
-      time_ranges.last.end - time_ranges.first.first
+      start_period
     else
       maximum_time_to_question(completed_question_count + 1)
     end
