@@ -1,5 +1,5 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.14.1"
+lock "~> 3.16.0"
 
 set :ruby_version, '/var/www/apps/h2/shared/ruby/2.6.1/bin'
 
