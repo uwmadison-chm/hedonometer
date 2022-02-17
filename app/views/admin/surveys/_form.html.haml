@@ -34,7 +34,7 @@
   - if survey.respond_to? :survey_questions
     = f.fields_for :survey_questions, survey.survey_questions do |question_form|
       = question_form.text_field :question_text, size: 80, maxlength: 140
-  = f.number_field :message_expiration_minutes, label: "Redirect links in messages expire after X minutes"
+  = f.number_field :message_expiration_minutes, label: "Expiration for redirect links in messages, in minutes"
   = f.check_box :development_mode, label: "Development mode", follow_field_with: '<div class="instructions">This is for testing, and enables the simulation of messages to and from participants. Don\'t enable this unless you know what you are doing!</div>'.html_safe
   %ul.twilio_errors
     - (flash[:twilio_errors] || []).each do |err|

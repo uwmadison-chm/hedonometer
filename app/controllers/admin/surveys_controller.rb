@@ -85,6 +85,7 @@ class Admin::SurveysController < AdminController
         :help_message,
         :samples_per_day,
         :mean_minutes_between_samples,
+        :message_expiration_minutes,
         :sample_minutes_plusminus,
         :sampled_days,
         :time_zone,
