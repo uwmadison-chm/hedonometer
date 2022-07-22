@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require_relative '../app/models/time_range.rb'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -35,5 +36,9 @@ module Hedonometer
 
     # ActiveJob should use delayed_job
     config.active_job.queue_adapter = :delayed_job
+
+    # We need to be able to serialize TimeRange
+    # See https://stackoverflow.com/questions/72970170/upgrading-to-rails-6-1-6-1-causes-psychdisallowedclass-tried-to-load-unspecif
+    config.active_record.yaml_column_permitted_classes = [TimeRange, Time]
   end
 end
