@@ -4,9 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.6.2'
+gem 'rails', '~> 5.2.8.1'
 # Use Puma as the app server
-gem 'puma', '~> 5.6'
+gem 'puma', '~> 5.6.4'
 # Use SCSS for stylesheets
 gem "sassc-rails", "~> 2.1.0"
 # Use Uglifier as compressor for JavaScript assets
