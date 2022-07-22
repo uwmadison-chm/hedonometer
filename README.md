@@ -13,10 +13,16 @@ Many variants on experience sampling exist; however, extant ones tend to rely ei
 
 ## Requirements
 
-This was written and tested in Ruby 2.2.0, and then upgraded to 2.6.0.
+This was written and tested in Ruby 2.2.0, and then upgraded to 2.6.1.
 
 
 ## Getting Started
+
+Development prerequisites:
+
+    sudo apt install postgresql libpq-dev nodejs
+
+(or any other [ExecJS](https://github.com/rails/execjs) runtime)
 
 Installing this is the same as installing any Rails app. Clone, `bundle install`, `rake db:migrate`.
 
@@ -26,11 +32,18 @@ Recently switched to postgres in devel to avoid a weird json blob problem in sql
 
 There's likely a cleaner way, but per environment, do something like:
 
-    sudo apt install postgres
+    sudo apt install postgresql libpq-dev
     sudo -u postgres psql
+
     create database hedonometer_development;
     create user myuser with encrypted password '123';
     grant all privileges on database hedonometer_development to myuser;
+
+    create database hedonometer_test;
+    grant all privileges on database hedonometer_test to myuser;
+
+    create database hedonometer_production;
+    grant all privileges on database hedonometer_production to myuser;
 
 Then copy `config/database.yml.example` to `config/database.yml` and edit it 
 to match.
