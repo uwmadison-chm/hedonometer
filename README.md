@@ -1,5 +1,9 @@
 # hedonometer
 
+## This project is archived
+
+This project is unmaintained and **you should not use it.** There is no planned replacement. This is code is provided for historical purposes only.
+
 ## Background
 
 A simple Rails-based web application for collecting experience sampling data via text message.
